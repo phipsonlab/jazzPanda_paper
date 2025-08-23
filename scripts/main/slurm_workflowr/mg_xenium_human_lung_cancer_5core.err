@@ -1,0 +1,107 @@
+/var/spool/slurmd/job23549985/slurm_script: line 32: msg: command not found
+/var/spool/slurmd/job23549985/slurm_script: line 33: msg: command not found
+/var/spool/slurmd/job23549985/slurm_script: line 34: msg: command not found
+/var/spool/slurmd/job23549985/slurm_script: line 35: msg: command not found
+/var/spool/slurmd/job23549985/slurm_script: line 36: msg: command not found
+/var/spool/slurmd/job23549985/slurm_script: line 37: msg: command not found
+/var/spool/slurmd/job23549985/slurm_script: line 38: msg: command not found
+/var/spool/slurmd/job23549985/slurm_script: line 39: msg: command not found
+Warning message:
+package ‘jazzPanda’ was built under R version 4.5.1 
+Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Registered S3 method overwritten by 'spatstat.explore':
+  method   from
+  plot.roc pROC
+Warning message:
+package ‘SeuratObject’ was built under R version 4.5.1 
+Warning message:
+package ‘data.table’ was built under R version 4.5.1 
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:data.table’:
+
+    between, first, last
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: Matrix
+Loaded glmnet 4.1-10
+Warning message:
+package ‘glmnet’ was built under R version 4.5.1 
+Loading required package: ggplot2
+Loading required package: lattice
+Warning message:
+package ‘edgeR’ was built under R version 4.5.1 
+10X data contains more than one type and is being returned as a list containing matrices of each type.
+Warning message:
+In asMethod(object) :
+  sparse->dense coercion: allocating vector of size 1.6 GiB
+Warning: Data is of class matrix. Coercing to dgCMatrix.
+Correlation Method = spearman
+Running 5000 permutation with 5 cores in parallel
+Warning messages:
+1: 1 point was rejected as lying outside the specified window 
+2: 1 point was rejected as lying outside the specified window 
+Warning messages:
+1: 1 point was rejected as lying outside the specified window 
+2: 1 point was rejected as lying outside the specified window 
+Calculating cluster c1
+Calculating cluster c12
+Calculating cluster c13
+Calculating cluster c15
+Calculating cluster c16
+Calculating cluster c18
+Calculating cluster c2
+Calculating cluster c3
+Calculating cluster c4
+Calculating cluster c5
+Calculating cluster c6
+Calculating cluster c8
+Calculating cluster c9
+Warning messages:
+1: The `slot` argument of `GetAssayData()` is deprecated as of SeuratObject 5.0.0.
+ℹ Please use the `layer` argument instead.
+ℹ The deprecated feature was likely used in the Seurat package.
+  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
+2: `PackageCheck()` was deprecated in SeuratObject 5.0.0.
+ℹ Please use `rlang::check_installed()` instead.
+ℹ The deprecated feature was likely used in the Seurat package.
+  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
+	Command being timed: "Rscript mg_xenium_human_lung_cancer.R"
+	User time (seconds): 994.62
+	System time (seconds): 119.72
+	Percent of CPU this job got: 49%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 37:20.54
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 34965976
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 73967
+	Minor (reclaiming a frame) page faults: 37804571
+	Voluntary context switches: 310442
+	Involuntary context switches: 2623
+	Swaps: 0
+	File system inputs: 56512
+	File system outputs: 17228728
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

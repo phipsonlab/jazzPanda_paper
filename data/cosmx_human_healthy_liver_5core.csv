@@ -1,0 +1,2 @@
+"technology","dataset","genes_n","transcript_n","cells_n","clusters_n","grid_length","fm_Elapsed_Time_sec","fm_Peak_RAM_Used_MiB","limma_Elapsed_Time_sec","limma_Peak_RAM_Used_MiB","perm_Elapsed_Time_sec","perm_Peak_RAM_Used_MiB","sv_Elapsed_Time_sec","sv_Peak_RAM_Used_MiB","glm_Elapsed_Time_sec","glm_Peak_RAM_Used_MiB"
+"cosmx","CosMx healthy human liver",1000,185447076,332784,15,40,97.4589999999998,11038.3,35.5160000000001,12748.3,812.93,3516.3,425.522,277.9,58.0539999999999,813.5

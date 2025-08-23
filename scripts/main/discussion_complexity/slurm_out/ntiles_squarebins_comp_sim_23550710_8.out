@@ -1,0 +1,91 @@
+------------------------------------------------------------------------
+Job Started on Fri 22 Aug 2025 23:32:58 AEST
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+CPU Information:
+Architecture:                       x86_64
+CPU op-mode(s):                     32-bit, 64-bit
+Address sizes:                      46 bits physical, 57 bits virtual
+Byte Order:                         Little Endian
+CPU(s):                             96
+On-line CPU(s) list:                0-95
+Vendor ID:                          GenuineIntel
+Model name:                         Intel(R) Xeon(R) Gold 6342 CPU @ 2.80GHz
+CPU family:                         6
+Model:                              106
+Thread(s) per core:                 2
+Core(s) per socket:                 24
+Socket(s):                          2
+Stepping:                           6
+CPU(s) scaling MHz:                 94%
+CPU max MHz:                        3500.0000
+CPU min MHz:                        800.0000
+BogoMIPS:                           5600.00
+Flags:                              fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 invpcid_single intel_ppin ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local split_lock_detect wbnoinvd dtherm ida arat pln pts vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg tme avx512_vpopcntdq la57 rdpid fsrm md_clear pconfig flush_l1d arch_capabilities
+Virtualization:                     VT-x
+L1d cache:                          2.3 MiB (48 instances)
+L1i cache:                          1.5 MiB (48 instances)
+L2 cache:                           60 MiB (48 instances)
+L3 cache:                           72 MiB (2 instances)
+NUMA node(s):                       2
+NUMA node0 CPU(s):                  0-23,48-71
+NUMA node1 CPU(s):                  24-47,72-95
+Vulnerability Gather data sampling: Mitigation; Microcode
+Vulnerability Itlb multihit:        Not affected
+Vulnerability L1tf:                 Not affected
+Vulnerability Mds:                  Not affected
+Vulnerability Meltdown:             Not affected
+Vulnerability Mmio stale data:      Mitigation; Clear CPU buffers; SMT vulnerable
+Vulnerability Retbleed:             Not affected
+Vulnerability Spec rstack overflow: Not affected
+Vulnerability Spec store bypass:    Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:           Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:           Mitigation; Enhanced / Automatic IBRS, IBPB conditional, RSB filling, PBRSB-eIBRS SW sequence
+Vulnerability Srbds:                Not affected
+Vulnerability Tsx async abort:      Not affected
+------------------------------------------------------------------------
+Memory Information:
+               total        used        free      shared  buff/cache   available
+Mem:          515103       59769       68638       19456      409509      455333
+Swap:              0           0           0
+------------------------------------------------------------------------
+Disk Space:
+Filesystem                         Size  Used Avail Use% Mounted on
+devtmpfs                           4.0M     0  4.0M   0% /dev
+tmpfs                              252G   18G  234G   8% /dev/shm
+tmpfs                              101G  1.2G  100G   2% /run
+/dev/mapper/rhel-root               10G  666M  9.4G   7% /
+/dev/mapper/rhel-usr                35G   14G   22G  39% /usr
+/dev/sda2                         1014M  369M  646M  37% /boot
+/dev/mapper/rhel-tmp                20G  3.1G   17G  16% /tmp
+/dev/sda1                          200M  7.1M  193M   4% /boot/efi
+/dev/mapper/rhel-var                10G  1.4G  8.7G  14% /var
+vast.hpc.wehi.edu.au:/projects     575T  433T  143T  76% /vast/projects
+vast.hpc.wehi.edu.au:/imaging      200T  152T   49T  76% /vast/imaging
+vast.hpc.wehi.edu.au:/scratch      550T  428T  123T  78% /vast/scratch
+vast.hpc.wehi.edu.au:/cryoem       300T  274T   27T  92% /vast/cryoem
+vast.hpc.wehi.edu.au:/ai_projects  600T   25T  576T   5% /vast/ai_projects
+General                            504T  291T  214T  58% /stornext/General
+Genomics                            64T   34T   31T  52% /stornext/Genomics
+Home                                96T   41T   56T  42% /stornext/Home
+ImageData                          252T  190T   63T  76% /stornext/ImageData
+Img                                252T  240T   13T  95% /stornext/Img
+Projects                           504T  329T  176T  66% /stornext/Projects
+SBPM                                48T   29T   20T  60% /stornext/SBPM
+Sysbio                              96T   57T   40T  59% /stornext/Sysbio
+System                              24T  8.9T   16T  37% /stornext/System
+Archive                             84T   45T   40T  54% /stornext/Archive
+Bioinf                             504T  478T   27T  95% /stornext/Bioinf
+------------------------------------------------------------------------
+System and Kernel:
+Linux il-n16.hpc.wehi.edu.au 5.14.0-362.24.1.el9_3.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Feb 15 07:18:13 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+------------------------------------------------------------------------
+Loading R/4.5.0
+  Loading requirement: libpng/1.6.43 libjpeg-turbo/3.0.2 libtiff/4.6.0
+    ninja/1.11.1 bzip2/1.0.8 hdf5/1.12.3 pcre2/10.42 openjdk/21.0.2 cairo/1.19.0
+Loading gdal/3.9.0
+  Loading requirement: proj/9.4.0 netcdf/4.9.2 mariadb-connector-c/3.3.10
+Repeat = 1 , curr_size = 80 
+------------------------------------------------------------------------
+Job Completed on Fri 22 Aug 2025 23:45:20 AEST
+------------------------------------------------------------------------

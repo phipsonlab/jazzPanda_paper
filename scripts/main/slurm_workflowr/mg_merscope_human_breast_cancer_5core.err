@@ -1,0 +1,114 @@
+/var/spool/slurmd/job23549986/slurm_script: line 32: msg: command not found
+/var/spool/slurmd/job23549986/slurm_script: line 33: msg: command not found
+/var/spool/slurmd/job23549986/slurm_script: line 34: msg: command not found
+/var/spool/slurmd/job23549986/slurm_script: line 35: msg: command not found
+/var/spool/slurmd/job23549986/slurm_script: line 36: msg: command not found
+/var/spool/slurmd/job23549986/slurm_script: line 37: msg: command not found
+/var/spool/slurmd/job23549986/slurm_script: line 38: msg: command not found
+/var/spool/slurmd/job23549986/slurm_script: line 39: msg: command not found
+Warning message:
+package ‘jazzPanda’ was built under R version 4.5.1 
+Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Registered S3 method overwritten by 'spatstat.explore':
+  method   from
+  plot.roc pROC
+Warning message:
+package ‘SeuratObject’ was built under R version 4.5.1 
+Warning message:
+package ‘data.table’ was built under R version 4.5.1 
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:data.table’:
+
+    between, first, last
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: Matrix
+Loaded glmnet 4.1-10
+Warning message:
+package ‘glmnet’ was built under R version 4.5.1 
+Loading required package: ggplot2
+Loading required package: lattice
+Warning message:
+package ‘edgeR’ was built under R version 4.5.1 
+Warning messages:
+1: 1 point was rejected as lying outside the specified window 
+2: 3 points were rejected as lying outside the specified window 
+3: 3 points were rejected as lying outside the specified window 
+4: 1 point was rejected as lying outside the specified window 
+5: 2 points were rejected as lying outside the specified window 
+6: 1 point was rejected as lying outside the specified window 
+Correlation Method = spearman
+Running 5000 permutation with 5 cores in parallel
+Warning messages:
+1: 1 point was rejected as lying outside the specified window 
+2: 3 points were rejected as lying outside the specified window 
+3: 3 points were rejected as lying outside the specified window 
+4: 1 point was rejected as lying outside the specified window 
+5: 2 points were rejected as lying outside the specified window 
+6: 1 point was rejected as lying outside the specified window 
+Warning: Data is of class matrix. Coercing to dgCMatrix.
+Calculating cluster c0
+Calculating cluster c1
+Calculating cluster c2
+Calculating cluster c3
+Calculating cluster c4
+Calculating cluster c5
+Calculating cluster c6
+Calculating cluster c7
+Calculating cluster c8
+Calculating cluster c9
+Calculating cluster c10
+Calculating cluster c11
+Calculating cluster c12
+Calculating cluster c13
+Calculating cluster c14
+Calculating cluster c15
+Warning messages:
+1: The `slot` argument of `GetAssayData()` is deprecated as of SeuratObject 5.0.0.
+ℹ Please use the `layer` argument instead.
+ℹ The deprecated feature was likely used in the Seurat package.
+  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
+2: `PackageCheck()` was deprecated in SeuratObject 5.0.0.
+ℹ Please use `rlang::check_installed()` instead.
+ℹ The deprecated feature was likely used in the Seurat package.
+  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
+	Command being timed: "Rscript mg_merscope_human_breast_cancer.R"
+	User time (seconds): 6850.09
+	System time (seconds): 1060.86
+	Percent of CPU this job got: 53%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:05:51
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 91852672
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 9814077
+	Minor (reclaiming a frame) page faults: 115569605
+	Voluntary context switches: 44907257
+	Involuntary context switches: 40561
+	Swaps: 0
+	File system inputs: 77699232
+	File system outputs: 2300456
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

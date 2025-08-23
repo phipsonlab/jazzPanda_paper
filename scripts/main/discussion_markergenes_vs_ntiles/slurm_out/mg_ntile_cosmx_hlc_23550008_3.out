@@ -1,0 +1,101 @@
+------------------------------------------------------------------------
+Job Started on Fri 22 Aug 2025 19:41:28 AEST
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+CPU Information:
+Architecture:                       x86_64
+CPU op-mode(s):                     32-bit, 64-bit
+Address sizes:                      46 bits physical, 48 bits virtual
+Byte Order:                         Little Endian
+CPU(s):                             56
+On-line CPU(s) list:                0-55
+Vendor ID:                          GenuineIntel
+Model name:                         Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
+CPU family:                         6
+Model:                              79
+Thread(s) per core:                 2
+Core(s) per socket:                 14
+Socket(s):                          2
+Stepping:                           1
+CPU(s) scaling MHz:                 85%
+CPU max MHz:                        3500.0000
+CPU min MHz:                        1200.0000
+BogoMIPS:                           5188.00
+Flags:                              fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 invpcid_single pti intel_ppin ssbd ibrs ibpb stibp tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm cqm rdt_a rdseed adx smap intel_pt xsaveopt cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts vnmi md_clear flush_l1d
+Virtualization:                     VT-x
+L1d cache:                          896 KiB (28 instances)
+L1i cache:                          896 KiB (28 instances)
+L2 cache:                           7 MiB (28 instances)
+L3 cache:                           70 MiB (2 instances)
+NUMA node(s):                       2
+NUMA node0 CPU(s):                  0-13,28-41
+NUMA node1 CPU(s):                  14-27,42-55
+Vulnerability Gather data sampling: Not affected
+Vulnerability Itlb multihit:        KVM: Mitigation: VMX disabled
+Vulnerability L1tf:                 Mitigation; PTE Inversion; VMX conditional cache flushes, SMT vulnerable
+Vulnerability Mds:                  Mitigation; Clear CPU buffers; SMT vulnerable
+Vulnerability Meltdown:             Mitigation; PTI
+Vulnerability Mmio stale data:      Mitigation; Clear CPU buffers; SMT vulnerable
+Vulnerability Retbleed:             Not affected
+Vulnerability Spec rstack overflow: Not affected
+Vulnerability Spec store bypass:    Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:           Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:           Mitigation; Retpolines, IBPB conditional, IBRS_FW, STIBP conditional, RSB filling, PBRSB-eIBRS Not affected
+Vulnerability Srbds:                Not affected
+Vulnerability Tsx async abort:      Mitigation; Clear CPU buffers; SMT vulnerable
+------------------------------------------------------------------------
+Memory Information:
+               total        used        free      shared  buff/cache   available
+Mem:          515364       30185      162200         184      326524      485178
+Swap:              0           0           0
+------------------------------------------------------------------------
+Disk Space:
+Filesystem                         Size  Used Avail Use% Mounted on
+devtmpfs                           4.0M     0  4.0M   0% /dev
+tmpfs                              252G  2.3M  252G   1% /dev/shm
+tmpfs                              101G  180M  101G   1% /run
+/dev/mapper/rhel-root               10G  467M  9.6G   5% /
+/dev/mapper/rhel-usr                35G   13G   23G  36% /usr
+/dev/sda2                         1014M  368M  647M  37% /boot
+/dev/mapper/rhel-tmp                20G  5.4G   15G  27% /tmp
+/dev/mapper/rhel-var                10G  974M  9.1G  10% /var
+/dev/sda1                          200M  7.1M  193M   4% /boot/efi
+vast.hpc.wehi.edu.au:/cryoem       300T  274T   27T  92% /vast/cryoem
+vast.hpc.wehi.edu.au:/scratch      550T  428T  123T  78% /vast/scratch
+vast.hpc.wehi.edu.au:/ai_projects  600T   25T  576T   5% /vast/ai_projects
+vast.hpc.wehi.edu.au:/projects     575T  433T  143T  76% /vast/projects
+vast.hpc.wehi.edu.au:/imaging      200T  152T   49T  76% /vast/imaging
+Home                                96T   41T   56T  42% /stornext/Home
+System                              24T  8.9T   16T  37% /stornext/System
+Archive                             84T   45T   40T  53% /stornext/Archive
+Bioinf                             504T  478T   27T  95% /stornext/Bioinf
+General                            504T  291T  214T  58% /stornext/General
+Genomics                            64T   34T   31T  52% /stornext/Genomics
+ImageData                          252T  190T   63T  76% /stornext/ImageData
+Img                                252T  240T   13T  95% /stornext/Img
+Projects                           504T  329T  176T  66% /stornext/Projects
+SBPM                                48T   29T   20T  60% /stornext/SBPM
+Sysbio                              96T   57T   40T  59% /stornext/Sysbio
+------------------------------------------------------------------------
+System and Kernel:
+Linux med-n34.hpc.wehi.edu.au 5.14.0-362.24.1.el9_3.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Feb 15 07:18:13 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+------------------------------------------------------------------------
+Loading R/4.5.0
+  Loading requirement: libpng/1.6.43 libjpeg-turbo/3.0.2 libtiff/4.6.0
+    ninja/1.11.1 bzip2/1.0.8 hdf5/1.12.3 pcre2/10.42 openjdk/21.0.2 cairo/1.19.0
+Loading gdal/3.9.0
+  Loading requirement: proj/9.4.0 netcdf/4.9.2 mariadb-connector-c/3.3.10
+Number of cells in cancer and normal samples:  793318Total number of cells remaining after removing low quality cells:  792953             used    (Mb)  gc trigger     (Mb)   max used    (Mb)
+Ncells   10002653   534.2    14413215    769.8   10002653   534.2
+Vcells 8916223213 68025.4 14056910301 107245.8 8916223213 68025.4
+loading transcript coordinates data for 1000 genes and 460169 cells took 23.12988 GB memorycurr_size = 30 
+             used    (Mb)  gc trigger     (Mb)   max used    (Mb)
+Ncells    9769404   521.8    14413215    769.8    9769404   521.8
+Vcells 1510791863 11526.5 16193701467 123548.2 1510791863 11526.5
+creating vectors for 1000 genes and 13 clusters with 30 x 30 tiles took 66.6482 mins and 0.00703 GB memory             used    (Mb) gc trigger    (Mb)   max used    (Mb)
+Ncells    9827963   524.9   14413215   769.8    9827963   524.9
+Vcells 1511361075 11530.8 4245081679 32387.5 1511361075 11530.8
+jazzPanda-linear model took 1.216834 mins and 0.00273 GB memory 
+------------------------------------------------------------------------
+Job Completed on Fri 22 Aug 2025 21:12:06 AEST
+------------------------------------------------------------------------
