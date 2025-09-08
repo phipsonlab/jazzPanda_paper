@@ -1,0 +1,2 @@
+"technology","dataset","genes_n","transcript_n","cells_n","clusters_n","grid_length","fm_Elapsed_Time_sec","fm_Peak_RAM_Used_MiB","limma_Elapsed_Time_sec","limma_Peak_RAM_Used_MiB","perm_Elapsed_Time_sec","perm_Peak_RAM_Used_MiB","sv_Elapsed_Time_sec","sv_Peak_RAM_Used_MiB","glm_Elapsed_Time_sec","glm_Peak_RAM_Used_MiB"
+"xenium","Xenium human lung cancer",392,66514984,531165,13,70,47.4519999999998,9108.9,19.8270000000002,9015,815.921,4070.2,360.157,9147.8,34.3009999999999,9115.7
