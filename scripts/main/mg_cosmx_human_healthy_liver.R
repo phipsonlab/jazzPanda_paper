@@ -238,6 +238,13 @@ hln_seu = FindVariableFeatures(hln_seu, selection.method = "vst",
                                nfeatures = 1000, verbose = FALSE)
 
 hln_seu=ScaleData(hln_seu, verbose = FALSE)
+
+set.seed(989)
+# print(ElbowPlot(hln_seu, ndims = 50))
+hln_seu <- RunPCA(hln_seu, features = row.names(hln_seu), 
+                  npcs = 50, verbose = FALSE)
+hln_seu <- RunUMAP(object = hln_seu, dims = 1:15)
+
 usage_fm= peakRAM({
 seu_markers <- FindAllMarkers(hln_seu, only.pos = TRUE,logfc.threshold = 0.25)
 
@@ -275,11 +282,9 @@ script_dir <- if (length(script_arg)) {
     normalizePath(getwd())  # interactive fallback
 }
 
-
-## Output folder name
-output_dir_nm <- "dataset_computational_complexity"
-
-out_dir <- file.path(script_dir, output_dir_nm)
+out_dir <- file.path(script_dir, "..", "..", 
+                     "data/dataset_computational_complexity")
+out_dir <- normalizePath(out_dir)
 
 setwd(out_dir)
 

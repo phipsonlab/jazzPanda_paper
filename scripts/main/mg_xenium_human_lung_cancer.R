@@ -63,7 +63,11 @@ hlc_seu = FindVariableFeatures(hlc_seu, selection.method = "vst",
                                nfeatures = 392, verbose = FALSE)
 
 hlc_seu=ScaleData(hlc_seu, verbose = FALSE)
-hlc_seu=RunPCA(hlc_seu, npcs = 50, verbose = FALSE)
+hlc_seu=RunPCA(hlc_seu, npcs = 50, verbose = FALSE, 
+               features = row.names(hlc_seu))
+# print(ElbowPlot(seu, ndims = 50))
+hlc_seu <- RunUMAP(object = hlc_seu, dims = 1:20)
+
 
 # load provided cluster labels
 graphclust_off=read.csv(paste(path, "graphclust.csv",sep=""))
@@ -214,13 +218,12 @@ script_dir <- if (length(script_arg)) {
     normalizePath(getwd())  # interactive fallback
 }
 
-
-## Output folder name
-output_dir_nm <- "dataset_computational_complexity"
-
-out_dir <- file.path(script_dir, output_dir_nm)
+out_dir <- file.path(script_dir, "..", "..", 
+                     "data/dataset_computational_complexity")
+out_dir <- normalizePath(out_dir)
 
 setwd(out_dir)
+
 
 saveRDS(clusters,"xenium_hlc_clusters.Rds")
 saveRDS(rep1_lasso_lst,"xenium_hlc_jazzPanda_res_lst.Rds")

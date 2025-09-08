@@ -139,7 +139,8 @@ mbrain_integrated <- ScaleData(mbrain_integrated, verbose = FALSE)
 mbrain_integrated <- RunPCA(mbrain_integrated, npcs = 50, verbose = FALSE)
 
 mbrain_integrated <- FindNeighbors(mbrain_integrated, dims = 1:30)
-
+mbrain_integrated <- RunUMAP(mbrain_integrated, dims = 1:30, 
+                             verbose = FALSE)
 mbrain_integrated <- FindClusters(mbrain_integrated, resolution = 0.05)
 #saveRDS(mbrain_integrated, "mbrain_integrated.Rds")
 
@@ -276,6 +277,7 @@ results_df <- data.frame(
 
 
 output_file_name <- "xenium_mouse_brain_5core.csv"
+
 args_all   <- commandArgs(trailingOnly = FALSE)
 script_arg <- grep("^--file=", args_all, value = TRUE)
 script_dir <- if (length(script_arg)) {
@@ -284,14 +286,11 @@ script_dir <- if (length(script_arg)) {
     normalizePath(getwd())  # interactive fallback
 }
 
-
-## Output folder name
-output_dir_nm <- "dataset_computational_complexity"
-
-out_dir <- file.path(script_dir, output_dir_nm)
+out_dir <- file.path(script_dir, "..", "..", 
+                     "data/dataset_computational_complexity")
+out_dir <- normalizePath(out_dir)
 
 setwd(out_dir)
-
 
 saveRDS(clusters,"xenium_mbrain_clusters.Rds")
 saveRDS(jazzPanda_res_lst,"xenium_mbrain_jazzPanda_res_lst.Rds")

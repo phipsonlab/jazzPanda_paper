@@ -1,2 +1,0 @@
-"technology","dataset","genes_n","transcript_n","cells_n","clusters_n","grid_length","fm_Elapsed_Time_sec","fm_Peak_RAM_Used_MiB","limma_Elapsed_Time_sec","limma_Peak_RAM_Used_MiB","perm_Elapsed_Time_sec","perm_Peak_RAM_Used_MiB","sv_Elapsed_Time_sec","sv_Peak_RAM_Used_MiB","glm_Elapsed_Time_sec","glm_Peak_RAM_Used_MiB"
-"MERSCOPE","MERSCOPE human breast cancer",500,490398542,575013,16,50,272.669,40611.4,52.2340000000004,12432.3,6654.667,29941.8,5977.498,29931.9,69.5259999999998,1533.2

@@ -154,6 +154,14 @@ hbm_seu <- NormalizeData(hbm_seu, verbose = FALSE,
 hbm_seu <- FindVariableFeatures(hbm_seu, selection.method = "vst", 
                                 nfeatures = 1000, verbose = FALSE)
 hbm_seu <- ScaleData(hbm_seu, verbose = FALSE)
+
+set.seed(989)
+# print(ElbowPlot(seu, ndims = 50))
+hbm_seu <- RunPCA(hbm_seu, features = row.names(hbm_seu), 
+                  npcs = 50, verbose = FALSE)
+
+hbm_seu <- RunUMAP(object = hbm_seu, dims = 1:20)
+
 usage_fm= peakRAM({
 seu_markers <- FindAllMarkers(hbm_seu, only.pos = TRUE,logfc.threshold = 0.25)
 })
@@ -182,7 +190,6 @@ results_df <- data.frame(
 
 output_file_name <- "merscope_human_breast_cancer_5core.csv"
 
-
 args_all   <- commandArgs(trailingOnly = FALSE)
 script_arg <- grep("^--file=", args_all, value = TRUE)
 script_dir <- if (length(script_arg)) {
@@ -191,11 +198,9 @@ script_dir <- if (length(script_arg)) {
     normalizePath(getwd())  # interactive fallback
 }
 
-
-## Output folder name
-output_dir_nm <- "dataset_computational_complexity"
-
-out_dir <- file.path(script_dir, output_dir_nm)
+out_dir <- file.path(script_dir, "..", "..", 
+                     "data/dataset_computational_complexity")
+out_dir <- normalizePath(out_dir)
 
 setwd(out_dir)
 

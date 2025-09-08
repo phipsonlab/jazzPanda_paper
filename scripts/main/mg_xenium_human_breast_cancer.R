@@ -48,6 +48,7 @@ script_dir <- if (length(script_arg)) {
     normalizePath(getwd())  # interactive fallback
 }
 
+
 project_root <- normalizePath(file.path(script_dir, "..", ".."))
 
 
@@ -303,6 +304,17 @@ Idents(merged_seu) = clusters$cluster
 
 # re-join layers after integration
 merged_seu[["RNA"]] <- JoinLayers(merged_seu[["RNA"]])
+
+VariableFeatures(merged_seu) <- row.names(merged_seu)
+merged_seu <- ScaleData(merged_seu, features = row.names(merged_seu),
+                        verbose = FALSE)
+set.seed(1939)
+# print(ElbowPlot(merged_seu, ndims = 50))
+merged_seu <- RunPCA(merged_seu, features = row.names(merged_seu),
+                     npcs = 50, verbose = FALSE)
+merged_seu <- RunUMAP(merged_seu, dims = 1:20, verbose = FALSE)
+
+
 usage_fm= peakRAM({
 FM_res <- FindAllMarkers(merged_seu, only.pos = TRUE,logfc.threshold = 0)
 })
@@ -329,12 +341,12 @@ results_df <- data.frame(
 output_file_name <- "xenium_human_breast_cancer_5core.csv"
 
 
-## Output folder name
-output_dir_nm <- "dataset_computational_complexity"
-
-out_dir <- file.path(script_dir, output_dir_nm)
+out_dir <- file.path(script_dir, "..", "..", 
+                     "data/dataset_computational_complexity")
+out_dir <- normalizePath(out_dir)
 
 setwd(out_dir)
+
 
 saveRDS(clusters,"xenium_hbreast_clusters.Rds")
 saveRDS(sp1_sp2_lasso_with_nc,"xenium_hbreast_jazzPanda_res_lst.Rds")

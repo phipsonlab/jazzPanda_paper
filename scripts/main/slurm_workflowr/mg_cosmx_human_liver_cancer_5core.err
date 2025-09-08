@@ -1,11 +1,11 @@
-/var/spool/slurmd/job23549987/slurm_script: line 32: msg: command not found
-/var/spool/slurmd/job23549987/slurm_script: line 33: msg: command not found
-/var/spool/slurmd/job23549987/slurm_script: line 34: msg: command not found
-/var/spool/slurmd/job23549987/slurm_script: line 35: msg: command not found
-/var/spool/slurmd/job23549987/slurm_script: line 36: msg: command not found
-/var/spool/slurmd/job23549987/slurm_script: line 37: msg: command not found
-/var/spool/slurmd/job23549987/slurm_script: line 38: msg: command not found
-/var/spool/slurmd/job23549987/slurm_script: line 39: msg: command not found
+/var/spool/slurmd/job23669984/slurm_script: line 32: msg: command not found
+/var/spool/slurmd/job23669984/slurm_script: line 33: msg: command not found
+/var/spool/slurmd/job23669984/slurm_script: line 34: msg: command not found
+/var/spool/slurmd/job23669984/slurm_script: line 35: msg: command not found
+/var/spool/slurmd/job23669984/slurm_script: line 36: msg: command not found
+/var/spool/slurmd/job23669984/slurm_script: line 37: msg: command not found
+/var/spool/slurmd/job23669984/slurm_script: line 38: msg: command not found
+/var/spool/slurmd/job23669984/slurm_script: line 39: msg: command not found
 Warning message:
 package ‘jazzPanda’ was built under R version 4.5.1 
 Loading required package: SeuratObject
@@ -56,6 +56,28 @@ Warning message:
 Warning message:
 In asMethod(object) :
   sparse->dense coercion: allocating vector of size 3.4 GiB
+Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
+To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
+This message will be shown once per session
+02:46:55 UMAP embedding parameters a = 0.9922 b = 1.112
+02:46:55 Read 460164 rows and found 15 numeric columns
+02:46:55 Using Annoy for neighbor search, n_neighbors = 30
+02:46:55 Building Annoy index with metric = cosine, n_trees = 50
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+02:47:50 Writing NN index file to temp file /vast/projects/xenium_5k/jazzPanda_analysis/tmp.DoNG9aLNxq/RtmppldkKF/file152bde679a7e6
+02:47:51 Searching Annoy index using 1 thread, search_k = 3000
+02:51:58 Annoy recall = 100%
+02:52:01 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+02:52:32 Initializing from normalized Laplacian + noise (using RSpectra)
+02:53:02 Commencing optimization for 200 epochs, with 20555546 positive edges
+02:53:02 Using rng type: pcg
+Using method 'umap'
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+02:57:29 Optimization finished
 Calculating cluster tumor_1
 Calculating cluster tumor_2
 Calculating cluster Macrophages
@@ -79,23 +101,23 @@ Warning messages:
 ℹ The deprecated feature was likely used in the Seurat package.
   Please report the issue at <https://github.com/satijalab/seurat/issues>. 
 	Command being timed: "Rscript mg_cosmx_human_liver_cancer.R"
-	User time (seconds): 5607.80
-	System time (seconds): 453.24
-	Percent of CPU this job got: 48%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:26:55
+	User time (seconds): 3243.90
+	System time (seconds): 474.53
+	Percent of CPU this job got: 44%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:19:03
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 159883024
+	Maximum resident set size (kbytes): 159885636
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 50
-	Minor (reclaiming a frame) page faults: 127108195
-	Voluntary context switches: 386917
-	Involuntary context switches: 27860
+	Major (requiring I/O) page faults: 5928
+	Minor (reclaiming a frame) page faults: 286961984
+	Voluntary context switches: 375755
+	Involuntary context switches: 5061
 	Swaps: 0
-	File system inputs: 10072
-	File system outputs: 2887792
+	File system inputs: 195648
+	File system outputs: 3884464
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0

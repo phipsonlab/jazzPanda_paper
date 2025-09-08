@@ -1,11 +1,11 @@
-/var/spool/slurmd/job23549983/slurm_script: line 32: msg: command not found
-/var/spool/slurmd/job23549983/slurm_script: line 33: msg: command not found
-/var/spool/slurmd/job23549983/slurm_script: line 34: msg: command not found
-/var/spool/slurmd/job23549983/slurm_script: line 35: msg: command not found
-/var/spool/slurmd/job23549983/slurm_script: line 36: msg: command not found
-/var/spool/slurmd/job23549983/slurm_script: line 37: msg: command not found
-/var/spool/slurmd/job23549983/slurm_script: line 38: msg: command not found
-/var/spool/slurmd/job23549983/slurm_script: line 39: msg: command not found
+/var/spool/slurmd/job23669892/slurm_script: line 32: msg: command not found
+/var/spool/slurmd/job23669892/slurm_script: line 33: msg: command not found
+/var/spool/slurmd/job23669892/slurm_script: line 34: msg: command not found
+/var/spool/slurmd/job23669892/slurm_script: line 35: msg: command not found
+/var/spool/slurmd/job23669892/slurm_script: line 36: msg: command not found
+/var/spool/slurmd/job23669892/slurm_script: line 37: msg: command not found
+/var/spool/slurmd/job23669892/slurm_script: line 38: msg: command not found
+/var/spool/slurmd/job23669892/slurm_script: line 39: msg: command not found
 Warning message:
 package ‘jazzPanda’ was built under R version 4.5.1 
 Loading required package: SeuratObject
@@ -118,6 +118,9 @@ The `slot` argument of `SetAssayData()` is deprecated as of SeuratObject 5.0.0.
   Please report the issue at <https://github.com/satijalab/seurat/issues>. 
 Computing nearest neighbor graph
 Computing SNN
+Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
+To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
+This message will be shown once per session
 0%   10   20   30   40   50   60   70   80   90   100%
 [----|----|----|----|----|----|----|----|----|----|
 **************************************************|
@@ -137,23 +140,23 @@ Warning message:
 ℹ The deprecated feature was likely used in the Seurat package.
   Please report the issue at <https://github.com/satijalab/seurat/issues>. 
 	Command being timed: "Rscript mg_xenium_mouse_brain.R"
-	User time (seconds): 555.86
-	System time (seconds): 32.93
-	Percent of CPU this job got: 82%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 11:52.58
+	User time (seconds): 504.77
+	System time (seconds): 16.84
+	Percent of CPU this job got: 87%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 9:57.56
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 9241480
+	Maximum resident set size (kbytes): 9364664
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 12213
-	Minor (reclaiming a frame) page faults: 18276242
-	Voluntary context switches: 52133
-	Involuntary context switches: 1408
+	Major (requiring I/O) page faults: 13620
+	Minor (reclaiming a frame) page faults: 16102353
+	Voluntary context switches: 60666
+	Involuntary context switches: 1189
 	Swaps: 0
-	File system inputs: 164464
-	File system outputs: 3137992
+	File system inputs: 207096
+	File system outputs: 3264040
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0

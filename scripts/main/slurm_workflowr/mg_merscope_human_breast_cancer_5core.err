@@ -1,11 +1,11 @@
-/var/spool/slurmd/job23549986/slurm_script: line 32: msg: command not found
-/var/spool/slurmd/job23549986/slurm_script: line 33: msg: command not found
-/var/spool/slurmd/job23549986/slurm_script: line 34: msg: command not found
-/var/spool/slurmd/job23549986/slurm_script: line 35: msg: command not found
-/var/spool/slurmd/job23549986/slurm_script: line 36: msg: command not found
-/var/spool/slurmd/job23549986/slurm_script: line 37: msg: command not found
-/var/spool/slurmd/job23549986/slurm_script: line 38: msg: command not found
-/var/spool/slurmd/job23549986/slurm_script: line 39: msg: command not found
+/var/spool/slurmd/job23669981/slurm_script: line 32: msg: command not found
+/var/spool/slurmd/job23669981/slurm_script: line 33: msg: command not found
+/var/spool/slurmd/job23669981/slurm_script: line 34: msg: command not found
+/var/spool/slurmd/job23669981/slurm_script: line 35: msg: command not found
+/var/spool/slurmd/job23669981/slurm_script: line 36: msg: command not found
+/var/spool/slurmd/job23669981/slurm_script: line 37: msg: command not found
+/var/spool/slurmd/job23669981/slurm_script: line 38: msg: command not found
+/var/spool/slurmd/job23669981/slurm_script: line 39: msg: command not found
 Warning message:
 package ‘jazzPanda’ was built under R version 4.5.1 
 Loading required package: SeuratObject
@@ -64,6 +64,28 @@ Warning messages:
 5: 2 points were rejected as lying outside the specified window 
 6: 1 point was rejected as lying outside the specified window 
 Warning: Data is of class matrix. Coercing to dgCMatrix.
+Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
+To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
+This message will be shown once per session
+02:30:53 UMAP embedding parameters a = 0.9922 b = 1.112
+02:30:53 Read 574818 rows and found 20 numeric columns
+02:30:53 Using Annoy for neighbor search, n_neighbors = 30
+02:30:53 Building Annoy index with metric = cosine, n_trees = 50
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+02:32:08 Writing NN index file to temp file /vast/projects/xenium_5k/jazzPanda_analysis/tmp.h1hikmmuwA/RtmpQL45ht/file2bcda700e75fe
+02:32:09 Searching Annoy index using 1 thread, search_k = 3000
+02:37:29 Annoy recall = 100%
+02:37:32 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+02:38:10 Initializing from normalized Laplacian + noise (using RSpectra)
+02:39:03 Commencing optimization for 200 epochs, with 26471294 positive edges
+02:39:03 Using rng type: pcg
+Using method 'umap'
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+02:44:38 Optimization finished
 Calculating cluster c0
 Calculating cluster c1
 Calculating cluster c2
@@ -90,23 +112,23 @@ Warning messages:
 ℹ The deprecated feature was likely used in the Seurat package.
   Please report the issue at <https://github.com/satijalab/seurat/issues>. 
 	Command being timed: "Rscript mg_merscope_human_breast_cancer.R"
-	User time (seconds): 6850.09
-	System time (seconds): 1060.86
-	Percent of CPU this job got: 53%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:05:51
+	User time (seconds): 3352.64
+	System time (seconds): 711.24
+	Percent of CPU this job got: 51%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:12:23
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 91852672
+	Maximum resident set size (kbytes): 91850020
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 9814077
-	Minor (reclaiming a frame) page faults: 115569605
-	Voluntary context switches: 44907257
-	Involuntary context switches: 40561
+	Major (requiring I/O) page faults: 9821572
+	Minor (reclaiming a frame) page faults: 116231902
+	Voluntary context switches: 46693101
+	Involuntary context switches: 23773
 	Swaps: 0
-	File system inputs: 77699232
-	File system outputs: 2300456
+	File system inputs: 78715480
+	File system outputs: 3567152
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
