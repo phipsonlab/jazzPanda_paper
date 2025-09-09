@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------
-Job Started on Mon 08 Sep 2025 20:04:09 AEST
+Job Started on Tue 09 Sep 2025 19:13:37 AEST
 ------------------------------------------------------------------------
 ------------------------------------------------------------------------
 CPU Information:
@@ -17,10 +17,10 @@ Thread(s) per core:                 2
 Core(s) per socket:                 14
 Socket(s):                          2
 Stepping:                           1
-CPU(s) scaling MHz:                 91%
+CPU(s) scaling MHz:                 63%
 CPU max MHz:                        3500.0000
 CPU min MHz:                        1200.0000
-BogoMIPS:                           5187.88
+BogoMIPS:                           5188.38
 Flags:                              fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 invpcid_single pti intel_ppin ssbd ibrs ibpb stibp tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm cqm rdt_a rdseed adx smap intel_pt xsaveopt cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp vnmi md_clear flush_l1d
 Virtualization:                     VT-x
 L1d cache:                          896 KiB (28 instances)
@@ -46,39 +46,39 @@ Vulnerability Tsx async abort:      Mitigation; Clear CPU buffers; SMT vulnerabl
 ------------------------------------------------------------------------
 Memory Information:
                total        used        free      shared  buff/cache   available
-Mem:          515362       15162      144486         216      360027      500200
+Mem:          515362        9950       40017         164      468921      505412
 Swap:              0           0           0
 ------------------------------------------------------------------------
 Disk Space:
 Filesystem                         Size  Used Avail Use% Mounted on
 devtmpfs                           4.0M     0  4.0M   0% /dev
-tmpfs                              252G  4.6M  252G   1% /dev/shm
-tmpfs                              101G  209M  101G   1% /run
-/dev/mapper/rhel-root               10G  447M  9.6G   5% /
+tmpfs                              252G  8.0K  252G   1% /dev/shm
+tmpfs                              101G  162M  101G   1% /run
+/dev/mapper/rhel-root               10G  412M  9.6G   5% /
 /dev/mapper/rhel-usr                35G   14G   22G  39% /usr
+/dev/mapper/rhel-var                10G  1.3G  8.8G  13% /var
 /dev/sda2                         1014M  368M  647M  37% /boot
-/dev/mapper/rhel-var                10G  6.0G  4.1G  60% /var
-/dev/mapper/rhel-tmp                20G  5.2G   15G  26% /tmp
+/dev/mapper/rhel-tmp                20G  4.3G   16G  22% /tmp
 /dev/sda1                          200M  7.1M  193M   4% /boot/efi
-vast.hpc.wehi.edu.au:/cryoem       300T  278T   23T  93% /vast/cryoem
 vast.hpc.wehi.edu.au:/ai_projects  600T   27T  574T   5% /vast/ai_projects
 vast.hpc.wehi.edu.au:/projects     575T  436T  140T  76% /vast/projects
+vast.hpc.wehi.edu.au:/cryoem       300T  279T   22T  93% /vast/cryoem
+vast.hpc.wehi.edu.au:/scratch      550T  312T  239T  57% /vast/scratch
 vast.hpc.wehi.edu.au:/imaging      200T  153T   48T  77% /vast/imaging
-vast.hpc.wehi.edu.au:/scratch      550T  314T  237T  58% /vast/scratch
-General                            504T  293T  212T  58% /stornext/General
+General                            504T  292T  213T  58% /stornext/General
 Genomics                            64T   34T   31T  52% /stornext/Genomics
 Home                                96T   41T   56T  42% /stornext/Home
-ImageData                          252T  189T   64T  75% /stornext/ImageData
-Img                                252T  240T   13T  95% /stornext/Img
+ImageData                          252T  191T   62T  76% /stornext/ImageData
+Img                                252T  243T  9.4T  97% /stornext/Img
 Projects                           504T  312T  193T  62% /stornext/Projects
-SBPM                                48T   30T   19T  61% /stornext/SBPM
+SBPM                                48T   30T   19T  63% /stornext/SBPM
 Sysbio                              96T   61T   36T  64% /stornext/Sysbio
 System                              24T  8.9T   16T  37% /stornext/System
 Archive                             84T   44T   41T  52% /stornext/Archive
-Bioinf                             504T  480T   25T  96% /stornext/Bioinf
+Bioinf                             504T  482T   23T  96% /stornext/Bioinf
 ------------------------------------------------------------------------
 System and Kernel:
-Linux med-n07.hpc.wehi.edu.au 5.14.0-362.24.1.el9_3.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Feb 15 07:18:13 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+Linux med-n21.hpc.wehi.edu.au 5.14.0-362.24.1.el9_3.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Feb 15 07:18:13 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
 ------------------------------------------------------------------------
 Loading R/4.5.0
   Loading requirement: libpng/1.6.43 libjpeg-turbo/3.0.2 libtiff/4.6.0
@@ -120,7 +120,7 @@ Loading gdal/3.9.0
 33/35                        
 34/35 [unnamed-chunk-6]      
 35/35                        
-/stornext/System/data/software/rhel/9/base/tools/pandoc/3.2/bin/pandoc +RTS -K512m -RTS supplementary_application_merscope_human_breast_cancer.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output supplementary_application_merscope_human_breast_cancer.html --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /vast/projects/xenium_5k/jazzPanda_paper/tmp.JfyVsUldQV/RtmpkfcGQx/rmarkdown-str3789996482bfb2.html 
+/stornext/System/data/software/rhel/9/base/tools/pandoc/3.2/bin/pandoc +RTS -K512m -RTS supplementary_application_merscope_human_breast_cancer.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output supplementary_application_merscope_human_breast_cancer.html --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /vast/projects/xenium_5k/jazzPanda_paper/tmp.oo8dGqSDz2/Rtmpfm5xEe/rmarkdown-str339bd72a5294f7.html 
 ------------------------------------------------------------------------
-Job Completed on Mon 08 Sep 2025 20:36:17 AEST
+Job Completed on Tue 09 Sep 2025 20:04:51 AEST
 ------------------------------------------------------------------------

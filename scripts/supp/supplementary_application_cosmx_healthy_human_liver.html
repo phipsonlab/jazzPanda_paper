@@ -1610,7 +1610,7 @@ hl_normal$y = hl_normal$y * 1000</code></pre>
 <pre class="r"><code>data_nm  &lt;- &quot;cosmx_hhliver&quot;
 # load geenrated data
 cluster_info = readRDS(here(data_path,paste0(data_nm, &quot;_clusters.Rds&quot;)))
-colnames(cluster_info)[colnames(cluster_info) == &quot;cellTypes&quot;] &lt;- &quot;anno_name&quot;
+cluster_info$anno_name = cluster_info$cluster
 
 cluster_names = c( &quot;B&quot;, &quot;Central.venous.LSECs&quot;, &quot;Cholangiocytes&quot;, &quot;Erthyroid.cells&quot;, 
                    &quot;Hep.1&quot;, &quot;Hep.3&quot;, &quot;Hep.4&quot;, &quot;Hep.5&quot;, &quot;Hep.6&quot;, &quot;Macrophages&quot;,
@@ -1634,6 +1634,7 @@ perm_lst = readRDS(here(data_path,paste0(data_nm, &quot;_perm_lst.Rds&quot;)))
 FM_result= readRDS(here(data_path,paste0(data_nm, &quot;_seu_markers.Rds&quot;)))
 sv_lst = readRDS(here(data_path,paste0(data_nm, &quot;_sq40_vector_lst.Rds&quot;)))
 seu = readRDS(here(data_path,paste0(data_nm, &quot;_seu.Rds&quot;)))
+seu &lt;- subset(seu, cells = cluster_info$cell_id)
 nbins = 1600
 Idents(seu)=cluster_info$anno_name[match(colnames(seu), cluster_info$cell_id)]
 seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cell_id)]</code></pre>

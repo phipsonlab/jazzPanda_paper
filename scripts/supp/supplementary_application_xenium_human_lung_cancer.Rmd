@@ -347,9 +347,9 @@ for (cl in cluster_names){
 }
 
 
-combined_plot <- wrap_plots(plot_lst, ncol = 3)
+combined_plot <- wrap_plots(plot_lst, ncol = 2)
 jpeg(file.path(mg_PA, paste0(data_nm, "_corr_top3_vvplot.jpg")),
-    height = 500 * (ceiling(length(plot_lst)/3)), width = 4500, res=200)
+    height = 500 * (ceiling(length(plot_lst)/2)), width = 3000, res=200)
 combined_plot 
 dev.off()
 
@@ -508,9 +508,9 @@ for (cl in cluster_names){
     
 }
 
-combined_plot <- wrap_plots(plot_lst, ncol = 3)
+combined_plot <- wrap_plots(plot_lst, ncol = 2)
 jpeg(file.path(mg_PA,paste0(data_nm, "_glm_top3_vvplot.jpg")),
-    height = 500 * (ceiling(length(plot_lst)/3)), width = 4500, res=200)
+    height = 500 * (ceiling(length(plot_lst)/2)), width = 3000, res=200)
 combined_plot 
 dev.off()
 

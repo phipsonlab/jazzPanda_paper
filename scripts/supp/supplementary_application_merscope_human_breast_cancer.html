@@ -1664,6 +1664,7 @@ obs_corr = get_cor(perm_lst)</code></pre>
         inters_df$value = as.numeric(inters_df$value)
         inters_df&lt;-inters_df[order(inters_df$value, decreasing = TRUE),]
         inters_df = inters_df[1:min(3, nrow(inters_df)),]
+        inters_df$text= paste(inters_df$gene,inters_df$value,sep=&quot;: &quot;)
         inters = inters_df$gene
         iters_sp1= transcript_df$feature_name %in% inters
         vis_r1 =transcript_df[iters_sp1,

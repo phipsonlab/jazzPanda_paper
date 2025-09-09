@@ -201,6 +201,7 @@ for (cl in cluster_names){
         inters_df$value = as.numeric(inters_df$value)
         inters_df<-inters_df[order(inters_df$value, decreasing = TRUE),]
         inters_df = inters_df[1:min(3, nrow(inters_df)),]
+        inters_df$text= paste(inters_df$gene,inters_df$value,sep=": ")
         inters = inters_df$gene
         iters_sp1= transcript_df$feature_name %in% inters
         vis_r1 =transcript_df[iters_sp1,
@@ -275,8 +276,14 @@ for (cl in cluster_names){
                      row.names(obs_corr[obs_corr[, cl]>obs_cutoff,]))
     inters<-perm_cl
     if (length(inters) >0){
+        rounded_val<-signif(as.numeric(obs_corr[inters,cl]), digits = 3)
+        inters_df = as.data.frame(cbind(gene=inters, value=rounded_val))
+        inters_df$value = as.numeric(inters_df$value)
+        inters_df<-inters_df[order(inters_df$value, decreasing = TRUE),]
+
         inters_df = inters_df[1:min(3, nrow(inters_df)),]
         mk_genes = inters_df$gene
+        
         
         dff = as.data.frame(cbind(sv_lst$cluster_mt[,cl],
                           sv_lst$gene_mt[,mk_genes]))
@@ -317,9 +324,9 @@ for (cl in cluster_names){
 }
 
 
-combined_plot <- wrap_plots(plot_lst, ncol = 3)
+combined_plot <- wrap_plots(plot_lst, ncol = 2)
 jpeg(file.path(mg_PA, paste0(data_nm, "_corr_top3_vvplot.jpg")),
-    height = 500 * (ceiling(length(plot_lst)/3)), width = 4500, res=200)
+    height = 500 * (ceiling(length(plot_lst)/2)), width = 3000, res=200)
 combined_plot 
 dev.off()
 
@@ -477,9 +484,9 @@ for (cl in cluster_names){
     
 }
 
-combined_plot <- wrap_plots(plot_lst, ncol = 3)
+combined_plot <- wrap_plots(plot_lst, ncol = 2)
 jpeg(file.path(mg_PA, paste0(data_nm, "_glm_top3_vvplot.jpg")),
-    height = 500 * (ceiling(length(plot_lst)/3)), width = 4500, res=200)
+    height = 500 * (ceiling(length(plot_lst)/2)), width = 3000, res=200)
 combined_plot 
 dev.off()
 

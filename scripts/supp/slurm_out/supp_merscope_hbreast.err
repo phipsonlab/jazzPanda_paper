@@ -1,11 +1,11 @@
-/var/spool/slurmd/job23730822/slurm_script: line 32: msg: command not found
-/var/spool/slurmd/job23730822/slurm_script: line 33: msg: command not found
-/var/spool/slurmd/job23730822/slurm_script: line 34: msg: command not found
-/var/spool/slurmd/job23730822/slurm_script: line 35: msg: command not found
-/var/spool/slurmd/job23730822/slurm_script: line 36: msg: command not found
-/var/spool/slurmd/job23730822/slurm_script: line 37: msg: command not found
-/var/spool/slurmd/job23730822/slurm_script: line 38: msg: command not found
-/var/spool/slurmd/job23730822/slurm_script: line 39: msg: command not found
+/var/spool/slurmd/job23734835/slurm_script: line 32: msg: command not found
+/var/spool/slurmd/job23734835/slurm_script: line 33: msg: command not found
+/var/spool/slurmd/job23734835/slurm_script: line 34: msg: command not found
+/var/spool/slurmd/job23734835/slurm_script: line 35: msg: command not found
+/var/spool/slurmd/job23734835/slurm_script: line 36: msg: command not found
+/var/spool/slurmd/job23734835/slurm_script: line 37: msg: command not found
+/var/spool/slurmd/job23734835/slurm_script: line 38: msg: command not found
+/var/spool/slurmd/job23734835/slurm_script: line 39: msg: command not found
 
 
 processing file: supplementary_application_merscope_human_breast_cancer.Rmd
@@ -14,23 +14,23 @@ output file: supplementary_application_merscope_human_breast_cancer.knit.md
 
 Output created: supplementary_application_merscope_human_breast_cancer.html
 	Command being timed: "Rscript -e rmarkdown::render('supplementary_application_merscope_human_breast_cancer.Rmd', output_format = 'html_document')"
-	User time (seconds): 1692.17
-	System time (seconds): 359.02
-	Percent of CPU this job got: 106%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 32:08.12
+	User time (seconds): 1930.46
+	System time (seconds): 758.76
+	Percent of CPU this job got: 87%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 51:13.73
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 104063924
+	Maximum resident set size (kbytes): 103300796
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 1291012
-	Minor (reclaiming a frame) page faults: 189231856
-	Voluntary context switches: 6594718
-	Involuntary context switches: 10437
+	Major (requiring I/O) page faults: 9509642
+	Minor (reclaiming a frame) page faults: 344967389
+	Voluntary context switches: 46266290
+	Involuntary context switches: 4780
 	Swaps: 0
-	File system inputs: 10849488
-	File system outputs: 28104
+	File system inputs: 79253176
+	File system outputs: 27320
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
