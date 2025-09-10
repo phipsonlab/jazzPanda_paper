@@ -1,7 +1,7 @@
 # jazzPanda_paper
 This repository provides the complete set of **R scripts** used to generate **all main and supplementary figures** for the *jazzPanda* paper.  
 
-- **jazzPanda R package**: [GitHub Repository](https://github.com/phipsonlab/jazzPanda)  
+- **jazzPanda R package**: [Repository](https://bioconductor.org/packages/jazzPanda)  
 - **Preprint**: [bioRxiv link](https://doi.org/XXXXXX)  
 - **Raw datasets**: [Download from Zenodo](https://zenodo.org/record/XXXXXX)  
 - **Analysis workflow**: [Workflow documentation](https://github.com/phipsonlab/jazzPanda_workflow)  

@@ -132,6 +132,9 @@ dff = rbind(dff, c("falsecode", 0, 0, 0, "falsecode"),
 ```
 
 ```{r}
+dff$log_ncells = as.numeric(dff$log_ncells)
+dff$ncells = as.numeric(dff$ncells)
+dff$nsig = as.numeric(dff$nsig)
 dff = dff[order(dff$ncells, decreasing = TRUE),]
 p1<- ggplot(dff, aes(x = log_ncells, y = nsig, color = anno_name)) +
   geom_point(size = 5) +

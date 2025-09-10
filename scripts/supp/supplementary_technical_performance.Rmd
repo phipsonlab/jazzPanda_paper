@@ -173,7 +173,7 @@ layout_design <-lyt + patchwork::plot_layout(heights = c(1,1),
         legend.justification = "center",
         legend.text = element_text(size=15),
         legend.box.just = "center")
-pdf(file.path(comp_PA, "complexity_square_ntiles.pdf"),width = 12, height=5)
+pdf(file.path(comp_PA, "complexity_ntiles_square.pdf"),width = 12, height=5)
 print(layout_design)
 dev.off()
 ```
@@ -256,7 +256,7 @@ p4<- ggplot(mem_hex, aes(x = n_bins, y = avg_memory, color=category)) +
          y = "Average Peak Memory (GiB)") +
     ntils_theme
 
- lyt <- p1 | p2
+ lyt <- p3 | p4
 layout_design <-lyt + patchwork::plot_layout(heights = c(1,1), 
                                              widths = c(1, 1), 
                                              guides = "collect")&
