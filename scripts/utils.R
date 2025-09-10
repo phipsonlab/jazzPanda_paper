@@ -4,6 +4,16 @@ data_path <- here::here("data", "dataset_computational_complexity")
 overview_PA <- here::here("figures", "supp", "application")
 mg_PA <- here::here("figures", "supp", "application", "marker_genes")
 comp_PA <- here::here("figures", "supp")
+mg_ntiles_comp <- here::here("scripts", "main","discussion_markergenes_vs_ntiles")
+
+
+fig2 <- here::here("figures", "main","figure2_cosmx_hliver")
+fig3 <- here::here("figures", "main","figure3_xenium_hbreast")
+fig4 <- here::here("figures", "main","figure4_simulation")
+fig5 <- here::here("figures", "main","figure5_compare_methods")
+fig6 <- here::here("figures", "main","figure6")
+
+
 
 # cluster colors
 my_colors <- c(
@@ -82,7 +92,7 @@ plot_cluster_props <- function(cluster_info, file_prefix,
     
     n_sample = length(unique(cluster_info$sample))
     # Build output file path
-    out_file <- here(out_dir, paste0("S_cluster_prop_",file_prefix, ".pdf"))
+    out_file <- here(out_dir, paste0(file_prefix, "_cluster_prop", ".pdf"))
     
     # Save to PDF
     pdf(out_file, width = 6*min(1.3,n_sample), height = 10)
@@ -120,9 +130,8 @@ plot_data_sp <- function(cluster_info, file_prefix,
     colnames(cluster_info)[colnames(cluster_info) == ct_nm] <- "cellType"
     n_sample = length(unique(cluster_info$sample))
     # Build output file path
-    out_file <- here(out_dir, paste0("S_dataset_sp_",file_prefix, ".jpg"))
+    out_file <- here(out_dir, paste0(file_prefix, "_dataset_sp", ".jpg"))
     
-    # Save to PDF
     jpeg(out_file, width = 1000*n_sample, height = 900, res=200)
     print(ggplot(data = cluster_info,
                  aes(x = x, y = y, color=cellType))+
@@ -154,7 +163,7 @@ plot_umap_seu <- function(cluster_info, seu, file_prefix,
     
     
     # Build output file path
-    out_file <- here(out_dir, paste0("S_UMAP_",file_prefix, ".jpg"))
+    out_file <- here(out_dir, paste0(file_prefix, "_UMAP", ".jpg"))
     # Save to PDF
     jpeg(out_file, width = fig_w, height = 1000, res=200)
     print(DimPlot(seu, reduction = "umap",split.by = "sample")+  ggtitle("") +

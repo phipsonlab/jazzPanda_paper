@@ -1,0 +1,454 @@
+---
+title: "Supplementary figures for Technical performance"
+author: "Melody Jin"
+date: "2025-09-08"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: false
+editor_options:
+  chunk_output_type: console
+output: html_notebook
+---
+
+```{r}
+library(dplyr) 
+library(knitr)
+library(ggplot2)
+library(tidyr)
+library(patchwork)
+library(ComplexUpset)
+library(xtable)
+library(here)
+library(spatstat.geom)
+
+source(here("scripts/utils.R"))
+```
+
+# Computational complexity 
+## Impact of increasing the number of transcripts 
+```{r}
+# get all slurm array results for ngenes
+result_path <- here("scripts/main/discussion_complexity/ngenes_result/")
+files <- list.files(path = result_path, pattern = "\\.csv$", full.names = TRUE)
+ngenes_df <- files %>% lapply(read.csv) %>% bind_rows()
+```
+
+```{r comp-ntr}
+average_times <- ngenes_df %>%
+  group_by(n_tr) %>%
+  summarise(average_time_min_sv = mean(sv_Elapsed_Time_sec/60),
+            average_time_min_glm = mean(glm_Elapsed_Time_sec/60), 
+            transcript_n_log = log10(mean(transcript_n)), .groups = "drop") %>%
+   pivot_longer(cols = c(average_time_min_sv,average_time_min_glm),
+               names_to = "category",
+               values_to = "avg_time",
+               names_prefix = "average_time_min_")
+average_times[average_times$category=="glm","category"] = "linear modelling"
+average_times[average_times$category=="sv","category"] = "create spatial vectors"
+average_times$category = factor(average_times$category, 
+                                levels=c("create spatial vectors","linear modelling"))
+average_memory <- ngenes_df %>%
+  group_by(n_tr) %>%
+  summarise(average_memory_sv = mean(sv_Peak_RAM_Used_MiB/1024),
+            average_memory_glm = mean(glm_Peak_RAM_Used_MiB/1024),
+             transcript_n_log =  log10(mean(transcript_n)), .groups = "drop")%>%
+  pivot_longer(cols = c(average_memory_sv,average_memory_glm),
+               names_to = "category",
+               values_to = "avg_memory",
+               names_prefix = "average_memory_")
+
+average_memory[average_memory$category=="glm","category"] = "linear modelling"
+average_memory[average_memory$category=="sv","category"] = "create spatial vectors"
+average_memory$category = factor(average_memory$category, levels=c("create spatial vectors","linear modelling"))
+
+
+p1<- ggplot(average_times, aes(x = transcript_n_log, y = avg_time, color=category)) +
+    geom_point(size = 2) +
+   # geom_smooth(method = "lm",se = FALSE, color = "steelblue")+
+    theme_classic() +
+    scale_y_continuous(limits =c(0,80), labels = seq(0,80,10), breaks =seq(0,80,10) )+
+   scale_x_continuous(breaks = seq(6,10,by=1),labels=as.character(seq(6,10, by=1)))+
+    labs(title = "Time usage",  x = expression("log10(number of transcripts)"), 
+         y = "Average Time (min)") +
+    theme(axis.text.x = element_text(size=15, angle=0, vjust=0.5),
+          axis.title.x = element_text(size=15),
+          legend.title=element_blank(),
+          legend.position = "right",   
+          axis.text.y = element_text(size=15),
+          plot.title = element_text(size = 18, face = "bold"),
+          axis.title.y = element_text(size=15))
+
+p2<- ggplot(average_memory, aes(x = transcript_n_log, y = avg_memory, color=category)) +
+    geom_point(size = 2) +
+    theme_classic() +
+    scale_x_continuous(breaks = seq(6,10,by=1),labels=as.character(seq(6,10, by=1)))+
+    labs(title = "Memory usage", x = expression("log10(number of transcripts)"), 
+         y = "Average Peak Memory (GiB)") +
+    theme(axis.text.x = element_text(size=15, angle=0, vjust=0.5),
+          axis.title.y = element_text(size=15), legend.title = element_blank(),
+          axis.text.y = element_text(size=15),legend.position = "none",
+          plot.title = element_text(size = 18, face = "bold"),
+          axis.title.x = element_text(size=15))
+
+ lyt <- p1 | p2
+layout_design <-lyt + patchwork::plot_layout(heights = c(1,1), widths = c(1, 1), guides = "collect")&
+    theme(legend.position = "right",
+        legend.justification = "center",
+        legend.text = element_text(size=15),
+        legend.box.just = "center")
+
+pdf(file.path(comp_PA, "complexity_ntr.pdf"),width = 12, height=5)
+print(layout_design)
+dev.off()
+
+```
+
+## Impact of increasing the number of square tiles used to create spatial vectors 
+```{r}
+result_path <-here("scripts/main/discussion_complexity/ntiles_squarebins_result/")
+files <- list.files(path = result_path, pattern = "\\.csv$", full.names = TRUE)
+nsq_df <- files %>% lapply(read.csv) %>% bind_rows()
+
+map_df = data.frame(grid_length = seq(10, 100, 10),
+                    n_bins = c( seq(10, 100, 10)^2))
+
+nsq_df = merge(nsq_df, map_df, by="grid_length")
+
+
+mem_sq <- nsq_df %>% 
+    group_by(grid_length,n_bins) %>%
+  summarise(sv_mem_sq_GiB= mean(sv_Peak_RAM_Used_MiB/1024),
+            glm_mem_sq_GiB= mean(glm_Peak_RAM_Used_MiB/1024))
+ngenes_df$rd=factor(ngenes_df$rd)
+
+memory_df = reshape2::melt(mem_sq, id.vars=c("grid_length","n_bins"),
+                                                     variable.name=c("describe"))
+memory_df$type =sub(memory_df$describe, pattern="_mem_sq_GiB",replacement="")
+memory_df$label = memory_df$type
+memory_df[memory_df$label=="sv","label"] = "build spatial vectors"
+memory_df[memory_df$label=="glm","label"] = "build linear model"
+memory_df$label = factor(memory_df$label, 
+                         levels = c("build spatial vectors","build linear model"))
+p2<- ggplot(memory_df, aes(x = n_bins, y = value, color=label)) +
+    geom_point(size = 2) +
+    theme_classic() +
+    scale_x_continuous(limits = c(100, 10000),
+                       breaks=c(100,seq(1000, 10000, 1000)),
+                      labels=as.character(c(100,seq(1000, 10000, 1000))))+
+    labs(title = "Memory usage",  x = expression("Square bin length"), 
+         y = "Average Peak Memory (GiB)", color="") +
+    ntils_theme
+
+tim_sq <- nsq_df %>%
+    group_by(grid_length,n_bins) %>%
+  summarise(glm_average_time_min = mean(glm_Elapsed_Time_sec/60),
+            sv_average_time_min = mean(sv_Elapsed_Time_sec/60) )
+
+time_df = reshape2::melt(tim_sq, id.vars=c("grid_length","n_bins"),
+                                                     variable.name=c("describe"))
+time_df$type =sub(time_df$describe, pattern="_average_time_min",replacement="")
+time_df$label=time_df$type
+time_df[time_df$label=="sv","label"] = "build spatial vectors"
+time_df[time_df$label=="glm","label"] = "build linear model"
+time_df$label = factor(time_df$label, 
+                         levels = c("build spatial vectors","build linear model"))
+p1<- ggplot(time_df, aes(x = n_bins, y = value, color=label)) +
+    geom_point(size = 2) +
+    theme_classic() +
+    scale_x_continuous(limits = c(100, 10000),
+                       breaks=c(100,seq(1000, 10000, 1000)),
+                      labels=as.character(c(100,seq(1000, 10000, 1000))))+
+    labs(title = "Time usage",  x = expression("Square bin length"), 
+         y = "Average time (min)", color="") +
+    ntils_theme
+
+
+lyt <- p1 | p2
+layout_design <-lyt + patchwork::plot_layout(heights = c(1,1), 
+                                             widths = c(1, 1),
+                                             guides = "collect")&
+    theme(legend.position = "right",
+        legend.justification = "center",
+        legend.text = element_text(size=15),
+        legend.box.just = "center")
+pdf(file.path(comp_PA, "complexity_square_ntiles.pdf"),width = 12, height=5)
+print(layout_design)
+dev.off()
+```
+## Impact of increasing the number of hex tiles used to create spatial vectors 
+```{r}
+ntils_theme <- theme(axis.text.x = element_text(size=15, angle=45, hjust=1, vjust=0.9),
+          axis.title.x = element_text(size=15),
+          legend.title=element_blank(),
+          legend.position = "right",   
+          axis.text.y = element_text(size=15),
+          plot.title = element_text(size = 18, face = "bold"),
+          axis.title.y = element_text(size=15))
+# get all slurm array results for ngenes
+result_path <- here("scripts/main/discussion_complexity/ntiles_hexbin_result/")
+files <- list.files(path = result_path, pattern = "\\.csv$", full.names = TRUE)
+nhex_df <- files %>% lapply(read.csv) %>% bind_rows()
+
+side_lengths <- c(620, 310, 207, 155, 124, 103, 89, 78)
+
+n_bins_vec <- sapply(side_lengths, function(s) {
+  H <- hextess(owin(c(0, 10000), c(0, 10000)), s)
+  length(H$tiles)
+})
+
+map_df = data.frame(grid_length = side_lengths,
+                    n_bins = n_bins_vec)
+
+nhex_df = merge(nhex_df, map_df, by="grid_length")
+nhex_df = nhex_df[nhex_df$grid_length %in% side_lengths, ]
+
+tim_hex <- nhex_df %>%
+  group_by(n_bins) %>%
+  summarise(average_time_min_sv = median(sv_Elapsed_Time_sec/60),
+            average_time_min_glm = median(glm_Elapsed_Time_sec/60),
+            .groups = "drop") %>%
+   pivot_longer(cols = c(average_time_min_sv,average_time_min_glm),
+               names_to = "category",
+               values_to = "avg_time",
+               names_prefix = "average_time_min_")
+tim_hex[tim_hex$category=="glm","category"] = "linear modelling"
+tim_hex[tim_hex$category=="sv","category"] = "create spatial vectors"
+tim_hex$category = factor(tim_hex$category, 
+                                levels=c("create spatial vectors","linear modelling"))
+mem_hex <- nhex_df %>%
+  group_by(n_bins) %>%
+  summarise(mem_hex_sv = median(sv_Peak_RAM_Used_MiB/1024),
+            mem_hex_glm = median(glm_Peak_RAM_Used_MiB/1024),
+            .groups = "drop")%>%
+  pivot_longer(cols = c(mem_hex_sv,mem_hex_glm),
+               names_to = "category",
+               values_to = "avg_memory",
+               names_prefix = "mem_hex_")
+
+mem_hex[mem_hex$category=="glm","category"] = "linear modelling"
+mem_hex[mem_hex$category=="sv","category"] = "create spatial vectors"
+mem_hex$category = factor(mem_hex$category, 
+                          levels=c("create spatial vectors","linear modelling"))
+
+
+p3<- ggplot(tim_hex, aes(x = n_bins, y = avg_time, color=category)) +
+    geom_point(size = 2) +
+    theme_classic() +
+    scale_y_continuous(limits =c(0,450), labels = seq(0,450,100), 
+                       breaks =seq(0,450,100))+
+   scale_x_continuous(limits = c(100, 10000),
+                       breaks=c(100,seq(1000, 10000, 1000)),
+                      labels=as.character(c(100,seq(1000, 10000, 1000))))+
+    labs(title = "Time usage",  x = "Hex bin length", 
+         y = "Average Time (min)") +
+    ntils_theme
+
+p4<- ggplot(mem_hex, aes(x = n_bins, y = avg_memory, color=category)) +
+    geom_point(size = 2) +
+    theme_classic() +
+    scale_y_continuous(limits =c(0,5,1), labels = seq(0,5,1), breaks =seq(0,5,1) )+
+    scale_x_continuous(limits = c(100, 10000),
+                       breaks=c(100,seq(1000, 10000, 1000)),
+                      labels=as.character(c(100,seq(1000, 10000, 1000))))+
+    labs(title = "Memory usage", x =  "Hex bin length",
+         y = "Average Peak Memory (GiB)") +
+    ntils_theme
+
+ lyt <- p1 | p2
+layout_design <-lyt + patchwork::plot_layout(heights = c(1,1), 
+                                             widths = c(1, 1), 
+                                             guides = "collect")&
+    theme(legend.position = "right",
+        legend.justification = "center",
+        legend.text = element_text(size=15),
+        legend.box.just = "center")
+
+pdf(file.path(comp_PA, "complexity_ntiles_hexbin.pdf"),width = 12, height=5)
+print(layout_design)
+dev.off()
+```
+
+
+# Marker gene comparision vs number of tiles 
+```{r}
+# get all slurm array results for marker genes vs ntiles (xenium human breast)
+result_path <- here("scripts/main/discussion_markergenes_vs_ntiles/")
+xenium_files <- list.files(path = result_path, pattern = "^xenium.*\\.csv$", full.names = TRUE)
+# Read all files into a list of data frames
+data_list <- lapply(xenium_files, read.csv)
+
+keep_dfs <- lapply(data_list, function(df) df[, c(1,4,5)])
+xenium_merged_df <- Reduce(function(x, y) merge(x,y,
+                                         by = names(x)[1], all = TRUE), keep_dfs)
+colnames(xenium_merged_df)[1] = "gene"
+
+
+# get all slurm array results for marker genes vs ntiles (cosmx human liver cancer)
+
+cosmx_files <- list.files(path = result_path, pattern = "^cosmx.*\\.csv$", full.names = TRUE)
+# Read all files into a list of data frames
+data_list <- lapply(cosmx_files, read.csv)
+
+keep_dfs <- lapply(data_list, function(df) df[, c(1,4,5)])
+cosmx_merged_df <- Reduce(function(x, y) merge(x,y,
+                                         by = names(x)[1], all = TRUE), keep_dfs)
+colnames(cosmx_merged_df)[1] = "gene"
+```
+
+## cosmx human liver cancer 
+```{r}
+
+clusters_df <- data.frame(
+  cluster =paste("c", 1:13, sep=""),
+  anno =c("tumor_1","tumor_2","Macrophages","T",
+         "Periportal.LSECs","Stellate","B",
+         "Central.venous.LSECs","Cholangiocytes","Hep",
+         "Portal.endothelial",
+         "NK.like","Erthyroid"),
+  stringsAsFactors = FALSE
+)
+plt_lst = list()
+for (cl in setdiff(clusters_df$cluster, c("c11","c9","c12"))){
+  gr10 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr10"]==cl,"gene"]
+  gr20 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr20"]==cl,"gene"]
+  gr30 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr30"]==cl,"gene"]
+  gr40 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr40"]==cl,"gene"]
+  gr50 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr50"]==cl,"gene"]
+  gr60 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr60"]==cl,"gene"]
+  gr70 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr70"]==cl,"gene"]
+  gr80 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr80"]==cl,"gene"]
+  gr90 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr90"]==cl,"gene"]
+  gr100 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr100"]==cl,"gene"]
+  
+  df_mt =as.data.frame(matrix(FALSE,nrow=nrow(cosmx_merged_df),ncol=10))
+  row.names(df_mt) =cosmx_merged_df$gene
+ colnames(df_mt)=paste(paste(seq(10,100, by=10), "x", sep=""),
+                        seq(10,100, by=10),sep="")
+  df_mt[gr10,"10x10"] = TRUE
+  df_mt[gr20,"20x20"] = TRUE
+  df_mt[gr30,"30x30"] = TRUE
+  df_mt[gr40,"40x40"] = TRUE
+  df_mt[gr50,"50x50"] = TRUE
+  df_mt[gr60,"60x60"] = TRUE
+  df_mt[gr70,"70x70"] = TRUE
+  df_mt[gr80,"80x80"] = TRUE
+  df_mt[gr90,"90x90"] = TRUE
+  df_mt[gr100,"100x100"] = TRUE
+    anno_name = clusters_df[clusters_df$cluster==cl,"anno"]
+  #pdf(paste(cl,"_xenium_upset.pdf", sep=""), height=6, width=8)
+  p<- upset(df_mt,intersect=colnames(df_mt),
+                wrap=TRUE, keep_empty_groups= FALSE, name="",
+                themes=theme_grey(),
+                stripes=upset_stripes(geom=geom_segment(size=5),colors=c('grey95', 'grey95', 'grey95')),
+                sort_intersections_by ="cardinality", sort_sets= FALSE,min_degree=1,
+                set_sizes = FALSE,
+                sort_intersections= "descending", warn_when_converting=FALSE,
+                warn_when_dropping_groups=TRUE,encode_sets=TRUE,
+                matrix=(intersection_matrix()+
+                    theme(axis.text.x=element_blank(),
+                          panel.background = element_rect(fill="NA"),
+                                                  axis.ticks = element_blank(),
+                                                  axis.title = element_blank())),
+                base_annotations=list('Intersection size'=(intersection_size(bar_number_threshold=1,color='grey9',fill='grey80',
+                                text = list(size = 3, vjust = -0.1))+
+                scale_y_continuous(expand = expansion(mult = c(0, 0.15)))+
+                theme(axis.text.x = element_blank(),
+                      axis.title.x = element_blank(),
+                      panel.background = element_rect(fill="NA"),
+                      panel.grid = element_line(color="grey90"),
+                      axis.ticks.x = element_blank()))),
+              width_ratio=0.5, height_ratio=0.7)+
+           ggtitle(paste(anno_name,"cells"))+
+               theme(
+    plot.title = element_text(size = 18, face = "bold"))
+         
+  plt_lst[[cl]] <- p
+}  
+
+combined_plot <- wrap_plots(plt_lst, ncol = 3)
+pdf(file.path(comp_PA, "cosmx_mg_ntiles.pdf"),  height=25, width=18)
+combined_plot 
+dev.off()
+
+
+
+```
+
+## Xenium huamn breast cancer samples
+```{r}
+
+clusters_df <- data.frame(
+  cluster = c("c1", "c3", "c2", "c4", "c5", "c7", "c9", "c6", "c8"),
+  anno = c("Tumor", "Macrophages", "Stromal", "Myoepithelial", "T", 
+           "Endothelial", "Mast", "B", "Dendritic"),
+  stringsAsFactors = FALSE
+)
+plt_lst = list()
+#for (cl in c("c1", "c8", "c5")){
+for (cl in clusters_df$cluster){
+    anno_name = clusters_df[clusters_df$cluster==cl,"anno"]
+  gr10 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr10"]==cl,"gene"]
+  gr20 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr20"]==cl,"gene"]
+  gr30 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr30"]==cl,"gene"]
+  gr40 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr40"]==cl,"gene"]
+  gr50 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr50"]==cl,"gene"]
+  gr60 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr60"]==cl,"gene"]
+  gr70 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr70"]==cl,"gene"]
+  gr80 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr80"]==cl,"gene"]
+  gr90 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr90"]==cl,"gene"]
+  gr100 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr100"]==cl,"gene"]
+  
+  df_mt =as.data.frame(matrix(FALSE,nrow=nrow(xenium_merged_df),ncol=10))
+  row.names(df_mt) =xenium_merged_df$gene
+  colnames(df_mt)=paste(paste(seq(10,100, by=10), "x", sep=""),
+                        seq(10,100, by=10),sep="")
+  df_mt[gr10,"10x10"] = TRUE
+  df_mt[gr20,"20x20"] = TRUE
+  df_mt[gr30,"30x30"] = TRUE
+  df_mt[gr40,"40x40"] = TRUE
+  df_mt[gr50,"50x50"] = TRUE
+  df_mt[gr60,"60x60"] = TRUE
+  df_mt[gr70,"70x70"] = TRUE
+  df_mt[gr80,"80x80"] = TRUE
+  df_mt[gr90,"90x90"] = TRUE
+  df_mt[gr100,"100x100"] = TRUE
+  # pdf(paste(paste(PA, anno_name,sep=""),"_gr10_100_upset_xenium_hbreast.pdf", sep=""), 
+  #     height=5, width=5)
+  p <- upset(df_mt,intersect=colnames(df_mt),
+                wrap=TRUE, keep_empty_groups= FALSE, name="",
+                themes=theme_grey(),
+                stripes=upset_stripes(geom=geom_segment(size=5),colors=c('grey95', 'grey95', 'grey95')),
+                sort_intersections_by ="cardinality", sort_sets= FALSE,min_degree=1,
+                set_sizes = FALSE,
+                sort_intersections= "descending", warn_when_converting=FALSE,
+                warn_when_dropping_groups=TRUE,encode_sets=TRUE,
+                matrix=(intersection_matrix()+
+                    theme(axis.text.x=element_blank(),
+                          panel.background = element_rect(fill="NA"),
+                                                  axis.ticks = element_blank(),
+                                                  axis.title = element_blank())),
+                base_annotations=list('Intersection size'=(intersection_size(bar_number_threshold=1,color='grey9',fill='grey80',
+                                text = list(size = 3, vjust = -0.1))+
+                scale_y_continuous(expand = expansion(mult = c(0, 0.15)))+
+                theme(axis.text.x = element_blank(),
+                      axis.title.x = element_blank(),
+                      panel.background = element_rect(fill="NA"),
+                      panel.grid = element_line(color="grey90"),
+                      axis.ticks.x = element_blank()))),
+              width_ratio=0.5, height_ratio=0.7)+
+           ggtitle(paste(anno_name,"cells"))+theme(
+    plot.title = element_text(size = 18, face = "bold")
+  )
+    plt_lst[[cl]] <- p
+# dev.off()
+}  
+combined_plot <- wrap_plots(plt_lst, ncol = 3)
+pdf(file.path(comp_PA, "xenium_mg_ntiles.pdf"), height=20, width=18)
+combined_plot 
+dev.off()
+```
+
+
+

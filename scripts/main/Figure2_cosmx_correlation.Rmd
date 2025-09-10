@@ -1,5 +1,5 @@
 ---
-title: "Cosmx human liver normal sample"
+title: "Figure 2: Cosmx human liver normal sample"
 author: "Melody"
 date: "`r Sys.Date()`"
 output: workflowr::wflow_html
@@ -48,7 +48,7 @@ PEAK_MEM_ID=which(colnames(gc())=="max used")
 PEAK_MEM_MB = PEAK_MEM_ID+1
 
 # figure path 
-PA = "figures/main/figure2_cosmx_hliver/"
+fig2 = "figures/main/figure2_cosmx_hliver/"
 
 # theme setting for figures
 defined_theme <- theme(#axis.text.x= element_text(size=8,vjust=1,hjust = 1),
@@ -203,44 +203,39 @@ hl_normal$x = hl_normal$x * 1000
 hl_normal$y = hl_normal$y * 1000
 ```
 
-## load negative control coordinates
-
-```{r,negprobes, fig.width=10, fig.height=2}
-negprobes_coords <- hl_normal[grepl("^NegPrb", hl_normal$feature_name), ]
-falsecode_coords <- hl_normal[grepl("^FalseCode", hl_normal$feature_name), ]
-```
-
-# refine clustering 
+# load data
 ```{r define-cluster} 
-selected_cols = c("x_FOV_px", "y_FOV_px","x_slide_mm", "y_slide_mm", "slide_ID_numeric", "Run_Tissue_name", "fov","cellType","niche","cell_id" )
-clusters_info = liver_normal[,selected_cols ]
-# [1] "x_FOV_px"         "y_FOV_px"         "x_slide_mm"       "y_slide_mm"       "slide_ID_numeric"
-# [6] "Run_Tissue_name"  "fov"   
-colnames(clusters_info) =c("x_FOV_px","y_FOV_px" , "x", "y", "slide_ID_numeric", "Run_Tissue_name", "fov","cellTypes","niche","cell_id")
-clusters_info$cluster = as.character(clusters_info$cellTypes)
-clusters_info[clusters_info$cellTypes %in% c("Antibody.secreting.B.cells", "Mature.B.cells"),"cluster"] = "B"
-clusters_info[clusters_info$cellTypes %in% c("CD3+.alpha.beta.T.cells", "gamma.delta.T.cells.1"),"cluster"] = "T"
-clusters_info[clusters_info$cellTypes %in% c("Non.inflammatory.macrophages", "Inflammatory.macrophages"),"cluster"] = "Macrophages"
-# clusters_info[clusters_info$cellTypes %in% c("Hep.3","Hep.4", "Hep.5","Hep.6"),"cluster"] = "Hep3"
-ig_clusters = c("NotDet")
 
-clusters_info = clusters_info[clusters_info$cluster != "NotDet",]
-clusters_info$cluster = factor(clusters_info$cluster)
-#clusters_info$cell_id = row.names(clusters_info)
-clusters_info$sample = "normal"
-# dim = 332873     11
-clusters_info = clusters_info[!duplicated(clusters_info[,c("x","y")]),]
-clusters_info$x = clusters_info$x * 1000
-clusters_info$y = clusters_info$y * 1000
-# dim = 329616 11
-# duplicated 3169 rows
-table(clusters_info$cluster)/1600
+data_nm  <- "cosmx_hhliver"
+# load geenrated data
+cluster_info = readRDS(here(data_path,paste0(data_nm, "_clusters.Rds")))
+cluster_info$anno_name = cluster_info$cluster
+
 cluster_names = c( "B", "Central.venous.LSECs", "Cholangiocytes", "Erthyroid.cells", 
                    "Hep.1", "Hep.3", "Hep.4", "Hep.5", "Hep.6", "Macrophages",
                    "NK.like.cells", "Periportal.LSECs", "Portal.endothelial.cells", 
                    "Stellate.cells", "T")  
 
-clusters_info$cluster = factor(clusters_info$cluster, levels = cluster_names)
+cluster_info$cluster = factor(cluster_info$cluster,
+                              levels=cluster_names)
+
+cluster_info$anno_name = factor(cluster_info$anno_name,
+                              levels=cluster_names)
+cluster_info = cluster_info[order(cluster_info$anno_name), ]
+
+
+fit.cont = readRDS(here(data_path,paste0(data_nm, "_fit_cont_obj.Rds")))
+
+perm_lst = readRDS(here(data_path,paste0(data_nm, "_perm_lst.Rds")))
+
+
+FM_result= readRDS(here(data_path,paste0(data_nm, "_seu_markers.Rds")))
+sv_lst = readRDS(here(data_path,paste0(data_nm, "_sq40_vector_lst.Rds")))
+seu = readRDS(here(data_path,paste0(data_nm, "_seu.Rds")))
+seu <- subset(seu, cells = cluster_info$cell_id)
+nbins = 1600
+Idents(seu)=cluster_info$anno_name[match(colnames(seu), cluster_info$cell_id)]
+seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cell_id)]
 
 
 my_colors<- c(
@@ -251,188 +246,31 @@ my_colors<- c(
 )
 ```
 
-## Limma
-```{r lm_workflow}
-limma_st = Sys.time()
-gc(reset = TRUE)
-limma_imem <-sum(gc()[, PEAK_MEM_MB])
-
-y <- DGEList(counts_normal_sample[, clusters_info$cell_id])
-y$genes <-row.names(counts_normal_sample)
-
-logcounts <- speckle::normCounts(y,log=TRUE,prior.count=0.1)
-maxclust <- length(unique(clusters_info$cluster))
-
-grp <- clusters_info$cluster
-
-design <- model.matrix(~0+grp)
-colnames(design) <- levels(grp)
-
-mycont <- matrix(NA,ncol=length(levels(grp)),nrow=length(levels(grp)))
-rownames(mycont)<-colnames(mycont)<-levels(grp)
-diag(mycont)<-1
-mycont[upper.tri(mycont)]<- -1/(length(levels(factor(grp)))-1)
-mycont[lower.tri(mycont)]<- -1/(length(levels(factor(grp)))-1)
-
-fit <- lmFit(logcounts,design)
-fit.cont <- contrasts.fit(fit,contrasts=mycont)
-fit.cont <- eBayes(fit.cont,trend=TRUE,robust=TRUE)
-
-#treat_res <- treat(fit.cont,lfc=0.5)
-limma_dt<-decideTests(fit.cont)
-
-summary(limma_dt)
-
-limma_fmem <-sum(gc()[, PEAK_MEM_MB])
-limma_dmem <- limma_fmem - limma_imem
-limma_ed = Sys.time()
-limma_time=difftime(limma_ed, limma_st, units = "mins")
-cat("limma took",limma_time ,"mins and",
-    round(limma_dmem / (1024),5),"GB memory")
-
-rm(y, logcounts,fit, mycont)
-limma_summary = as.data.frame(summary(limma_dt))
-limma_summary = limma_summary[limma_summary$Var1=="Up",c(2,3)]
-colnames(limma_summary) = c("cluster","limma")
-
-
-saveRDS(limma_dt, "cosmx_hhliver_limma_dt.Rds")
-```
-
-## FindMarkers
-```{r fm_workflow}
-fm_st = Sys.time()
-gc(reset = TRUE)
-fm_imem <-sum(gc()[, PEAK_MEM_MB])
-
-hln_seu=CreateSeuratObject(counts = counts_normal_sample, project = "hl_normal")
-Idents(hln_seu) = clusters_info[match(colnames(hln_seu), 
-                                      clusters_info$cell_id),"cluster"]
-hln_seu = NormalizeData(hln_seu, verbose = FALSE,
-                        normalization.method = "LogNormalize")
-hln_seu = FindVariableFeatures(hln_seu, selection.method = "vst", 
-                                nfeatures = 1000, verbose = FALSE)
-
-hln_seu=ScaleData(hln_seu, verbose = FALSE)
-seu_markers <- FindAllMarkers(hln_seu, only.pos = TRUE,logfc.threshold = 0.25)
-saveRDS(hln_seu, "cosmx_hhliver_hln_seu.Rds")
-fm_fmem <-sum(gc()[, PEAK_MEM_MB])
-fm_dmem <- fm_fmem - fm_imem
-fm_ed = Sys.time()
-fm_time = difftime(fm_ed, fm_st, units = "mins")
-cat("FindMarkers took", fm_time,"mins and",
-    round(fm_dmem / (1024),5),"GB memory")
-
-
-table(seu_markers$cluster)
-
-markers = seu_markers
-top_markers <- split(markers, markers$cluster)
-top_markers <- lapply(top_markers, head, n=3)
-top_markers <- do.call("rbind", top_markers)
-as.data.frame(top_markers)
-
-
-saveRDS(seu_markers, "cosmx_hhliver_seu_markers.Rds")
-```
-
 
 # Figure 2(c) UMAP
-```{r cluster-xy-umap, fig.width=10, fig.height=10}
-
-set.seed(189)
-Idents(seu) = seu$slide_ID_numeric
-# Subset on a value in the object meta data
-hhliver_seu = subset(x = seu,idents =1)
-hhliver_seu = subset(x = hhliver_seu, cells = clusters_info$cell_id)
-Idents(hhliver_seu) = clusters_info$cluster[match(hhliver_seu$cell_id, 
-                                                  clusters_info$cell_id)]
-hhliver_seu <- RunUMAP(object = hhliver_seu, dims = 1:10)
-
-
-jpeg(paste(PA, "figure2c_cosmx_hhliver_UMAP.jpg", sep=""),
-     height = 1000, width = 1000, res=200)
-DimPlot(hhliver_seu, reduction = "umap" )+  ggtitle("") +
-   labs(title = " ", x = "UMAP1", y = "UMAP2", fill=" ") +
-
-  theme(
-      legend.position = "none",
-    panel.border = element_blank(), 
-    panel.grid = element_blank(),
-    panel.background = element_blank(),axis.title = element_text(size=12)
-  ) 
-dev.off()
-
+```{r}
+plot_umap_seu(cluster_info=cluster_info,seu=seu, file_prefix = data_nm, 
+              my_colors = my_colors, ct_nm = "anno_name", fig_w = 1400)
 ```
 
 # Figure 2(a)
 ```{r}
-
-sum_df = clusters_info[,c("cluster", "cellTypes","sample"),drop=FALSE] %>%
-    group_by(cluster,sample) %>% dplyr::count()
-sum_df$cluster = factor(sum_df$cluster, levels = cluster_names)
-pdf(paste(PA, "figure2a_cosmx_hln_celltype_prop.pdf", sep=""), width=6, height=10)
-ggplot(sum_df, aes(x = sample, y = n, fill=cluster)) +
-  geom_bar( stat="identity",position="fill") +
-  scale_y_continuous(labels = scales::percent)+
-  labs(title = " ", x = " ", y = "proportion of cell types", fill="cell types") +
-
-     scale_fill_manual(values =my_colors)+
-   theme(legend.position = "right",axis.text.x= element_blank(),
-         legend.text = element_text(size =12),
-          axis.line=element_blank(),
-               axis.text.y=element_blank(),axis.ticks=element_blank(),
-               axis.title.x=element_blank(),
-               axis.title.y=element_blank(),
-               panel.background=element_blank(),
-               panel.grid.major=element_blank(),
-               panel.grid.minor=element_blank(),
-         plot.background=element_blank())
-dev.off()
+plot_cluster_props(cluster_info=cluster_info,file_prefix = data_nm, 
+                   my_colors = my_colors, ct_nm = "anno_name")
 ```
 # Figure 2(b)
 ```{r cluster-xy, fig.width=10, fig.height=10}
-p1<-ggplot(data = clusters_info,
-        aes(x = x, y = y, color=cluster))+
-        geom_point(size=0.0001, alpha=0.5)+
-    
-        scale_color_manual(values =my_colors)+
-        #facet_wrap(~sample)+
-        theme_classic()+
-        guides(color=guide_legend(title="", nrow = 2,
-        override.aes=list(alpha=1, size=6)))+
-        defined_theme+theme(legend.position = "none",
-                            strip.text = element_blank())
-
-jpeg(paste(PA, "figure2b_cosmx_hhliver_cluster_xy.jpg", sep=""),
-     height = 1600, width = 2000, res=200)
-p1
-dev.off()
+plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, 
+             my_colors = my_colors, ct_nm = "anno_name")
 
 ```
 
-# Detect marker genes 
-## jazzPanda
-### permutation approach
+# jazzPanda
+## permutation approach
 ```{r mg-perm}
-grid_length = 40
-seed_number=589
-set.seed(seed_number)
-# 
-# perm_p = jazzPanda::compute_permp(x=list("normal"=hl_normal),
-#                         cluster_info=clusters_info, 
-#                         perm.size=5000,
-#                         bin_type="square",
-#                         bin_param=c(grid_length,grid_length),
-#                         test_genes=row.names(counts_normal_sample), 
-#                         correlation_method = "spearman", 
-#                         n_cores=5, 
-#                         correction_method="BH")
-# saveRDS(perm_p, "cosmx_hln_perm_lst.Rds")
 
-perm_p = readRDS("cosmx_hln_perm_lst.Rds")
-perm_res = get_perm_adjp(perm_p)
-obs_corr = get_cor(perm_p)
+perm_res = get_perm_adjp(perm_lst)
+obs_corr = get_cor(perm_lst)
 head(perm_res)
 
 jazzPanda_perm = as.data.frame(matrix(0, nrow=ncol(obs_corr), ncol=2))
@@ -447,80 +285,6 @@ for (cl in cluster_names){
 }
 
 ```
-
-# create spatial vectors based on count matrix and cell coordiantes 
-```{r create-sv}
-
-gc(reset = TRUE)
-sv_st = Sys.time()
-sv_imem <- sum(gc()[, PEAK_MEM_MB])
-
-hliver_vector_lst = get_vectors(x=list("normal"=hl_normal),
-                                sample_names = "normal",
-                                cluster_info = clusters_info,
-                                bin_type="square",
-                                bin_param=c(40,40), 
-                                test_genes = all_genes,
-                                n_cores = 5)
-sv_ed= Sys.time()
-sv_fmem <-sum(gc()[, PEAK_MEM_MB])
-sv_dmem <- sv_fmem - sv_imem
-sv_time = difftime(sv_ed,sv_st, units = "mins")
-cat("creating vectors for",nrow(counts_normal_sample),"genes and",
-    length(unique(clusters_info$cluster)),"clusters took", sv_time,"mins and",
-    round(sv_dmem / (1024),5),"GB memory")
-
-saveRDS(hliver_vector_lst,"hliver_normal_sq40_hliver_vector_lst.Rds")
-
-
-
-#########
-
-falsecode_coords$sample = "normal"
-negprobes_coords$sample = "normal"
-kpt_cols = c("x","y","feature_name","sample")
-# nc_lst = list(trans_info = rbind(falsecode_coords[,kpt_cols],
-#                                         negprobes_coords[,kpt_cols]))
-nc_coords = rbind(falsecode_coords[,kpt_cols],negprobes_coords[,kpt_cols])
-
-
-falsecode_names = unique(falsecode_coords$feature_name)
-negprobe_names = unique(negprobes_coords$feature_name)
-nc_vectors = create_genesets(x=list("normal"=nc_coords),
-                             sample_names = "normal",
-                            name_lst=list(falsecode=falsecode_names,
-                                        negprobe=negprobe_names),
-                            bin_type="square",
-                            bin_param=c(grid_length, grid_length),
-                            cluster_info=NULL)
-set.seed(589)
-gc(reset = TRUE)
-glm_st = Sys.time()
-glm_imem <-sum(gc()[, PEAK_MEM_MB])
-
-jazzPanda_res_lst = lasso_markers(gene_mt=hliver_vector_lst$gene_mt,
-                                    cluster_mt = hliver_vector_lst$cluster_mt,
-                                    sample_names=c("normal"),
-                                    keep_positive=TRUE, 
-                                    background=nc_vectors,
-                                    n_fold = 10)
-
-glm_fmem <- sum(gc()[, PEAK_MEM_MB])
-glm_ed <- Sys.time()
-glm_dmem <- glm_fmem - glm_imem
-glm_time <- difftime(glm_ed, glm_st, units = "mins")
-cat("jazzPanda-linear model took", glm_time,"mins and",
-    round(glm_dmem / (1024),5),"GB memory")
-
-jazzPanda_res=get_top_mg(jazzPanda_res_lst, coef_cutoff=0.2)  
-table(jazzPanda_res$top_cluster)
-head(jazzPanda_res)
-
-
-jazzPanda_summary = as.data.frame(table(jazzPanda_res$top_cluster))
-colnames(jazzPanda_summary) = c("cluster","jazzPanda_glm")
-```
-
 
 # Figure 2(d) 
 ## spatial coordinates for one cluster
@@ -544,7 +308,7 @@ p_cl<- ggplot(data = clusters_info[clusters_info$cluster==cl, ],
               panel.spacing = unit(0, "lines"))
 
 
-jpeg(paste(PA, "figure2d_cosmx_hhliver_stellate_xy.jpg", sep=""),
+jpeg(file.path(fig2, "figure2d_cosmx_hhliver_stellate_xy.jpg"),
       height = 1000, width = 1100, res=200)
 p_cl 
 dev.off()
@@ -553,15 +317,12 @@ dev.off()
 ## spatial coordinates for top marker gene
 ```{r top3-gene-vis-xy-perm, fig.width=10, fig.height=12}
 
-cl_hex = c(80,  90, 150,  100, 200, 300, 300,  200, 300, 100, 100, 200, 100, 120, 100)
-tr_hex = c(100, 160, 120, 200, 1000, 100, 400,   400, 200, 100, 200, 80, 80, 100, 100)
 cl = "Stellate.cells"
 
 obs_cutoff = quantile(obs_corr[, cl], 0.75)
 perm_cl=intersect(row.names(perm_res[perm_res[,cl]<0.05,]),
                  row.names(obs_corr[obs_corr[, cl]>obs_cutoff,]))
 inters=perm_cl
-#inters=jazzPanda_res[jazzPanda_res$top_cluster==cl,"gene"]
 rounded_val=signif(as.numeric(obs_corr[inters,cl]), digits = 3)
 inters_df = as.data.frame(cbind(gene=inters, value=rounded_val))
 inters_df$value = as.numeric(inters_df$value)
@@ -585,22 +346,20 @@ p1<- ggplot(data = vis_r1,
               panel.spacing = unit(0, "lines"))
 
 
-jpeg(paste(PA, "figure2e_cosmx_hhliver_top1_xy_perm.jpg", sep=""),
+jpeg(file.path(fig2, "figure2e_cosmx_hhliver_top1_xy_perm.jpg"),
      height = 1000, width = 1100, res=200)
 p1
 dev.off()
 ```
 # Figure 2(f) 
-
 ```{r}
 
-hliver_vector_lst= readRDS("hliver_normal_sq40_hliver_vector_lst.Rds")
 cl = "Stellate.cells"
 mk_gene ="IGFBP7"
 perm_res[mk_gene,cl]
 obs_corr[mk_gene,cl]
-dff = as.data.frame(cbind(hliver_vector_lst$cluster_mt[,cl],
-                        hliver_vector_lst$gene_mt[,mk_gene]))
+dff = as.data.frame(cbind(sv_lst$cluster_mt[,cl],
+                        sv_lst$gene_mt[,mk_gene]))
 colnames(dff) = c("cluster", mk_gene)
 dff$vector_id = c(1:(grid_length*grid_length))
 long_df <- dff %>% 
@@ -624,7 +383,7 @@ theme(panel.grid = element_blank(),legend.position = "none",
     panel.border  =element_rect(colour = "black", fill=NA, linewidth=0.5)
     )
 
-pdf(paste(PA, "figure2f_cosmx_hhliver_top1_perm_vvplot.pdf", sep=""),
+pdf(file.path(fig2, "figure2f_cosmx_hhliver_top1_perm_vvplot.pdf"),
       height = 5, width = 5)
 p
 dev.off()

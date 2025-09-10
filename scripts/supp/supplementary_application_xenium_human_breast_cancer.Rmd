@@ -102,10 +102,10 @@ seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cells)]
 xhb_color<- c("#FC8D62","#66C2A5" ,"#8DA0CB","#E78AC3",
               "#A6D854","skyblue","purple3","#E5C498","blue")
 plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, 
-             my_colors = my_colors, ct_nm = "anno_name",
+             my_colors = xhb_color, ct_nm = "anno_name",
              reverse_y = TRUE)
 plot_cluster_props(cluster_info=cluster_info,file_prefix = data_nm, 
-                   my_colors = my_colors, ct_nm = "anno_name")
+                   my_colors = xhb_color, ct_nm = "anno_name")
 
 plot_umap_seu(cluster_info=cluster_info,seu=seu, file_prefix = data_nm, 
               my_colors = xhb_color, ct_nm = "anno_name", fig_w = 1400)

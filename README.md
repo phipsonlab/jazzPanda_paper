@@ -5,24 +5,66 @@ This repository contains the **exact R scripts** used to generate **all main fig
 
 | Figure    | Script                      | Output                       |
 |-----------|-----------------------------|------------------------------|
-| Figure 2  | `scripts/main/fig2.R`       | `figures/main/fig2.pdf`      |
+| Figure 2  | `scripts/main/figure2.R`       | `figures/main/figure2_cosmx_hliver/`      |
+| Figure 3  | `scripts/main/figure3.R`       | `figures/main/figure3_xenium_hbreast/`      |
+| Figure 4  | `scripts/main/figure4.R`       | `figures/main/figure4_simulation/`      |
+| Figure 5  | `scripts/main/figure5.R`       | `figures/main/figure5_compare_methods/`      |
+| Figure 6  | `scripts/main/figure6.R`       | `figures/main/figure6/`      |
+
 
 ```sh
 .
 ├── scripts/
 │   ├── main/                 
 │   └── supp/                 
-├── figures/                  # outputs (PDF/PNG/SVG) — created by scripts
+├── figures/                  # outputs (PDF/JPG) — created by scripts
 │   ├── main/
 │   └── supp/
-├── configs/
-│   └── paths.yml             # local paths to data dirs (edit me)`
 ├── data/
-│   ├── README.md             # where/how to obtain datasets
-│   ├── raw/                  # large downloads (gitignored)
-│   └── processed/            # derived caches (gitignored)
-
-├── renv.lock                 # pinned R package versions
 ├── .gitignore
 └── README.md                 # you are here
 ```
+
+
+## Script Overview
+
+### Marker gene: 
+
+| Location       | Scripts                                                     | Output  |
+| -------------- | ----------------------------------------------------------- | ------- |
+| `scripts/main` | `run_mg_xenium_mouse_brain.sh`<br>`mg_xenium_mouse_brain.R` | `data/` |
+| `scripts/main` | `run_mg_xenium_human_breast_cancer.sh`<br>`mg_xenium_human_breast_cancer.R` | `data/` |
+| `scripts/main` | `run_mg_xenium_human_breast_cancer.sh`<br>`mg_xenium_human_breast_cancer.R` | `data/` |
+| `scripts/main` | `run_mg_merscope_human_breast_cancer.sh`<br>`mg_merscope_human_breast_cancer.R` | `data/` |
+| `scripts/main` | `run_mg_cosmx_human_healthy_liver.sh`<br>`mg_cosmx_human_healthy_liver.R` | `data/` |
+| `scripts/main` | `run_mg_cosmx_human_liver_cancer.sh`<br>`mg_cosmx_human_liver_cancer.R` | `data/` |
+
+### Simulation
+| **Analysis**                                              | **Location**                                | **Scripts**                                                                                                   | **Output**                                   |
+|-----------------------------------------------------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
+| Simulation: CosMx human liver cancer                      | `scripts/main`                               | `cosmx_hlc_simulation_simbg_sa.sh`<br>`cosmx_hlc_simulation_simbg_slurmarray_temp.R`                | `scripts/main/cosmx_hlc_simulation_result/`              |
+
+
+## Technical performance: 
+### Tiles on marker genes 
+| Location                                        | Scripts                                                              | Output                                                                               |
+| ----------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `scripts/main/discussion_markergenes_vs_ntiles` | `cosmx_ntile_markergenes_sa.sh`<br>`cosmx_ntile_markergene_result.R` | `scripts/main/discussion_markergenes_vs_ntiles/cosmx_hlc_ntiles_mg_gr{10–100}_*.csv` |
+| `scripts/main/discussion_markergenes_vs_ntiles` | `xenium_hbreast_ntile_markergenes_sa.sh`<br>`xenium_hbreast_ntile_markergene_result.R` | `scripts/main/discussion_markergenes_vs_ntiles/xenium_hbreast_ntiles_mg_gr{10–100}_*.csv` |
+
+### Computational complexity on number of cores 
+| Location                             | Scripts                                                                                | Output                                              |
+| ------------------------------------ | -------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `scripts/main/discussion_complexity` | `complexity_ncores_sa.sh`<br>`complexity_ncores_cosmx_hliver_cancer_slurmarray_temp.R` | `scripts/main/discussion_complexity/ncores_result/` |
+
+### Computational complexity on number of transcripts 
+| Location                             | Scripts                                                     | Output                                              |
+| ------------------------------------ | ----------------------------------------------------------- | --------------------------------------------------- |
+| `scripts/main/discussion_complexity` | `complexity_ntr_sim_sa.sh`<br>`complexity_ntr_simulation.R` | `scripts/main/discussion_complexity/ngenes_result/` |
+
+### Computational complexity on number of tiles
+#### 
+| Location                             | Scripts                                                                                | Output                                                         |
+| ------------------------------------ | -------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `scripts/main/discussion_complexity` | `complexity_ntiles_squarebins_sim_sa.sh`<br>`complexity_ntiles_squarebin_simulation.R` | `scripts/main/discussion_complexity/ntiles_squarebins_result/` |
+| `scripts/main/discussion_complexity` | `complexity_ntiles_hexbin_sim_sa.sh`<br>`complexity_ntiles_hexbin_simulation.R` | `scripts/main/discussion_complexity/ntiles_hexbin_result/` |
