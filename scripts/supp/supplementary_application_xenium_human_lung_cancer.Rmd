@@ -166,7 +166,7 @@ seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cell_id)]
 ```
 
 ```{r}
-plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, 
+plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm,fig_ratio=10/11,
              my_colors = my_colors, ct_nm = "anno_name")
 plot_cluster_props(cluster_info=cluster_info,file_prefix = data_nm, 
                    my_colors = my_colors, ct_nm = "anno_name")
@@ -178,7 +178,8 @@ plot_umap_seu(cluster_info=cluster_info,seu=seu, file_prefix = data_nm,
 # load blank genes
 ```{r negprobes, fig.width=8, fig.height=8 }
 
-nc_coords <- hl_cancer$trans_info[!(hl_cancer$trans_info$feature_name %in% c(hl_cancer$probe, hl_cancer$codeword)), ]
+nc_coords <- hl_cancer$trans_info[(hl_cancer$trans_info$feature_name %in% 
+                                        c(hl_cancer$probe, hl_cancer$codeword)), ]
 nc_coords$category = "negative control probe"
 nc_coords[nc_coords$feature_name %in% c(hl_cancer$codeword), "category"] = "negative control codeword"
 cat("#negative controls", length(unique((nc_coords$feature_name))), "\n")
@@ -188,19 +189,19 @@ nc_coords$category=factor(nc_coords$category,
 nc_coords$sample = "sample1"
 
 
-cat("#negative controls", length(unique((nc_coords$gene))), "\n")
+# Xenium negative control category 
+bins_map <- list("negative control probe" = 1,
+                 "negative control codeword" = 1)   
 
-jpeg(file.path(overview_PA, paste0(data_nm, "_nc_xy.jpg")), 
-     width=1100, height=1000, res=200)
-ggplot(nc_coords, aes(x=x, y=y))+
-    geom_point(size=0.01, color="black")+
-    theme_bw()+
-    facet_wrap(category~sample)+
-    scale_y_reverse()+
-    defined_theme+
-    theme(strip.text = element_text(size=8), 
-          strip.background = element_rect(fill =NA,colour = "black"))
-dev.off()
+plot_nc(nc_coords, "sample1","negative control probe" , 
+        data_nm, overview_PA,fig_ratio=10/11,
+          bins_map = bins_map, width = 1100, height = 1100)
+
+plot_nc(nc_coords, "sample1", "negative control codeword", 
+        data_nm, overview_PA,fig_ratio = 10/11,
+          bins_map = bins_map, width = 1100, height = 1100)
+
+
 ```
 
 # jazzPanda-correlation
@@ -248,7 +249,8 @@ for (cl in cluster_names){
                                                  barwidth  = unit(0.02, "npc")))+
                     defined_theme+ theme(legend.position = "right", 
                               strip.background = element_rect(fill =NA,colour = NA),
-                              strip.text = element_text(size = rel(1.2)), 
+                              strip.text = element_text(size = rel(1.3)), 
+                              aspect.ratio = 10/11,
                               strip.text.y.right = element_blank(),
                               legend.key.width = unit(2, "cm"),
                               legend.title = element_text(size = 10),
@@ -263,9 +265,10 @@ for (cl in cluster_names){
                     facet_wrap(~anno_name, nrow=1,strip.position = "left")+
                     scale_color_manual(values = c("black"))+
                     defined_theme + theme(legend.position = "none", 
+                                          aspect.ratio = 10/11,
                               strip.background = element_blank(), 
                               legend.key.width = unit(15, "cm"),
-                              strip.text = element_text(size = rel(1.2)))
+                              strip.text = element_text(size = rel(1.3)))
 
         if (length(inters) == 2) {
             genes_plt <- (genes_plt | plot_spacer()) + 
@@ -415,8 +418,9 @@ for (cl in cluster_names){
                                                  barwidth  = unit(0.02, "npc")))+
                     defined_theme+ 
             theme(legend.position = "right", 
+                  aspect.ratio = 10/11,
                   strip.background = element_rect(fill =NA,colour = NA),
-                  strip.text = element_text(size = rel(1.2)), 
+                  strip.text = element_text(size = rel(1.3)), 
                   strip.text.y.right = element_blank(),
                   legend.key.width = unit(2, "cm"),
                   legend.title = element_text(size = 10),
@@ -433,7 +437,8 @@ for (cl in cluster_names){
                     defined_theme + theme(legend.position = "none", 
                               strip.background = element_blank(), 
                               legend.key.width = unit(15, "cm"),
-                              strip.text = element_text(size = rel(1.2)))
+                              aspect.ratio = 10/11,
+                              strip.text = element_text(size = rel(1.3)))
         if (length(inters) == 2) {
             genes_plt <- (genes_plt | plot_spacer()) + 
             plot_layout(widths = c(2, 1))

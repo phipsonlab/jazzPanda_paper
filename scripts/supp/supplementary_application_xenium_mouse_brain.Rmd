@@ -129,7 +129,7 @@ seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cells)]
 
 # Dataset overview
 ```{r}
-plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, 
+plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, height = 1400,
              my_colors = my_colors, ct_nm = "anno_name")
 plot_cluster_props(cluster_info=cluster_info,file_prefix = data_nm, 
                    my_colors = my_colors, ct_nm = "anno_name")
@@ -141,34 +141,47 @@ plot_umap_seu(cluster_info=cluster_info,seu=seu, file_prefix = data_nm,
 # Spatial pattern of negative controls
 ```{r falsecode, fig.width=10, fig.height=10}
 
-nc_sp1 <- rep1$trans_info[rep1$trans_info$feature_name %in% c(rep1$probe, rep1$codeword),
-                                c("x", "y", "feature_name")]
-nc_sp2 <- rep2$trans_info[rep2$trans_info$feature_name %in% c(rep2$probe, rep2$codeword), 
-                                c("x", "y", "feature_name")]
-nc_sp3 <- rep3$trans_info[rep3$trans_info$feature_name %in% c(rep3$probe, rep3$codeword), 
-                                c("x", "y", "feature_name")]
-nc_coords = as.data.frame(rbind(cbind(nc_sp1, sample= "replicate1"), 
-                                cbind(nc_sp2, sample= "replicate2"),
-                                cbind(nc_sp2, sample= "replicate3"))
-                          )
-nc_coords$category = "negative control probe"
-nc_coords[nc_coords$feature_name %in% c(rep1$codeword,rep2$codeword,rep3$codeword), "category"] = "negative control codeword"
-cat("#negative controls", length(unique((nc_coords$feature_name))), "\n")
-nc_coords$category=factor(nc_coords$category, 
-                          levels =c("negative control probe",
-                                   "negative control codeword"))
+nc_sp1 <- rep1$trans_info %>% 
+    filter(feature_name %in% c(rep1$probe, rep1$codeword)) %>% 
+    mutate(sample = "replicate1", 
+           category = ifelse(feature_name %in% rep1$codeword, 
+                             "negative control codeword",
+                             "negative control probe"))
 
-jpeg(file.path(overview_PA, paste0(data_nm, "_nc_xy.jpg")), 
-     width=600*2, height=800*3, res=200)
-ggplot(nc_coords, aes(x=x, y=y))+
-    geom_point(size=0.01, color="black")+
-    theme_bw()+
-    facet_wrap(category~sample)+
-    scale_y_reverse()+
-    defined_theme+
-    theme(strip.text = element_text(size=8), 
-          strip.background = element_rect(fill =NA,colour = "black"))
-dev.off()
+nc_sp2 <- rep2$trans_info %>% 
+    filter(feature_name %in% c(rep2$probe, rep2$codeword)) %>% 
+    mutate(sample = "replicate2", 
+           category = ifelse(feature_name %in% rep2$codeword, 
+                             "negative control codeword",
+                             "negative control probe"))
+
+
+nc_sp3 <- rep3$trans_info %>% 
+    filter(feature_name %in% c(rep3$probe, rep3$codeword)) %>% 
+    mutate(sample = "replicate3", 
+           category = ifelse(feature_name %in% rep3$codeword, 
+                             "negative control codeword",
+                             "negative control probe"))
+
+# Xenium negative control category 
+bins_map <- list("negative control probe" = 1,
+                 "negative control codeword" = 1) 
+
+
+for (cat in unique(nc_sp1$category)) {
+  plot_nc(nc_sp1, "replicate1", cat, data_nm, overview_PA,fig_ratio=4/3,
+          bins_map = bins_map, width = 600, height = 800)
+}
+
+for (cat in unique(nc_sp2$category)) {
+  plot_nc(nc_sp2, "replicate2", cat, data_nm, overview_PA,fig_ratio=4/3,
+          bins_map = bins_map, width = 600, height = 800)
+}
+
+for (cat in unique(nc_sp3$category)) {
+  plot_nc(nc_sp3, "replicate3", cat, data_nm, overview_PA,fig_ratio=4/3,
+          bins_map = bins_map, width = 600, height = 800)
+}
 
 ```
 
@@ -244,14 +257,16 @@ for (cl in paste("c", 0:9, sep="")){
                     #scale_color_manual(values = c("maroon4","maroon4","maroon4"))+
                     guides(fill = guide_colorbar(barheight = unit(0.2, "npc"), 
                                                  barwidth  = unit(0.03, "npc")))+
-                    defined_theme+ theme(legend.position = "right", 
-                              strip.background = element_rect(fill =NA,colour = NA),
-                              strip.text = element_text(size = rel(1.2)), 
-                              strip.text.y.right = element_blank(),
-                              legend.key.width = unit(2, "cm"),
-                              legend.title = element_text(size = 10),
-                              legend.text = element_text(size = 10),
-                               legend.key.height = unit(2, "cm"))
+                    defined_theme+
+            theme(legend.position = "right", 
+              strip.background = element_rect(fill =NA,colour = NA),
+              strip.text = element_text(size = rel(1.3)), 
+              strip.text.y.right = element_blank(),
+              legend.key.width = unit(2, "cm"),
+              aspect.ratio = 4/3,
+              legend.title = element_text(size = 10),
+              legend.text = element_text(size = 10),
+               legend.key.height = unit(2, "cm"))
         
         cluster_data =  cluster_info[cluster_info$cluster==cl, ]
         cluster_data$label = paste(cluster_data$sample, cluster_data$anno_name, sep="-")
@@ -265,15 +280,15 @@ for (cl in paste("c", 0:9, sep="")){
                     facet_wrap(~label, nrow=3,strip.position = "left")+
                     scale_x_reverse() +
                     scale_color_manual(values = c("black","black","black"))+
-                    #scale_fill_gradient(low="white", high="maroon4") + 
-                    #guides(fill = guide_colorbar(barwidth = unit(15, "cm"),height= unit(30, "cm")))+
-                    defined_theme + theme(legend.position = "none", 
-                              strip.background = element_blank(), legend.key.width = unit(15, "cm"),
-                              strip.text = element_text(size = rel(1.2)))
+                    defined_theme + 
+            theme(legend.position = "none", 
+                  strip.background = element_blank(), 
+                  aspect.ratio = 4/3,
+                  legend.key.width = unit(15, "cm"),
+                  strip.text = element_text(size = rel(1.3)))
 
         lyt <-p_cl | genes_plt
         layout_design <- lyt + patchwork::plot_layout(heights = c(1,1),widths = c(1, 3)) 
-        plot_lst[[cl]] = print(layout_design)
         cat("cluster:", cl,"\n")
         jpeg(file.path(mg_PA,paste0(data_nm, "_glm_", cl,"_top3.jpg")),
              width=600*4, height=800*3, res=200)

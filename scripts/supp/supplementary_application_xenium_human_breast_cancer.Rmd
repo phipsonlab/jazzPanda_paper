@@ -113,34 +113,42 @@ plot_umap_seu(cluster_info=cluster_info,seu=seu, file_prefix = data_nm,
 
 # load blank genes
 ```{r negprobes, fig.width=8, fig.height=8 }
+nc_sp1 <- sp1$trans_info %>% 
+    filter(feature_name %in% c(sp1$probe, sp1$codeword)) %>% 
+    mutate(sample = "sample1", 
+           category = ifelse(feature_name %in% sp1$codeword, 
+                             "negative control codeword", 
+                             "negative control probe"))
 
-nc_coords_sp1 <- sp1$trans_info[sp1$trans_info$feature_name %in% c(sp1$probe, sp1$codeword),
-                                c("x", "y", "feature_name")]
-nc_coords_sp2 <- sp2$trans_info[sp2$trans_info$feature_name %in% c(sp2$probe, sp2$codeword), 
-                                c("x", "y", "feature_name")]
-nc_coords = as.data.frame(rbind(cbind(nc_coords_sp1, sample= "sample1"), 
-                                cbind(nc_coords_sp2, sample= "sample2"))
-                          )
-nc_coords$category = "negative control probe"
-nc_coords[nc_coords$feature_name %in% c(sp1$codeword,sp2$codeword), "category"] = "negative control codeword"
-cat("#negative controls", length(unique((nc_coords$feature_name))), "\n")
-nc_coords$category=factor(nc_coords$category, 
-                          levels =c("negative control probe",
-                                   "negative control codeword"))
 
-jpeg(file.path(overview_PA, paste0(data_nm, "_nc_xy.jpg")), 
-     width=700*2, height=500*2, res=200)
-ggplot(nc_coords, aes(x=x, y=y))+
-    geom_point(size=0.01, color="black")+
-    theme_bw()+
-    facet_wrap(category~sample)+
-    scale_y_reverse()+
-    defined_theme+
-    theme(strip.text = element_text(size=8), 
-          strip.background = element_rect(fill =NA,colour = "black"))
-dev.off()
+nc_sp2 <- sp2$trans_info %>% 
+    filter(feature_name %in% c(sp2$probe, sp2$codeword)) %>% 
+    mutate(sample = "sample2", 
+           category = ifelse(feature_name %in% sp2$codeword, 
+                             "negative control codeword",
+                             "negative control probe"))
+
+# Xenium negative control category 
+bins_map <- list("negative control probe" = 2,
+                 "negative control codeword" = 0.5)   
+
+plot_nc(nc_sp1, "sample1","negative control probe" , 
+        data_nm, fig2,reverse_y = TRUE,fig_ratio=5/7, 
+          bins_map = bins_map, width = 700, height = 700)
+
+plot_nc(nc_sp1, "sample1", "negative control codeword", 
+        data_nm, overview_PA,reverse_y = TRUE,fig_ratio=5/7,
+          bins_map = bins_map, width = 700, height = 700)
+bins_map <- list("negative control probe" = 1,
+                 "negative control codeword" = 0.5)
+for (cat in unique(nc_sp2$category)) {
+  plot_nc(nc_sp2, "sample2", cat, data_nm, overview_PA,
+          reverse_y = TRUE,fig_ratio=5/7, 
+          bins_map = bins_map, width = 700, height = 700)
+}
+
+
 ```
-
 
 # jazzPanda-glm
 ```{r jazzPanda-glm}
@@ -213,6 +221,7 @@ for (cl in cluster_names){
                               strip.text = element_text(size = rel(1.2)), 
                               strip.text.y.right = element_blank(),
                               legend.key.width = unit(2, "cm"),
+                              fig_ratio=5/7,
                               legend.title = element_text(size = 10),
                               legend.text = element_text(size = 10),
                                legend.key.height = unit(2, "cm"))
@@ -231,9 +240,11 @@ for (cl in cluster_names){
                     scale_color_manual(values = c("black","black"))+
                     #scale_fill_gradient(low="white", high="maroon4") + 
                     #guides(fill = guide_colorbar(barwidth = unit(15, "cm"),height= unit(30, "cm")))+
-                    defined_theme + theme(legend.position = "none", 
-                              strip.background = element_blank(), legend.key.width = unit(15, "cm"),
-                              strip.text = element_text(size = rel(1.2)))
+                    defined_theme + 
+            theme(legend.position = "none", fig_ratio=5/7,
+                  strip.background = element_blank(), 
+                  legend.key.width = unit(15, "cm"),
+                  strip.text = element_text(size = rel(1.2)))
 
         if (length(inters) == 2) {
             genes_plt <- (genes_plt | plot_spacer()) + 

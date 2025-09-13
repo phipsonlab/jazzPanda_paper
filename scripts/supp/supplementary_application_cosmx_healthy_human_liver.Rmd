@@ -188,7 +188,8 @@ seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cell_id)]
 ```
 
 ```{r}
-plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, 
+plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm,
+             fig_ratio = 1/1,
              my_colors = my_colors, ct_nm = "anno_name")
 plot_cluster_props(cluster_info=cluster_info,file_prefix = data_nm, 
                    my_colors = my_colors, ct_nm = "anno_name")
@@ -215,18 +216,17 @@ nc_coords$category=factor(nc_coords$category,
                           levels =c("NegPrb","FalseCode"))
 nc_coords$sample = "sample1"
 
-cat("#negative controls", length(unique((nc_coords$gene))), "\n")
 
-jpeg(file.path(overview_PA, paste0(data_nm, "_nc_xy.jpg")), 
-     width=1100*2, height=1000, res=200)
-ggplot(nc_coords, aes(x=x, y=y))+
-    geom_point(size=0.001, color="black", alpha=0.5)+
-    theme_bw()+
-    facet_wrap(~category, nrow=1)+
-    defined_theme+
-    theme(strip.text = element_text(size=8), 
-          strip.background = element_rect(fill =NA,colour = "black"))
-dev.off()
+# CosMx negative control category 
+bins_map <- list("NegPrb" = 3,
+                 "FalseCode" = 5)   
+
+plot_nc(nc_coords, "sample1","NegPrb" , fig_ratio = 1/1,
+        data_nm, fig2, bins_map = bins_map, width = 1100, height = 1100)
+
+plot_nc(nc_coords, "sample1", "FalseCode", fig_ratio = 1/1,
+        data_nm, overview_PA, bins_map = bins_map, width = 1100, height = 1100)
+
 ```
 
 # jazzPanda-correlation
@@ -270,14 +270,16 @@ for (cl in cluster_names){
                     scale_fill_gradient(low="white", high="maroon4") + 
                     guides(fill = guide_colorbar(barheight = unit(0.3, "npc"), 
                                                  barwidth  = unit(0.02, "npc")))+
-                    defined_theme+ theme(legend.position = "right", 
-                              strip.background = element_rect(fill =NA,colour = NA),
-                              strip.text = element_text(size = rel(1.2)), 
-                              strip.text.y.right = element_blank(),
-                              legend.key.width = unit(2, "cm"),
-                              legend.title = element_text(size = 10),
-                              legend.text = element_text(size = 10),
-                               legend.key.height = unit(2, "cm"))
+                    defined_theme+ 
+            theme(legend.position = "right", 
+                    aspect.ratio = 1/1,
+                    strip.background = element_rect(fill =NA,colour = NA),
+                    strip.text = element_text(size = rel(1.3)), 
+                    strip.text.y.right = element_blank(),
+                    legend.key.width = unit(2, "cm"),
+                    legend.title = element_text(size = 10),
+                    legend.text = element_text(size = 10),
+                    legend.key.height = unit(2, "cm"))
         
         cluster_data =  cluster_info[cluster_info$cluster==cl, ]
         cl_pt<- ggplot(data =cluster_data,
@@ -286,10 +288,12 @@ for (cl in cluster_names){
                     geom_point(size=0.01)+
                     facet_wrap(~anno_name, nrow=1,strip.position = "left")+
                     scale_color_manual(values = c("black"))+
-                    defined_theme + theme(legend.position = "none", 
-                              strip.background = element_blank(), 
-                              legend.key.width = unit(15, "cm"),
-                              strip.text = element_text(size = rel(1.2)))
+                    defined_theme + 
+            theme(legend.position = "none", 
+                    aspect.ratio = 1/1,
+                    strip.background = element_blank(), 
+                    legend.key.width = unit(15, "cm"),
+                    strip.text = element_text(size = rel(1.3)))
 
         if (length(inters) == 2) {
             genes_plt <- (genes_plt | plot_spacer()) + 
@@ -437,13 +441,14 @@ for (cl in cluster_names){
                                                  barwidth  = unit(0.02, "npc")))+
                     defined_theme+ 
             theme(legend.position = "right", 
+                  aspect.ratio = 1/1,
                   strip.background = element_rect(fill =NA,colour = NA),
-                  strip.text = element_text(size = rel(1.2)), 
+                  strip.text = element_text(size = rel(1.3)), 
                   strip.text.y.right = element_blank(),
                   legend.key.width = unit(2, "cm"),
                   legend.title = element_text(size = 10),
                   legend.text = element_text(size = 10),
-                   legend.key.height = unit(2, "cm"))
+                  legend.key.height = unit(2, "cm"))
 
         cluster_data =  cluster_info[cluster_info$cluster==cl, ]
         cl_pt<- ggplot(data =cluster_data,
@@ -451,10 +456,12 @@ for (cl in cluster_names){
                     geom_point(size=0.01)+
                     facet_wrap(~anno_name, nrow=1,strip.position = "left")+
                     scale_color_manual(values = c("black"))+
-                    defined_theme + theme(legend.position = "none", 
-                              strip.background = element_blank(), 
-                              legend.key.width = unit(15, "cm"),
-                              strip.text = element_text(size = rel(1.2)))
+                    defined_theme + 
+            theme(legend.position = "none", 
+                    strip.background = element_blank(), 
+                    aspect.ratio = 1/1,
+                    legend.key.width = unit(15, "cm"),
+                    strip.text = element_text(size = rel(1.3)))
         if (length(inters) == 2) {
             genes_plt <- (genes_plt | plot_spacer()) + 
             plot_layout(widths = c(2, 1))

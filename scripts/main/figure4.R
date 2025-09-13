@@ -1,251 +1,191 @@
 ################################################################################
-# CosMx human liver cancer - simulation
-
+# Figure 4: Xenium human breast cancer samples
+library(data.table)
+library(Seurat)
 library(ggplot2)
 library(matrixStats)
 library(patchwork)
-library(pheatmap)
-library(RColorBrewer)
 library(reshape2)
 library(tidyr)
 library(dplyr)
-library(tidyverse)
-library(stringr)
 library(here)
 source(here("scripts/utils.R"))
-wk_path = "scripts/main/cosmx_hlc_simulation_result/"
 
-perm_res_files <- list.files(path =wk_path,
-                             pattern = "^cosmx_hlc_simulation_s[0-9]+_perm_res_lst\\.Rds$",
-                             full.names = TRUE)
+sp1_path <- "/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Xenium_human_breast_samples/Xenium_hbreast_sample1/"
 
-p_value_lst <- list()
-adjp_value_lst <- list()
-obs_lst <- list()
+sp1 = get_xenium_data(sp1_path, 
+                      mtx_name="cell_feature_matrix",
+                      trans_name="transcripts.csv.gz", 
+                      cells_name="cells.csv.gz" )
+sp1$trans_info = sp1$trans_info[sp1$trans_info$qv >=20 & 
+                                    sp1$trans_info$cell_id != -1 & 
+                                    !(sp1$trans_info$cell_id %in% sp1$zero_cells), ]
 
+## sample2
+sp2_path <- "/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Xenium_human_breast_samples/Xenium_hbreast_sample2/"
+sp2 = get_xenium_data(sp2_path, 
+                      mtx_name="cell_feature_matrix",
+                      trans_name="transcripts.csv.gz", 
+                      cells_name="cells.csv.gz" )
 
-# Loop over the files
-for (f in perm_res_files) {
-    res_obj <- readRDS(f)
-    
-    # Optionally extract the seed from the filename
-    seed <- sub("^.*_s([0-9]+)_perm_res_lst\\.Rds$", "\\1", basename(f))
-    
-    # Add a column for the seed to keep track
-    res_obj$perm.pval = as.data.frame(res_obj$perm.pval)
-    res_obj$obs.stat = as.data.frame(res_obj$obs.stat)
-    res_obj$obs.stat$seed <- seed
-    res_obj$perm.pval.adj$seed <- seed
-    res_obj$perm.pval$seed <- seed
-    
-    obs_lst[[length(obs_lst) + 1]] <- get_cor(res_obj)
-    p_value_lst[[length(p_value_lst) + 1]] <- res_obj$perm.pval
-    adjp_value_lst[[length(adjp_value_lst) + 1]] <- get_perm_adjp(res_obj)
-}
-
-# Combine into single data frames
-obs_df <- do.call(rbind, obs_lst)
-adjp_df <- do.call(rbind, adjp_value_lst)
-p_value_df <- do.call(rbind, p_value_lst)
-
-colSums(p_value_df[, 1:13] <0.05)
-colSums(adjp_df[, 1:13] <0.05)
-
-zz = rowSums(adjp_df[, 1:13] <0.05)
-
-table(zz)
+sp2$trans_info = sp2$trans_info[sp2$trans_info$qv >=20 & 
+                                    sp2$trans_info$cell_id != -1 & 
+                                    !(sp2$trans_info$cell_id %in% sp1$zero_cells), ]
 
 
-jazzPanda_perm = as.data.frame(matrix(0, nrow=ncol(obs_df), ncol=2))
-colnames(jazzPanda_perm) = c("cluster","jazzPanda_correlation")
-jazzPanda_perm$cluster = colnames(obs_df)
+data_nm  <- "xenium_hbreast"
+# load geenrated data
+cluster_info = readRDS(here(data_path,paste0(data_nm, "_clusters.Rds")))
+colnames(cluster_info)[6] = "anno_name"
 
-for (cl in paste("c", 1:13, sep="")){
-    obs_cutoff=0.05
-    #obs_cutoff = quantile(obs_df[, cl], 0.95)
-    perm_cl=intersect(row.names(adjp_df[adjp_df[,cl]<0.05,]),
-                      row.names(obs_df[obs_df[, cl]>obs_cutoff,]))
-    jazzPanda_perm[jazzPanda_perm$cluster==cl,"jazzPanda_correlation"] = length(perm_cl)
-}
+cluster_names = paste0("c", 1:9)
+cluster_info$cluster = factor(cluster_info$cluster,
+                              levels=cluster_names)
+ct_names =c("Tumor", "Stromal","Macrophages","Myoepithelial", "T_Cells", 
+            "B_Cells","Endothelial", "Dendritic", "Mast_Cells")
+cluster_info$anno_name = factor(cluster_info$anno_name,
+                                levels=ct_names)
 
-cat("False positive rate =", (sum(jazzPanda_perm[,2])/10000*100),"%")
+cluster_info = cluster_info[order(cluster_info$anno_name), ]
+cluster_info$cells = paste0("_", cluster_info$cells)
+anno_df = unique(cluster_info[c("cluster", "anno_name")])
+anno_df$anno_name = factor(anno_df$anno_name, levels = ct_names)
+jazzPanda_res_lst = readRDS(here(data_path,paste0(data_nm, "_jazzPanda_res_lst.Rds")))
+
+fit.cont = readRDS(here(data_path,paste0(data_nm, "_fit_cont_obj.Rds")))
+
+FM_result= readRDS(here(data_path,paste0(data_nm, "_seu_markers.Rds")))
+sv_lst = readRDS(here(data_path,paste0(data_nm, "_sq40_vector_lst.Rds")))
+seu = readRDS(here(data_path,paste0(data_nm, "_seu.Rds")))
+seu <- subset(seu, cells = cluster_info$cells)
+nbins = 1600
+Idents(seu)=cluster_info$anno_name[match(colnames(seu), cluster_info$cells)]
+seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cells)]
+
+xhb_color<- c("#FC8D62","#66C2A5" ,"#8DA0CB","#E78AC3",
+              "#A6D854","skyblue","purple3","#E5C498","blue")
+################################################################################
+# Figure 4(a) 
+
+plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, 
+             out_dir = fig4,
+             my_colors = xhb_color, ct_nm = "anno_name",
+             reverse_y = TRUE)
+
+# Figure 4(b) 
+plot_cluster_props(cluster_info=cluster_info,file_prefix = data_nm, 
+                   out_dir = fig4,
+                   my_colors = xhb_color, ct_nm = "anno_name" )
+
+################################################################################
+# Figure 4(d) 
+## spatial coordinates for one cluster
+
+ct_nm = "T_Cells"
+p_cl<- ggplot(data = cluster_info[cluster_info$anno_name==ct_nm, ],
+              aes(x = x, y = y))+ 
+    facet_wrap(~sample, nrow=2)+
+    #geom_hex(bins = 120)+
+    geom_point(size=0.01, alpha=0.7,color="#A6D854")+
+    guides(fill = guide_colorbar(height= unit(0.6, "cm")))+
+    scale_fill_gradient(low="white", high="black") + 
+    #scale_fill_gradient(low="white", high="maroon4") + 
+    defined_theme+ 
+    theme(legend.position = "bottom",
+          strip.background = element_rect(colour = "white", 
+                                          fill = "white", 
+                                          linetype = "solid"), 
+          panel.border = element_rect(colour = "NA", fill="NA"),
+          strip.text = element_text(size = 15),
+          panel.spacing = unit(0, "lines"))
 
 
-all_files = list.files(path = wk_path, pattern = "\\.Rds$", full.names = TRUE)
-
-seeds <- str_extract(all_files, "s\\d+")
-seeds <- unique(seeds)
-corr_df = as.data.frame(matrix(0, nrow = 1, ncol=17))
-colnames(corr_df) = c("seed","gene","falsecode","negprobe",paste("c", 1:13, sep=""))
-for (seed in seeds) {
-    
-    # Find all files related to this seed
-    seed_files <- all_files[grepl(seed, all_files)]
-    
-    # Load each file
-    nc_spatial_file <- seed_files[grepl("_nc_spatial_vectors\\.Rds$", seed_files)]  
-    spatial_file <- seed_files[grepl("_spatial_vectors\\.Rds$", seed_files) & !grepl("_nc_spatial_vectors\\.Rds$", seed_files)]  
-    nc_spatial = readRDS(nc_spatial_file)
-    sv_spatial = readRDS(spatial_file)
-    curr_corr= as.data.frame(cor(sv_spatial$gene_mt,
-                                 cbind(nc_spatial,sv_spatial$cluster_mt[,paste("c", 1:13, sep="")]), 
-                                 method = "pearson"))
-    curr_corr$seed = sub(seed, pattern="s", replacement="")
-    curr_corr$gene = row.names(curr_corr)
-    curr_corr=curr_corr[, colnames(corr_df)]
-    corr_df = rbind(curr_corr, corr_df)
-}
-corr_df = corr_df[2:nrow(corr_df),]
-
-
-dff = reshape2::melt(corr_df, id.vars =c("gene", "seed"), variable.name = "cluster",
-                     value.name = "observed_corr")
-dff$cluster <- factor(dff$cluster, levels = c(
-    "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", 
-    "c10", "c11", "c12", "c13", "falsecode", "negprobe"
-))
-dff$cluster = factor(dff$cluster, levels = c(paste("c", 1:13, sep=""), "falsecode","negprobe"))
-
-summary(dff[!(dff$cluster %in% c("falsecode","negprobe")),"observed_corr"])
-summary(dff[dff$cluster == "falsecode","observed_corr"])
-summary(dff[dff$cluster == "negprobe","observed_corr"])
-
-p1<- ggplot(dff, aes(x = cluster, y = observed_corr)) +
-    #geom_point(size = 1) +
-    geom_boxplot(outlier.size = 0.8, outlier.alpha = 0.5, width = 0.6)+
-    #geom_violin(scale = "width")+
-    theme_classic() +
-    labs(title = " ", x = " ", y = "pearson correlation") +
-    theme( axis.line = element_blank(),
-           panel.border = element_rect(color = "black", fill = NA, linewidth = 0.6),
-           axis.text.y = element_text(size=10, vjust=0.5),
-           axis.text.x = element_text(size = 10, angle =45, hjust = 1),
-           axis.title.y= element_text(size=12))
-
-pdf(file.path(fig4, "figure4_cosmx_hlc_correlation.pdf"), width=8, height=4)
-p1
+jpeg(file.path(fig4, "figure4c_xenium_hbreast_tcell_xy.jpg"),
+     width = 1000, height = 1800, res=200)
+p_cl 
 dev.off()
 
+################################################################################
+# Figure 4(e) 
+## spatial coordinates for top marker gene
+mk_gene = "IL7R"
+
+iters_sp1= sp1$trans_info$feature_name %in% mk_gene
+vis_r1 =sp1$trans_info[iters_sp1,
+                       c("x","y","feature_name")]
+vis_r1$sample="sample1"
+iters_rep2= sp2$trans_info$feature_name %in% mk_gene
+vis_r2 =sp2$trans_info[iters_rep2,
+                       c("x","y","feature_name")]
+vis_r2$sample="sample2"
+p1<- ggplot(data = vis_r1,
+            aes(x = x, y = y))+ 
+    #geom_hex(bins = tr_hex[cl_ids])+
+    geom_point(size=0.01, alpha=0.7)+
+    facet_wrap(~sample, scales="free", ncol=1)+
+    #scale_fill_gradient(low="white", high="maroon4") + 
+    guides(fill = guide_colorbar(height= unit(0.6, "cm")))+
+    defined_theme+  theme(legend.position = "bottom",
+                          strip.background = element_rect(colour = "white", 
+                                                          fill = "white", 
+                                                          linetype = "solid"), 
+                          panel.border = element_rect(colour = "NA", fill="NA"),
+                          strip.text = element_text(size = 15),
+                          panel.spacing = unit(0, "lines"))
+
+p2<- ggplot(data = vis_r2,
+            aes(x = x, y = y))+ 
+    #geom_hex(bins = tr_hex[cl_ids])+
+    geom_point(size=0.01, alpha=0.7)+
+    facet_wrap(~sample, scales="free", ncol=1)+
+    #scale_fill_gradient(low="white", high="maroon4") + 
+    guides(fill = guide_colorbar(height= unit(0.6, "cm")))+
+    defined_theme+  theme(legend.position = "bottom",
+                          strip.background = element_rect(colour = "white", 
+                                                          fill = "white", 
+                                                          linetype = "solid"), 
+                          panel.border = element_rect(colour = "NA", fill="NA"),
+                          strip.text = element_text(size = 15),
+                          panel.spacing = unit(0, "lines"))
+
+lyt = (p1 / p2) 
+layout_design <- lyt + patchwork::plot_layout(heights = c(1,1),widths = c(1, 1)) 
+jpeg(file.path(fig4, "figure4d_xenium_hbreast_top1_xy_glm.jpg"),
+     width = 1000, height = 1800, res=200)
+layout_design
+dev.off()
 
 ################################################################################
-lasso_files <- list.files(path =wk_path,
-                          pattern = "^cosmx_hlc_simulation_s[0-9]+_lasso_res_lst\\.Rds$",
-                          full.names = TRUE)
-
-top_df_lst <- list()
-full_df_lst<- list()
-
-# Loop over the files
-for (f in lasso_files) {
-    res_obj <- readRDS(f)
-    
-    # Optionally extract the seed from the filename
-    seed <- sub("^.*_s([0-9]+)_lasso_res_lst\\.Rds$", "\\1", basename(f))
-    
-    # Add a column for the seed to keep track
-    res_obj$top_result$seed <- seed
-    res_obj$full_result$seed <- seed
-    
-    top_df_lst[[length(top_df_lst) + 1]] <- get_top_mg(res_obj, coef_cutoff = 0)
-    full_df_lst[[length(full_df_lst) + 1]] <- get_full_mg(res_obj, coef_cutoff = 0)
-}
-
-# Combine into single data frames
-top_df <- do.call(rbind, top_df_lst)
-full_df <- do.call(rbind, full_df_lst)
-
-table(top_df$top_cluster)
-
-# check the top cluster from full table
-top_by_gene <- full_df %>%
-    arrange(seed, gene, p_value, desc(glm_coef)) %>%  # break ties in p by larger coef
-    group_by(seed, gene) %>%
-    slice_head(n = 1) %>%
-    ungroup()
-table(top_by_gene$cluster)
-
-
-## no genes with real cluster as only fetures 
-genes_only_cluster <- full_df %>%
-    group_by(seed,gene) %>%
-    summarise(all_c = all(grepl("^c", cluster))) %>%
-    filter(all_c) %>%
-    nrow()
-
-n_summary = full_df %>%
-    mutate(
-        type = case_when(
-            grepl("^c", cluster) ~ "real",
-            cluster %in% c("falsecode", "negprobe") ~ "background",
-            TRUE ~ "other"
-        )
-    ) %>%
-    group_by(seed, gene) %>%
-    summarise(
-        n_real_clusters = sum(type == "real"),
-        n_background_clusters = sum(type == "background")
+# Figure 2(f) 
+cluster_nm = anno_df[anno_df$anno_name==ct_nm, "cluster"]
+dff = as.data.frame(cbind(sv_lst$cluster_mt[,cluster_nm],sv_lst$gene_mt[,mk_gene]))
+colnames(dff) = c("cluster", mk_gene)
+dff$sample= "sample1"
+dff[nbins:(nbins*2),"sample"] = "sample2"
+dff$vector_id = c(1:nbins, 1:nbins)
+long_df <- dff %>% 
+    pivot_longer(cols = -c(cluster, sample, vector_id), names_to = "gene", 
+                 values_to = "vector_count")
+long_df$gene = factor(long_df$gene, levels=mk_gene)
+dff$sample = factor(dff$sample , levels=c("sample1","sample2"))
+p<-ggplot(long_df, aes(x = cluster, y = vector_count, color =gene )) +
+    geom_point(color="black", size=0.01) +
+    facet_wrap(~sample, nrow=2) +
+    labs(x = paste("T cell", " cluster vector ", sep=""), y = "IL7R gene vector") +
+    theme_minimal()+
+    scale_y_continuous(expand = c(0.01,0.01))+ 
+    scale_x_continuous(expand =  c(0.01,0.01))+ 
+    theme(panel.grid = element_blank(),legend.position = "none",
+          strip.text = element_blank(),#element_text(size = rel(1)),
+          axis.line=element_blank(),
+          axis.text=element_text(size = 12),
+          axis.ticks=element_line(color="black"),
+          axis.title=element_text(size = 15),
+          panel.border  =element_rect(colour = "black", fill=NA, linewidth=0.5)
     )
 
-nrow(n_summary[n_summary$n_real_clusters==0,])
-nrow(n_summary[n_summary$n_real_clusters==1,])
-nrow(n_summary[n_summary$n_real_clusters==2,])
-nrow(n_summary[n_summary$n_real_clusters==3,])
-nrow(n_summary[n_summary$n_real_clusters==4,])
-
-ranked_df <- full_df %>%
-    group_by(gene, seed) %>%
-    #arrange(desc(glm_coef), .by_group = TRUE) %>%
-    arrange(p_value, .by_group = TRUE) %>%
-    mutate(p_rank = row_number()) %>%
-    ungroup()
-
-################################################################################
-# Ensure rank is treated as a factor (for full axis)
-top_df <- ranked_df %>%
-    mutate(rank = as.integer(p_rank),
-           cluster = as.factor(cluster))
-
-# Get all combinations of cluster and rank (e.g., ranks 1:6)
-full_combos <- expand_grid(
-    cluster = unique(top_df$cluster),
-    rank = 1:6
-)
-
-# Count frequencies and fill in missing ones with 0
-plot_df <- top_df %>%
-    dplyr::count(cluster, rank) %>%
-    right_join(full_combos, by = c("cluster", "rank")) %>%
-    replace_na(list(n = 0))
-
-plot_df$cluster <- factor(plot_df$cluster, levels = c(
-    "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", 
-    "c10", "c11", "c12", "c13", "falsecode", "negprobe"
-))
-
-pdf(file.path(fig4, "rank_p_value_heatmap.pdf"), width=8,height=5)
-ggplot(plot_df, aes(x = cluster, y = factor(rank), fill = n)) +
-    geom_tile(color = "white", linewidth = 0.2) +
-    scale_fill_viridis_c(
-        option = "plasma",
-        #trans = "sqrt",
-        name = "# Simulation",
-        breaks = seq(0, 10000, 2000),
-        guide = guide_colorbar(barwidth = 2, barheight = 10)
-    ) +
-    labs(
-        x = "cluster",
-        y = "cluster rank (1 = most significant)",
-        title = "Rank of clusters across simulated genes",
-        subtitle = "Lower ranks correspond to lower p-value"
-    ) +
-    theme_minimal(base_size = 14) +
-    theme(
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        panel.grid = element_blank(),
-        plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
-        plot.subtitle = element_text(size = 12, hjust = 0.5),
-        axis.title.x = element_text(margin = margin(t = 10)),
-        axis.title.y = element_text(margin = margin(r = 10))
-    )
+pdf(file.path(fig4,"figure4e_xenium_hbreast_vvplot.pdf"),
+    height = 9, width = 5)
+p
 dev.off()
 

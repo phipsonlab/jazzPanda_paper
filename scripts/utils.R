@@ -7,11 +7,11 @@ comp_PA <- here::here("figures", "supp")
 mg_ntiles_comp <- here::here("scripts", "main","discussion_markergenes_vs_ntiles")
 
 
-fig2 <- here::here("figures", "main","figure2_cosmx_hliver")
-fig3 <- here::here("figures", "main","figure3_xenium_hbreast")
-fig4 <- here::here("figures", "main","figure4_simulation")
-fig5 <- here::here("figures", "main","figure5_compare_methods")
-fig6 <- here::here("figures", "main","figure6")
+fig2 <- here::here("figures", "main", "figure2_simulation")
+fig3 <- here::here("figures", "main", "figure3_cosmx_hliver")
+fig4 <- here::here("figures", "main", "figure4_xenium_hbreast")
+fig5 <- here::here("figures", "main", "figure5_compare_methods")
+fig6 <- here::here("figures", "main", "figure6")
 
 
 
@@ -40,10 +40,10 @@ defined_theme <- theme(strip.text = element_text(size = rel(2)),
 
 #############################################################################
 # Function to automatically determine hex bin size based on data density
-auto_hex_bin <- function(n, target_points_per_bin = 5) {
+auto_hex_bin <- function(n, target_points_per_bin = 5, min_bins=10) {
     k <- n / target_points_per_bin
     bins <- round(sqrt(k))
-    return(max(10, bins)) 
+    return(max(min_bins, bins)) 
 }
 #############################################################################
 # A help function to load Xenium data
@@ -124,7 +124,7 @@ plot_cluster_props <- function(cluster_info, file_prefix,
 # help function to plot spatial coordinates for cells in a dataset
 plot_data_sp <- function(cluster_info, file_prefix,
                          ct_nm,
-                         my_colors,
+                         my_colors,height = 900,fig_ratio=1,
                          out_dir = overview_PA,reverse_y = FALSE) {
     
     colnames(cluster_info)[colnames(cluster_info) == ct_nm] <- "cellType"
@@ -132,7 +132,7 @@ plot_data_sp <- function(cluster_info, file_prefix,
     # Build output file path
     out_file <- here(out_dir, paste0(file_prefix, "_dataset_sp", ".jpg"))
     
-    jpeg(out_file, width = 1000*n_sample, height = 900, res=200)
+    jpeg(out_file, width = 1000*n_sample, height = height, res=200)
     print(ggplot(data = cluster_info,
                  aes(x = x, y = y, color=cellType))+
               geom_point(size=0.001, alpha=0.7)+
@@ -146,9 +146,10 @@ plot_data_sp <- function(cluster_info, file_prefix,
               theme(strip.background = element_rect(color="white"),
                     legend.position = "none",legend.key.width = unit(1, "cm"),
                     legend.title = element_text(size = 12),
+                    aspect.ratio = fig_ratio,
                     legend.text = element_text(size = 8),
                     legend.key.height = unit(1, "cm"),
-                    strip.text = element_text(size = 12))
+                    strip.text = element_blank())
     )
     dev.off()
 }
@@ -178,5 +179,62 @@ plot_umap_seu <- function(cluster_info, seu, file_prefix,
                     panel.background = element_blank(),
                     axis.title = element_text(size=12)
               ) )
+    dev.off()
+}
+
+#############################################################################
+
+plot_nc <- function(df,
+                    sample_name,
+                    category,
+                    data_nm,
+                    overview_PA,
+                    bins_map = list("negative control probe" = 2,
+                                    "negative control codeword" = 1),
+                    reverse_y=FALSE, fig_ratio = 1,
+                    width,
+                    height) {
+    # skip if no data
+    if (!category %in% df$category) {
+        message("No data for category: ", category, " in ", sample_name)
+        return(invisible(NULL))
+    }
+    
+    dff <- df[df$category == category, ]
+
+    # choose target_points_per_bin from bins_map (fallback = 2)
+    target_bin <- ifelse(category %in% names(bins_map),
+                         bins_map[[category]],
+                         2)
+    
+    out_file <- file.path(
+        overview_PA,
+        paste0(data_nm, "_", sample_name, "_",
+               gsub(" ", "_", category), "_nc_xy.jpg")
+    )
+    base_size <- 18
+    scale_factor <- sqrt(width * height) / 1000
+    
+    jpeg(out_file, width = width, height = height, res = 200)
+    print(
+        ggplot(dff, aes(x = x, y = y)) +
+            geom_hex(bins = auto_hex_bin(nrow(dff), target_points_per_bin = target_bin)) +
+            theme_bw() +
+            scale_fill_gradient(low = "white", high = "black") +
+            guides(fill = guide_colorbar(barheight = unit(0.06, "npc"),
+                                         barwidth  = unit(0.4, "npc"),
+                                         )) +
+            (if (reverse_y) scale_y_reverse() else NULL) +
+            facet_grid(~sample) +
+            defined_theme +
+            theme(legend.title = element_text(size = base_size * scale_factor,
+                                              hjust = 1, vjust=0.8),
+                legend.position = "bottom",
+                legend.text = element_text(size = 0.8*base_size * scale_factor),
+                aspect.ratio = fig_ratio,
+                strip.text = element_blank(),
+                strip.background = element_blank()
+            )
+    )
     dev.off()
 }
