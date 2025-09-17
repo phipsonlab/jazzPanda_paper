@@ -383,7 +383,7 @@ FM_result$cluster <- factor(FM_result$cluster, levels = paste0("c", 0:9))
 top_mg <- FM_result %>%
   group_by(cluster) %>%
   arrange(desc(avg_log2FC), .by_group = TRUE) %>% 
-  slice_max(order_by = avg_log2FC, n = 10) %>%
+  slice_max(order_by = avg_log2FC, n = 20) %>%
   select(cluster, gene, avg_log2FC)
 uni_clusters <-paste0("c", 0:9)
 

@@ -1,0 +1,127 @@
+/var/spool/slurmd/job23813650/slurm_script: line 33: msg: command not found
+/var/spool/slurmd/job23813650/slurm_script: line 34: msg: command not found
+/var/spool/slurmd/job23813650/slurm_script: line 35: msg: command not found
+/var/spool/slurmd/job23813650/slurm_script: line 36: msg: command not found
+/var/spool/slurmd/job23813650/slurm_script: line 37: msg: command not found
+/var/spool/slurmd/job23813650/slurm_script: line 38: msg: command not found
+/var/spool/slurmd/job23813650/slurm_script: line 39: msg: command not found
+/var/spool/slurmd/job23813650/slurm_script: line 40: msg: command not found
+Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Registered S3 method overwritten by 'pROC':
+  method   from            
+  plot.roc spatstat.explore
+
+Attaching package: ‘tidyr’
+
+The following object is masked from ‘package:reshape2’:
+
+    smiths
+
+
+Attaching package: ‘dplyr’
+
+The following object is masked from ‘package:matrixStats’:
+
+    count
+
+The following object is masked from ‘package:gridExtra’:
+
+    combine
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+corrplot 0.95 loaded
+Loading required package: spatstat.data
+Loading required package: spatstat.univar
+spatstat.univar 3.1-4
+Loading required package: spatstat.geom
+spatstat.geom 3.5-0
+
+Attaching package: ‘spatstat.geom’
+
+The following object is masked from ‘package:patchwork’:
+
+    area
+
+The following objects are masked from ‘package:ggpubr’:
+
+    border, rotate
+
+Loading required package: spatstat.random
+spatstat.random 3.4-1
+Loading required package: spatstat.explore
+Loading required package: nlme
+
+Attaching package: ‘nlme’
+
+The following object is masked from ‘package:dplyr’:
+
+    collapse
+
+spatstat.explore 3.5-2
+Loading required package: spatstat.model
+Loading required package: rpart
+spatstat.model 3.4-0
+Loading required package: spatstat.linnet
+spatstat.linnet 3.3-1
+
+spatstat 3.4-0 
+For an introduction to spatstat, type ‘beginner’ 
+
+
+Attaching package: ‘data.table’
+
+The following object is masked from ‘package:spatstat.geom’:
+
+    shift
+
+The following objects are masked from ‘package:dplyr’:
+
+    between, first, last
+
+The following objects are masked from ‘package:reshape2’:
+
+    dcast, melt
+
+
+Attaching package: ‘purrr’
+
+The following object is masked from ‘package:data.table’:
+
+    transpose
+
+Correlation Method = pearson
+Running 1000 permutation in sequential
+Correlation Method = pearson
+Running 1000 permutation in sequential
+Correlation Method = pearson
+Running 1000 permutation in sequential
+Correlation Method = pearson
+Running 1000 permutation in sequential
+Correlation Method = pearson
+Running 1000 permutation in sequential
+Correlation Method = pearson
+Running 1000 permutation in sequential
+Correlation Method = pearson
+Running 1000 permutation in sequential
+Correlation Method = pearson
+Running 1000 permutation in sequential
+Correlation Method = pearson
+Running 1000 permutation in sequential
+Correlation Method = pearson
+Running 1000 permutation in sequential
+There were 20 warnings (use warnings() to see them)

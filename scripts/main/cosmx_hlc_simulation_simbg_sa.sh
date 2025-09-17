@@ -40,13 +40,13 @@ msg 'Job ID ' ${SLURM_JOB_ID}          # Job ID
 msg 'Job name ' $SLURM_JOB_NAME        # Job name
 
 ################################################################################
-module load R/4.5.0
+module load R/4.5.1
 module load pandoc/3.2
 module load gdal/3.9.0
 module load ImageMagick/7.1.1
 module load gcc/14.2
 
-export TMPDIR=$(mktemp -d -p /vast/projects/xenium_5k/jazzPanda_analysis)
+export TMPDIR=$(mktemp -d -p .)
 # Pass parameters and SLURM_ARRAY_TASK_ID to the R script
 Rscript cosmx_hlc_simulation_simbg_slurmarray_temp.R $SLURM_ARRAY_TASK_ID
 rm -rf  $TMPDIR

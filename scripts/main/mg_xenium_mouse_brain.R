@@ -7,51 +7,9 @@ library(caret)
 library(limma)
 library(edgeR)
 library(speckle)
-
 library(peakRAM)
-
-
-# theme setting for figures
-defined_theme <- theme(strip.text = element_text(size = rel(2)),
-                       axis.line=element_blank(),
-                       axis.ticks=element_blank(),
-                       axis.text=element_blank(),
-                       legend.position = "none",
-                       axis.title=element_blank(),
-                       panel.background=element_blank(),
-                       panel.grid.major=element_blank(),
-                       panel.grid.minor=element_blank(),
-                       plot.background=element_blank())
-
-# A help function to load Xenium data
-get_xenium_data<-function(path,mtx_name, trans_name="transcript_info.csv.gz",
-                          cells_name="cell_info.csv.gz"){
-    
-    transcript_info <- as.data.frame(fread(paste(path, trans_name,sep="")))
-    cell_info <- as.data.frame(fread(paste(path,cells_name,sep="")))
-    
-    data <- Read10X(data.dir = paste(path,mtx_name, sep=""))
-    
-    cm <- as.matrix(data$`Gene Expression`)
-    r_codeword <- as.matrix(data$`Negative Control Codeword`)
-    
-    r_probe <- as.matrix(data$`Negative Control Probe`)
-    # merge negative control genes and real genes
-    cm_neg <- as.data.frame(rbind(r_probe, r_codeword))
-    zero_cells <- colnames(cm)[colSums(cm)==0]
-    
-    transcript_info$x <- as.numeric(transcript_info$x_location)
-    transcript_info$y <- as.numeric(transcript_info$y_location)
-    
-    cell_info$x <- as.numeric(cell_info$x_centroid)
-    cell_info$y <- as.numeric(cell_info$y_centroid)
-    
-    return (list(cm = cm, cm_neg=cm_neg, zero_cells = zero_cells,
-                 trans_info=transcript_info, cell_info=cell_info,
-                 probe = row.names(r_probe),
-                 codeword=row.names(r_codeword)))
-    
-}
+library(here)
+source(here("scripts/utils.R"))
 ###############################################################################
 # load data
 
@@ -69,14 +27,14 @@ rep2$trans_info = rep2$trans_info[rep2$trans_info$qv >=20 &  rep2$trans_info$cel
 rep3$trans_info = rep3$trans_info[rep3$trans_info$qv >=20 & rep3$trans_info$cell_id != -1 & !(rep3$trans_info$cell_id %in% rep3$zero_cells), ]
 
 
-cm1 = rep1$cm[, setdiff(colnames(rep1$cm), rep1$zero_cells)]
+cm1 = rep1$cm
 colnames(cm1) = paste("r1-", colnames(cm1), sep="")
 cm1 =cm1[, colnames(cm1)!="r1-6128"]
 
-cm2 = rep2$cm[, setdiff(colnames(rep2$cm), rep2$zero_cells)]
+cm2 = rep2$cm
 colnames(cm2) = paste("r2-", colnames(cm2), sep="")
 
-cm3 = rep3$cm[, setdiff(colnames(rep3$cm), rep3$zero_cells)]
+cm3 = rep3$cm
 colnames(cm3) = paste("r3-", colnames(cm3), sep="")
 
 probe_coords <- as.data.frame(rbind(cbind(sample="replicate1",rep1$trans_info[rep1$trans_info$feature_name %in% rep1$probe, c("feature_name","x","y")]),

@@ -34,7 +34,8 @@ chln_vecs= readRDS(file.path(here("data/dataset_computational_complexity/cosmx_h
 hln_seu_markers=readRDS(file.path(here("data/dataset_computational_complexity/cosmx_hhliver_seu_markers.Rds")))
 
 limma_dt<-decideTests(chln_fit) 
-for (cl in c("Cholangiocytes", "Hep.4", "Stellate.cells")){
+plot_lst=list()
+for (cl in c("Hep.4", "Stellate.cells", "Cholangiocytes")){
     obs_cutoff = quantile(chln_obs_corr[, cl], 0.75)
     findM_sig =hln_seu_markers[hln_seu_markers$cluster==cl,"gene"]
     limma_sig=row.names(limma_dt[limma_dt[,cl]==1,])
@@ -53,8 +54,7 @@ for (cl in c("Cholangiocytes", "Hep.4", "Stellate.cells")){
     df_mt[lasso_cl,"jazzPanda-glm"] = TRUE
     
     cl = sub(cl, pattern = ".cells", replacement="")
-    pdf(file.path(fig5, paste0(cl, "_cosmx_hhliver_upset.pdf", sep="")), width=4, height=4)
-    plot(upset(df_mt,
+    p = plot(upset(df_mt,
                intersect=c("limma","Wilcoxon Rank Sum Test", 
                            "jazzPanda-correlation","jazzPanda-glm"),
                wrap=TRUE, keep_empty_groups= FALSE, name="",
@@ -75,17 +75,24 @@ for (cl in c("Cholangiocytes", "Hep.4", "Stellate.cells")){
                                                                     panel.grid = element_line(color="grey90"),
                                                                     axis.ticks.x = element_blank()))),
                width_ratio=0.5, height_ratio=1/4)+
-             ggtitle(paste(cl,"cells"))
+             ggtitle(paste(cl,"cells"))+
+                 theme(plot.title = element_text( size=15))
+
     )
+    plot_lst[[cl]] = p
     dev.off()
 }
+combined_plot <- wrap_plots(plot_lst, ncol = 3)
+pdf(file.path(fig5, "cosmx_hhliver_upset.pdf"),height=4, width=12)
+print(combined_plot)
+dev.off()
 ################################################################################
 cor_M = cor(chln_vecs$gene_mt,
             chln_vecs$cluster_mt,method = "spearman")
 cor_M[cor_M <= 0.7] = 0
 cor_M[cor_M > 0.7]=1
-
-for (cl in c("Cholangiocytes", "Hep.4", "Stellate.cells")){
+plot_lst=list()
+for (cl in c("Hep.4", "Stellate.cells", "Cholangiocytes")){
     obs_cutoff = quantile(chln_obs_corr[, cl], 0.75)
     fm_cl=FindMarkers(hln_seu, ident.1 = cl, only.pos = TRUE,
                       logfc.threshold = 0.25)
@@ -93,7 +100,7 @@ for (cl in c("Cholangiocytes", "Hep.4", "Stellate.cells")){
     to_plot =row.names(fm_cl)
     FM_pt = data.frame("name"=to_plot,"rk"= 1:length(to_plot),
                        "y"= cumsum(cor_M[to_plot, cl]),
-                       "type"="FindMarkers")
+                       "type"="Wilcoxon Rank Sum Test")
     limma_cl=limma_dt[limma_dt[,cl]==1,]
     
     limma_cl<-topTable(chln_fit,coef=cl,p.value = 0.05, n=Inf, sort.by = "p")
@@ -121,28 +128,41 @@ for (cl in c("Cholangiocytes", "Hep.4", "Stellate.cells")){
     corr_pt = data.frame("name"=perm_sorted$gene,"rk"= 1:length(perm_sorted$gene),
                          "y"= cumsum(cor_M[perm_sorted$gene, cl]),
                          "type"="jazzPanda-correlation")
-    
+    cl = sub(cl, pattern = ".cells", replacement="")
     #data_lst = rbind(limma_pt, lasso_pt,FM_pt)
     data_lst = rbind(limma_pt, FM_pt,corr_pt,lasso_pt)
     data_lst$type = factor(data_lst$type)
     data_lst$rk = as.numeric(data_lst$rk)
-    pdf(file.path(fig5, paste0(cl, "_cosmx_hhliver_rank.pdf")), width=5, height=5)
-    plot(y~rk,data=data_lst[data_lst$type=="limma",],
-         type="s", xlim=c(0,max(data_lst$rk)),main=paste(cl, " cells",sep=""),
-         ylim=c(0,max(data_lst$y)),xlab="Rank of marker genes",
-         ylab="Cumulative count of genes with correlation >0.7"
-    )
-    lines(y~rk,data=data_lst[data_lst$type=="FindMarkers",],type="s",col="blue")
-    lines(y~rk,data=data_lst[data_lst$type=="jazzPanda-correlation",],type="s",col="orange")
-    lines(y~rk,data=data_lst[data_lst$type=="jazzPanda-glm",],type="s",col="red")
-    legend("bottomright",           
-           legend = c("limma","Wilcoxon Rank Sum Test", 
-                      "jazzPanda-correlation","jazzPanda-glm"),  
-           col = c("black", "blue", "orange","red"),   
-           lty = 1,             
-           cex = 0.8)   
-    dev.off()
+    p <-ggplot(data_lst, aes(x = rk, y = y, color = type)) +
+        geom_step(size = 0.8) +  # type = "s"
+        scale_color_manual(values = c("limma" = "black",
+                                      "Wilcoxon Rank Sum Test" = "blue",
+                                      "jazzPanda-correlation" = "orange",
+                                      "jazzPanda-glm" = "red"
+        )) +
+        labs(title = paste(cl, "cells"), x = "Rank of marker genes",
+             y = "Cumulative count of genes with correlation >0.7",
+             color = NULL) +
+        theme_classic(base_size = 12) +
+        theme(plot.title = element_text(hjust = 0.5, size=16),
+              axis.line = element_blank(),  
+              legend.text  = element_text(size=13),
+              panel.border = element_rect(color = "black", 
+                                          fill = NA, linewidth = 1),
+              legend.position = "inside",
+              legend.position.inside = c(0.98, 0.02),
+              legend.justification = c("right", "bottom"),
+              legend.background = element_rect(color = "black", 
+                                               fill = "white", linewidth = 0.5),
+              legend.box.background = element_rect(color = "black",
+                                                   linewidth = 0.5)
+        )
+    plot_lst[[cl]] <- p
 }
+combined_plot <- wrap_plots(plot_lst, ncol = 3)
+pdf(file.path(fig5, "cosmx_hhliver_rank.pdf"), height=5, width=15)
+print(combined_plot)
+dev.off()
 
 # Two samples: Xenium human breast 
 ################################################################################
@@ -156,7 +176,8 @@ xhb_clusters= readRDS(file.path(here("data/dataset_computational_complexity/xeni
 
 limma_dt<-decideTests(xhb_fit)
 panel_genes=row.names(xhb_seu)
-for (cl in c("c1", "c8","c5")){
+plot_lst=list()
+for (cl in c("c1", "c5", "c8")){
     anno_name = unique(xhb_clusters[xhb_clusters$cluster==cl,"anno"])
     anno_name = sub(anno_name,pattern = "_Cells", replacement="")
     limma_sig=row.names(limma_dt[limma_dt[,cl]==1,])
@@ -176,8 +197,7 @@ for (cl in c("c1", "c8","c5")){
     df_mt[limma_sig,"limma"] = TRUE
     df_mt[lasso_sig,"jazzPanda-glm"] = TRUE
     df_mt$gene_name =row.names(df_mt)
-    pdf(file.path(fig5, paste0(anno_name, "_xenium_hbreast_upset.pdf")), width=4, height=4)
-    plot(upset(df_mt,
+    p <-plot(upset(df_mt,
                intersect=c("limma","Wilcoxon Rank Sum Test", "jazzPanda-glm"),
                wrap=TRUE, keep_empty_groups= FALSE, name="",
                themes=theme_grey(),
@@ -196,11 +216,16 @@ for (cl in c("c1", "c8","c5")){
                                                                     panel.grid = element_line(color="grey90"),
                                                                     axis.ticks.x = element_blank()))),
                width_ratio=0.5, height_ratio=1/4)+
-             ggtitle(paste(anno_name,"cells"))
+             ggtitle(paste(anno_name,"cells"))+
+                 theme(plot.title = element_text(size=15))
+                 
     )
-    dev.off()
+   plot_lst[[cl]] = p
 }
-
+combined_plot <- wrap_plots(plot_lst, ncol = 3)
+pdf(file.path(fig5, "xenium_hbreast_upset.pdf"), height=4, width=12)
+print(combined_plot)
+dev.off()
 ################################################################################
 cor_M = cor(xhb_vecs$gene_mt,
             xhb_vecs$cluster_mt,method = "spearman")
@@ -208,7 +233,8 @@ cor_M[cor_M <= 0.7] = 0
 cor_M[cor_M > 0.7]=1
 
 cluster_names= colnames(limma_dt)
-for (cl in c("c1", "c8", "c5")){
+plot_lst=list()
+for (cl in c("c1", "c5","c8")){
     anno_name = unique(xhb_clusters[xhb_clusters$cluster==cl,"anno"])
     anno_name = sub(anno_name,pattern = "_Cells", replacement="")
     fm_cl=FindMarkers(xhb_seu, ident.1 = cl, only.pos = TRUE,
@@ -217,7 +243,7 @@ for (cl in c("c1", "c8", "c5")){
     to_plot =row.names(fm_cl)
     FM_pt = data.frame("name"=to_plot,"rk"= 1:length(to_plot),
                        "y"= cumsum(cor_M[to_plot, cl]),
-                       "type"="FindMarkers")
+                       "type"="Wilcoxon Rank Sum Test")
     
     limma_cl<-topTable(xhb_fit,coef=cl,p.value = 0.05, n=Inf, sort.by = "p")
     limma_cl = limma_cl[limma_cl$logFC>0, ]
@@ -239,18 +265,31 @@ for (cl in c("c1", "c8", "c5")){
     data_lst = rbind(limma_pt, lasso_pt,FM_pt)
     data_lst$type = factor(data_lst$type)
     data_lst$rk = as.numeric(data_lst$rk)
-    pdf(file.path(fig5, paste0(anno_name, "_xenium_hbreast_rank.pdf")), width=5, height=5)
-    plot(y~rk,data=data_lst[data_lst$type=="limma",],
-         type="s", xlim=c(0,max(data_lst$rk)),main=paste(anno_name, " cells",sep=""),
-         ylim=c(0,max(data_lst$y)),xlab="Rank of marker genes",
-         ylab="Cumulative count of genes with correlation >0.7"
-    )
-    lines(y~rk,data=data_lst[data_lst$type=="FindMarkers",],type="s",col="blue")
-    lines(y~rk,data=data_lst[data_lst$type=="jazzPanda-glm",],type="s",col="red")
-    legend("bottomright",           
-           legend = c("limma","Wilcoxon Rank Sum Test", "jazzPanda-glm"),  
-           col = c("black", "blue", "red"),   
-           lty = 1,             
-           cex = 0.8)   
-    dev.off()
+    p <-ggplot(data_lst, aes(x = rk, y = y, color = type)) +
+        geom_step(size = 0.8) +  # type = "s"
+        scale_color_manual(values = c("limma" = "black",
+                                      "Wilcoxon Rank Sum Test" = "blue",
+                                      "jazzPanda-glm" = "red")) +
+        labs(title = paste(anno_name, "cells"), x = "Rank of marker genes",
+             y = "Cumulative count of genes with correlation >0.7",
+             color = NULL) +
+        theme_classic(base_size = 12) +
+        theme(plot.title = element_text(hjust = 0.5, size=16),
+              axis.line = element_blank(),  
+              legend.text  = element_text(size=13),
+              panel.border = element_rect(color = "black", 
+                                          fill = NA, linewidth = 1),
+              legend.position = "inside",
+              legend.position.inside = c(0.98, 0.02),
+              legend.justification = c("right", "bottom"),
+              legend.background = element_rect(color = "black", 
+                                               fill = "white", linewidth = 0.5),
+              legend.box.background = element_rect(color = "black",
+                                                   linewidth = 0.5)
+        )
+    plot_lst[[cl]] = p
 }
+combined_plot <- wrap_plots(plot_lst, ncol = 3)
+pdf(file.path(fig5, "xenium_hbreast_rank.pdf"), height=5, width=15)
+print(combined_plot)
+dev.off()

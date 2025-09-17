@@ -60,64 +60,92 @@ cluster_names = paste0("c", 0:15)
 anno_df <- data.frame(
   cluster = c("c0","c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","c11","c12","c13","c14","c15"),
   major_class = c(
-    "Epithelial (tumor)","Stromal","Epithelial (tumor)",
-    "Epithelial (tumor)","Epithelial (tumor)", "Epithelial (tumor)",
-    "Myeloid","Cycling (mixed, mostly tumor)","Myeloid","Epithelial (tumor)",
-    "Myeloid","Lymphoid","Epithelial (tumor)",
-    "Vascular","Lymphoid","Myeloid"
+    "Epithelial","Stromal","Epithelial","Epithelial","Epithelial","Epithelial",
+    "Immune","Epithelial","Immune","Epithelial","Immune","Immune","Epithelial",
+    "Stromal","Immune","Immune"
   ),
-  subclass = c(
-    "Luminal-progenitor–like","CAF","Basal/EMT-edge","Luminal","IFN-γ response","Cell-cycle high",
-    "Macrophage (TAM)","—","Macrophage (TAM)","Stress/edge","Monocyte/TAM","T cells",
-    "Inflammatory/hypoxic","Endothelium (± pericyte admixture)","B lineage","Dendritic cells"
+  sub_class = c(
+    "Tumor epithelial","Fibroblast (CAF)","Tumor epithelial","Tumor epithelial",
+    "Tumor epithelial (IFN/MHC-II+)","Tumor epithelial (cycling)",
+    "Myeloid (Macrophage/TAM)","Tumor epithelial (cycling)",
+    "Myeloid (Macrophage/TAM)","Tumor epithelial","Myeloid (Mono→MΦ)",
+    "T/NK","Tumor epithelial","Endothelial","B lineage","Dendritic cell"
   ),
-  Specific_state_type = c(
-    "WNT-active/ERBB3⁺ stem-like",
-    "myCAF / desmoplastic (ACTA2⁺, COL11A1⁺) with iCAF features",
-    "Invasive LAMC2⁺/MMP7⁺/SOX9⁺",
-    "Cycling luminal EPCAM⁺/ERBB3⁺",
-    "MHC-II⁺ antigen-presenting tumor cells (CIITA⁺)",
-    "G2/M-phase tumor cells",
-    "SPP1⁺ inflammatory TAM (CXCL8/MMP9⁺)",
-    "Highly proliferative (MKI67⁺/FOXM1⁺)",
-    "C1QC⁺/MRC1⁺ CD163⁺ phagocytic (M2-like) TAM",
-    "NF-κB/EGFR-axis, invasive edge (MMP7/PTGS2⁺)",
-    "FCGR3A⁺ (CD16⁺), TREM2⁺ LAM-like",
-    "Mixed T states (CD8 effector/memory ± Treg/exhaustion)",
-    "PTGS2⁺/VEGFA⁺ inflamed epithelium (MUC1⁺)",
-    "Angiogenic endothelium (PLVAP⁺/VWF⁺/KDR⁺), some PDGFRB⁺ pericytes",
-    "Plasma cells / plasmablasts (XBP1⁺/MZB1⁺)",
-    "cDC2-like (CD1C⁺/FCER1A⁺) with Langerin (CD207)⁺ subset"
+  cell_type = c(
+    "WNT/ERBB-active luminal-progenitor–like",
+    "Myofibroblastic CAF (myCAF)",
+    "Basal/EMT-high invasive",
+    "G2/M cycling carcinoma",
+    "Antigen-presenting tumor epithelial (AP-TEC)",
+    "S-phase/replication-high carcinoma",
+    "SPP1+ inflammatory TAM",
+    "G2/M hyper-proliferative/stem-like",
+    "C1QC+/MRC1+ immunoregulatory TAM",
+    "Stress/EMT/stem-like (ERBB/LGR5/SOD2)",
+    "FCGR3A+ inflammatory monocyte/macrophage",
+    "Activated TILs (mixed CD8+/Th1; partial exhaustion/Treg admixture)",
+    "Inflammatory/hypoxic (COX-2/PTGS2+)",
+    "Angiogenic/tip endothelium",
+    "Plasma cell",
+    "Langerhans-like / cDC2-skewed DC"
   ),
-  Confidence = c(
-    "Medium","High","Medium","Medium","High","Medium","High","Medium",
-    "High","Medium","High","High","Medium","High","High","High (type), 
-    Medium (Langerin specificity)"
-  ),
-  Key_supporting_markers = c(
-    "DKK1, EPHB3, TCF7L2, LRP5/6, ERBB3, FGFR2, LGR5",
-    "COL1A1/5A1/6A3/11A1, ACTA2, SERPINE1, TNC, PDGFRA, CXCL12, FAP, LOX",
-    "MMP7, LAMC2, SOX9, SOD2, TP53, CDK4/6",
-    "EPCAM, ERBB3, CDH1, MCM2, MYC, BIRC5",
-    "HLA-DRA/DRB1/DMA/DPB1/DQA1, CIITA, TAP1/2, EPCAM, ERBB2/3",
-    "BIRC5, FOXM1, MYBL2, PLK1, CCNB1, CDK4/CCNE1",
-    "SPP1, VEGFA, MMP9/12, CXCL8, ITGAX, MARCO",
-    "MKI67, FOXM1, PLK1, AURKA/B, BIRC5; minor immune signals (IL2RA/CD70 low)",
-    "C1QC, MRC1, CD163, CD14, CSF1R, CD209",
-    "SOD2, MMP7, CEACAM1, LGR5, PTGS2, MET/RET, ICAM1",
-    "LYZ, FCGR3A, CYBB, ITGB2, CSF3R, TREM2, MSR1",
-    "TRAC, CD3E/CD3D, CD8A, GZMA/K, CCL5, CCR7, TIGIT/PDCD1 (low), FOXP3 (low)",
-    "PTGS2, VEGFA/VEGFC, LAMC2/LAMB3, MET, MUC1",
-    "PLVAP, VWF, PECAM1, CLDN5, KDR/FLT1/FLT4, ANGPT2, PDGFRB/CD248",
+  supporting_genes = c(
+    "DKK1, EPHB3, ERBB2/3, FGFR2, LRP6, EPCAM, LGR5",
+    "COL1A1, COL11A1, COL6A3, ACTA2, FN1, FAP, PDGFRA/B, TNC",
+    "MMP7, LAMC2, LAMB3, SOD2, SOX9, EPCAM",
+    "MCM2, PCNA, PLK1, BIRC5, MYBL2, FOXM1, EPCAM",
+    "HLA-DRA/DRB1/DPA1, CIITA, TAP1/2, EPCAM, ERBB2/3",
+    "MKI67, PCNA, CCNE1, CDK4/6, AURKA/B, BIRC5, MYBL2",
+    "SPP1, MMP9/12, CXCL8, VEGFA, ITGAX, IL1B, MARCO",
+    "FOXM1, BIRC5, PLK1, MKI67, AURKA/B, SOX2",
+    "C1QC, MRC1, CD163, CSF1R, CD14, CD209",
+    "SOD2, MMP7, SOX9, LGR5, FGFR2, ICAM1, VEGFA",
+    "LYZ, FCGR3A, ITGB2, CYBB, CCR1, CCL2, MSR1, TREM2",
+    "TRAC, CD3E/D/G, CD8A, GZMA/H, CCL5, CXCR3, TIGIT, LAG3, PDCD1, FOXP3",
+    "PTGS2, VEGFA, ICAM1, MMP7, LAMC2/LAMB3, MUC1",
+    "PECAM1, VWF, KDR/FLT1, FLT4, PLVAP, CLDN5, ANGPT2, MMRN2, PGF",
     "XBP1, MZB1, IRF4, POU2AF1, CD79A/B, TNFRSF13C",
-    "CD1C, FCER1A, CD207, CD1B/E, CCL22"
+    "CD207, FCER1A, CD1C/B/E, CCL22, LAMP3, CX3CR1"
   ),
-  anno_name=c("Tumor-LP/WNT","CAF-myCAF","Tumor-Basal/EMT",
-              "Tumor-Luminal/Cycling","Tumor-MHCII+","Tumor-G2M","TAM-SPP1",
-              "Tumor-HiCycle", "TAM-C1QC/M2","Tumor-Edge/NFkB","TAM-CD16/TREM2",
-              "Tcell-Mixed", "Tumor-Inflam/Hypoxia","Endo-Angiogenic",
-              "PlasmaCell","DC-cDC2/Langerin"),
-  stringsAsFactors = FALSE
+  notes = c(
+    "Epithelial RTK/WNT program; stem-like cues; non-cycling.",
+    "Highly concordant ECM/myofibroblast signature across methods.",
+    "Invasive/EMT markers with epithelial core; not strongly cell-cycle.",
+    "Robust proliferative program; epithelial identity retained.",
+    "Clear CIITA/MHC-II induction in carcinoma cells.",
+    "FM shows strong S-phase; jazzPanda sparse likely coverage.",
+    "Inflammatory/angiogenic TAM subtype distinct from C1QC+ state.",
+    "Mitotic peak with SOX2; minor immune transcripts likely bleed-through.",
+    "Regulatory/resident TAM program; distinct from inflammatory TAMs.",
+    "Oxidative stress + EMT/stem features; epithelial confirmed.",
+    "Mono-derived activation; distinct from TAM states in c6/c8.",
+    "Mixture of CD8+, Th1, Treg and exhaustion markers—heterogeneous TILs.",
+    "COX-2/hypoxia/inflammation in epithelium; weaker specificity than c4.",
+    "Canonical endothelial with tip/angiogenic features.",
+    "Textbook plasma-cell program; very strong.",
+    "Langerin+ with cDC2 features; likely migratory LAMP3+ DC admixture."
+  ),
+  confidence = c(
+    "Medium","High","Medium","High","High","Medium",
+    "High","High","High","Medium-High","High","Medium",
+    "Medium","High","High","Medium-High"
+  ),
+anno_name = c("Tumor-LP/WNT",
+                "CAF-myCAF", 
+                "Tumor-Basal/EMT",
+                "Tumor-Luminal/Cycling",
+                "Tumor-MHCII+",
+                "Tumor-G2M",
+                "TAM (SPP1+)",
+                "Cycling carcinoma",
+                "TAM-C1QC/M2",
+                "EMT/stress carcinoma",
+                "TAM-CD16/TREM2",
+                "Tcell-Mixed",
+                "Tumor-Inflam/Hypoxia",
+                "Endothelium (angiogenic)",
+                "Plasma cell",
+                "DC-cDC2/Langerin")
 )
 
 
@@ -502,7 +530,7 @@ FM_result$cluster <- factor(FM_result$cluster,
 top_mg <- FM_result %>%
   group_by(cluster) %>%
   arrange(desc(avg_log2FC), .by_group = TRUE) %>% 
-  slice_max(order_by = avg_log2FC, n = 10) %>%
+  slice_max(order_by = avg_log2FC, n = 20) %>%
   select(cluster, gene, avg_log2FC)
 
 # Combine into a new dataframe for LaTeX output

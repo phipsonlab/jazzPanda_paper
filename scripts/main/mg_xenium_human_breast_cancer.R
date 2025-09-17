@@ -10,36 +10,8 @@ library(speckle)
 library(peakRAM)
 library(dplyr) 
 library(scCustomize)
-# A help function to load Xenium data
-get_xenium_data<-function(path,mtx_name, trans_name="transcript_info.csv.gz",
-                          cells_name="cell_info.csv.gz"){
-    
-    transcript_info <- as.data.frame(fread(paste(path, trans_name,sep="")))
-    cell_info <- as.data.frame(fread(paste(path,cells_name,sep="")))
-    
-    data <- Read10X(data.dir = paste(path,mtx_name, sep=""))
-    
-    cm <- as.matrix(data$`Gene Expression`)
-    r_codeword <- as.matrix(data$`Negative Control Codeword`)
-    
-    r_probe <- as.matrix(data$`Negative Control Probe`)
-    # merge negative control genes and real genes
-    cm_neg <- as.data.frame(rbind(r_probe, r_codeword))
-    zero_cells <- colnames(cm)[colSums(cm)==0]
-    
-    transcript_info$x <- as.numeric(transcript_info$x_location)
-    transcript_info$y <- as.numeric(transcript_info$y_location)
-    
-    cell_info$x <- as.numeric(cell_info$x_centroid)
-    cell_info$y <- as.numeric(cell_info$y_centroid)
-    
-    return (list(cm = cm, cm_neg=cm_neg, zero_cells = zero_cells,
-                 trans_info=transcript_info, cell_info=cell_info,
-                 probe = row.names(r_probe),
-                 codeword=row.names(r_codeword)))
-    
-}
-
+library(here)
+source(here("scripts/utils.R"))
 args_all   <- commandArgs(trailingOnly = FALSE)
 script_arg <- grep("^--file=", args_all, value = TRUE)
 script_dir <- if (length(script_arg)) {

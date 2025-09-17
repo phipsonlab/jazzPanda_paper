@@ -10,10 +10,8 @@ library(speckle)
 library(peakRAM)
 library(dplyr) 
 
-data_p = "/stornext/Bioinf/data/lab_phipson/givanna/merscope_data/20231220/"
-# load count matrix 
 
-# count_raw =read.csv("/stornext/Bioinf/data/lab_phipson/givanna/merscope_data/HumanBreastCancerPatient1/cell_by_gene.csv")
+# load count matrix 
 cm =  fread("/stornext/Bioinf/data/lab_phipson/melody/spaceMarker_analysis/analysis/merscope_processed_count_matrix.csv", header=TRUE)
 
 all_gene_names <- cm[["V1"]]
@@ -31,15 +29,7 @@ transcript_df$y <- transcript_df$global_y
 transcript_df$feature_name = transcript_df$gene
 
 clusters_info <- as.data.frame(cells_meta[, c("min_x","min_y","max_x", "max_y","leiden","cell_id")])
-# clusters_info = cells_meta[, c("min_x","min_y","max_x", "max_y","cell_id")]
-# seurat_cluster = as.data.frame(merscope_seu$seurat_clusters)
-# seurat_cluster$cell_id = row.names(seurat_cluster)
-# colnames(seurat_cluster) = c("cluster", "cell_id")
-# clusters_info = merge(clusters_info, seurat_cluster, by = "cell_id", all.x = TRUE)
 clusters_info$cluster <- paste("c", clusters_info$leiden,sep="")
-# table(clusters_info$cluster)
-#clusters_info[clusters_info$cluster %in% c("c2","c3","c4","c5"),"cluster"] = "c2"
-#clusters_info$cluster = factor(clusters_info$cluster, levels=c("c0","c1","c2",paste("c", 6:15, sep="")))
 clusters_info$cluster <- factor(clusters_info$cluster, levels=paste("c", 0:15, sep=""))
 clusters_info$sample <- "sample1"
 

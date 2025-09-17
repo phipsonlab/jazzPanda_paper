@@ -39,14 +39,14 @@ msg 'Job ID ' ${SLURM_JOB_ID}          # Job ID
 msg 'Job name ' $SLURM_JOB_NAME        # Job name
 
 ################################################################################
-module load R/4.5.0
+module load R/4.5.1
 module load pandoc/3.2
 module load gdal/3.9.0
 module load ImageMagick/7.1.1
 module load gcc/14.2
 
 export TMPDIR=$(mktemp -d -p /vast/projects/xenium_5k/jazzPanda_paper)
-/usr/bin/time -v Rscript -e "rmarkdown::render('supplementary_application_merscope_human_breast_cancer.Rmd', output_format = 'html_document')"
+/usr/bin/time -v Rscript -e "rmarkdown::render('supplementary_application_xenium_human_breast_cancer.Rmd', output_format = 'html_document')"
 rm -rf  $TMPDIR
 
 echo "------------------------------------------------------------------------"

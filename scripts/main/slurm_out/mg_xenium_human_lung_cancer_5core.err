@@ -1,0 +1,121 @@
+/var/spool/slurmd/job23813639/slurm_script: line 32: msg: command not found
+/var/spool/slurmd/job23813639/slurm_script: line 33: msg: command not found
+/var/spool/slurmd/job23813639/slurm_script: line 34: msg: command not found
+/var/spool/slurmd/job23813639/slurm_script: line 35: msg: command not found
+/var/spool/slurmd/job23813639/slurm_script: line 36: msg: command not found
+/var/spool/slurmd/job23813639/slurm_script: line 37: msg: command not found
+/var/spool/slurmd/job23813639/slurm_script: line 38: msg: command not found
+/var/spool/slurmd/job23813639/slurm_script: line 39: msg: command not found
+Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Registered S3 method overwritten by 'spatstat.explore':
+  method   from
+  plot.roc pROC
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:data.table’:
+
+    between, first, last
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: Matrix
+Loaded glmnet 4.1-10
+Loading required package: ggplot2
+Loading required package: lattice
+here() starts at /vast/projects/xenium_5k/jazzPanda_paper
+10X data contains more than one type and is being returned as a list containing matrices of each type.
+Warning message:
+In asMethod(object) :
+  sparse->dense coercion: allocating vector of size 1.6 GiB
+Warning: Data is of class matrix. Coercing to dgCMatrix.
+Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
+To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
+This message will be shown once per session
+17:13:12 UMAP embedding parameters a = 0.9922 b = 1.112
+17:13:12 Read 530893 rows and found 20 numeric columns
+17:13:12 Using Annoy for neighbor search, n_neighbors = 30
+17:13:12 Building Annoy index with metric = cosine, n_trees = 50
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+17:14:18 Writing NN index file to temp file ./tmp.aogPoG8yug/RtmpzfJXWt/file1fecae21fdc1d1
+17:14:19 Searching Annoy index using 1 thread, search_k = 3000
+17:18:54 Annoy recall = 100%
+17:18:56 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+17:19:00 152 smooth knn distance failures
+17:19:29 Initializing from normalized Laplacian + noise (using RSpectra)
+17:20:12 Commencing optimization for 200 epochs, with 25041816 positive edges
+17:20:12 Using rng type: pcg
+Using method 'umap'
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+17:25:13 Optimization finished
+Correlation Method = spearman
+Running 5000 permutation with 5 cores in parallel
+Warning messages:
+1: 1 point was rejected as lying outside the specified window 
+2: 1 point was rejected as lying outside the specified window 
+Warning messages:
+1: 1 point was rejected as lying outside the specified window 
+2: 1 point was rejected as lying outside the specified window 
+Calculating cluster c1
+Calculating cluster c12
+Calculating cluster c13
+Calculating cluster c15
+Calculating cluster c16
+Calculating cluster c18
+Calculating cluster c2
+Calculating cluster c3
+Calculating cluster c4
+Calculating cluster c5
+Calculating cluster c6
+Calculating cluster c8
+Calculating cluster c9
+Warning messages:
+1: The `slot` argument of `GetAssayData()` is deprecated as of SeuratObject 5.0.0.
+ℹ Please use the `layer` argument instead.
+ℹ The deprecated feature was likely used in the Seurat package.
+  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
+2: `PackageCheck()` was deprecated in SeuratObject 5.0.0.
+ℹ Please use `rlang::check_installed()` instead.
+ℹ The deprecated feature was likely used in the Seurat package.
+  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
+	Command being timed: "Rscript mg_xenium_human_lung_cancer.R"
+	User time (seconds): 1507.94
+	System time (seconds): 141.83
+	Percent of CPU this job got: 59%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 46:07.58
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 35033572
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 80101
+	Minor (reclaiming a frame) page faults: 76521089
+	Voluntary context switches: 296495
+	Involuntary context switches: 2736
+	Swaps: 0
+	File system inputs: 4816
+	File system outputs: 17886112
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -258,7 +258,7 @@ hln_seu=ScaleData(hln_seu, verbose = FALSE)
 set.seed(989)
 # print(ElbowPlot(hln_seu, ndims = 50))
 hln_seu <- RunPCA(hln_seu, features = row.names(hln_seu), 
-                  npcs = 50, verbose = FALSE)
+                  npcs = 30, verbose = FALSE)
 hln_seu <- RunUMAP(object = hln_seu, dims = 1:15)
 
 usage_fm= peakRAM({

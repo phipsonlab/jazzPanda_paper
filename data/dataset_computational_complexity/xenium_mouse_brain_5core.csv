@@ -1,2 +1,2 @@
 "technology","dataset","genes_n","transcript_n","cells_n","clusters_n","grid_length","fm_Elapsed_Time_sec","fm_Peak_RAM_Used_MiB","limma_Elapsed_Time_sec","limma_Peak_RAM_Used_MiB","sv_Elapsed_Time_sec","sv_Peak_RAM_Used_MiB","glm_Elapsed_Time_sec","glm_Peak_RAM_Used_MiB"
-"xenium","Xenium mouse brain",284,19587496,75692,10,20,14.793,3632.5,1.56200000000001,943.1,111.691,3268.5,15.678,1284.8
+"xenium","Xenium mouse brain",284,19587496,75692,10,20,23.7329999999999,4551.8,1.85199999999998,943.099999999999,157.935,4165.4,23.0360000000001,1296.9

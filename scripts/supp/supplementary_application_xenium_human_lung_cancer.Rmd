@@ -64,30 +64,28 @@ clusts <- unique(cluster_info$cluster)
 cluster_names <- clusts[order(as.numeric(sub("c", "", clusts)))]
 anno_df <- data.frame(
   cluster = c("c1","c2","c3","c4","c5","c6","c8","c9","c12","c13","c15","c16","c18"),
-  major_class = c(
-    "Myeloid","Lymphoid","Myeloid","Epithelial (tumor)","Stromal","Epithelial (non-malig.)",
-    "Endothelial","Endothelial","Myeloid","Stromal","Lymphoid","Stromal","Epithelial (non-malig./mixed)"
+    major_class = c(
+    "Myeloid","Lymphoid","Myeloid","Epithelial (tumor)","Stromal","Epithelial",
+    "Vascular","Vascular","Myeloid","Stromal","Lymphoid","Stromal","Epithelial"
   ),
-  subclass = c(
-    "Mononuclear phagocytes","T cells","Tissue-resident macrophages","Epithelial carcinoma",
-    "Fibroblasts / CAFs","Secretory (airway/tracheobronchial)","Capillary/arterial endothelium",
-    "Venous/HEV / lymphatic-skewed endothelium","Dendritic / inflammatory monocytes",
-    "Smooth muscle (airway)","B lineage","Perivascular","Basal–ciliated airway lineage"
+  sub_class = c(
+    "Macrophage/monocyte","T cell","Macrophage","Carcinoma (luminal-like)","Fibroblast","Airway secretory",
+    "Endothelium (capillary/arterial)","Endothelium (venous/activated)","Dendritic/monocyte","Vascular mural cell","B lineage","Vascular smooth muscle","Airway basal–ciliated transitional"
   ),
-  specific_cell_type_state = c(
-    "Activated TAM, CHIT1⁺/MMP^hi",
-    "Activated/exhausted T cells (CD8⁺ GZMK⁺/PDCD1⁺) with Tfh/Treg admixture",
-    "MARCO⁺/VSIG4⁺ alveolar-like macrophages (immunosuppressive)",
-    "Lung adenocarcinoma cells (EPCAM⁺/MUC1⁺/EGFR⁺), cycling subset present",
-    "Myofibroblastic CAFs (mCAFs)",
-    "Club/Goblet-like secretory cells",
-    "Capillary/arterial-like endothelium",
-    "ACKR1⁺ venous/HEV-like endothelium with lymphatic features",
-    "cDC2/Mono-DC (CD1C⁺/FCER1A⁺) + FCN1^hi monocytes",
-    "Airway smooth muscle (ASM)",
-    "Plasmablasts / plasma cells (MZB1⁺, CD27⁺, TNFRSF17⁺)",
-    "Vascular smooth muscle / pericytes (MYH11⁺/CSPG4⁺)",
-    "Basal/suprabasal & ciliated mixed program (SOX2/TP73/FOXJ1)"
+    cell_type = c(
+    "IFN-activated TAM (CXCL9/10+, MMP-high)",
+    "Exhausted/activated T (CXCR6+ PD-1+ GZMK+)",
+    "MARCO+ alveolar/TAM (immunoreg.)",
+    "Proliferating EGFR/MET+ tumor epi",
+    "SFRP2/THBS2+ matrix CAF",
+    "Club/serous secretory (SFTPD+ CFTR+)",
+    "Capillary/arterial EC (TMEM100+ CLDN5+)",
+    "Venous/activated EC (VWF+ ACKR1+ PLVAP+)",
+    "cDC2 / inflammatory monocyte mix",
+    "Pericyte-leaning mural cell",
+    "Plasma cell (MZB1+ BCMA+)",
+    "Contractile SMC",
+    "Basal/ciliated transitional (KRT5/TP63 & FOXJ1/TP73)"
   ),
   anno_name = c("Inflammatory TAM",
                 "Activated T cell",
@@ -98,39 +96,42 @@ anno_df <- data.frame(
                 "Capillary endothelium",
                 "Venous/HEV endothelium",
                 "cDC2 / Mono-DC",
-                "Airway smooth muscle",
+                "Vascular mural cell",
                 "Plasma cell",
                 "Vascular SMC / Pericyte",
                 "Basal–ciliated epithelium"), 
-  evidence_selected_markers = c(
-    "CHIT1, LGMN, AIF1, FCGR1A, ITGAM, CD14, MS4A4A; MMP9/12, CXCL10, TREM2/HAVCR2",
-    "IL7R, CXCL9, GZMK/GZMA, PDCD1, CTLA4, CXCR6, CD3D/E, CD247; low FOXP3/CXCL13",
-    "MARCO, VSIG4, CD163, FCGR3A, ALOX5, AQP9, CXCL5, RETN",
-    "EPCAM, MUC1, KRT7, TACSTD2, EGFR, MET; UBE2C, TOP2A, MKI67, CENPF, CCNB2, AREG/SEC61G",
-    "THBS2, SFRP2, LTBP2, COL5A2, COL8A1, FBN1, THY1, IGF1, PDPN; PDGFRA/B",
-    "SFTPD, SFTA3, DMBT1, TMPRSS2, CFTR, GKN2, PEBP4, DUOX1, PRG4",
-    "TMEM100, CA4, ACE, CLDN5, RAMP2, CD34, KCNK3; AGER present",
-    "VWF, PLVAP, ACKR1, SELP, ADGRL4; LYVE1/PROX1 (low), ECSCR",
-    "FCN1, S100A12, CD1C, FCER1A, CLEC4E, CD300E, CLEC10A",
-    "DES, MYH11, CNN1, PLN, LMOD1; TGM2, FST",
-    "MZB1, POU2AF1, CD79A, TNFRSF17, CD27, CD38, FKBP11",
-    "MYH11 (very high), DES, CNN1, LMOD1, PLN; CSPG4, RERGL",
-    "FOXJ1, MUC5B, KRT5, KRT17, KRT15, SOX2, TP73, CYP2F1, AGR3; ITGB4, ELF3"
+  supporting_genes = c(
+    "CXCL9,CXCL10,IRF8,FCGR1A,CD86,CD14,MMP9,MMP12,CHIT1,LGMN",
+    "PDCD1,CTLA4,CXCR6,GZMK,CD3D/E,CD8A,KLRB1,CXCL13",
+    "MARCO,VSIG4,CD68,CD163,FCGR3A,TREM2,ALOX5",
+    "EPCAM,KRT7,MUC1,TACSTD2,EGFR,MET,SEC61G,UBE2C,CCNB2,MKI67,TOP2A",
+    "SFRP2,THBS2,COL5A2,COL8A1,FBN1,PDGFRA,PDGFRB,THY1,IGF1,LTBP2",
+    "SFTPD,SFTA3,DMBT1,CFTR,TMPRSS2,DUOX1,GKN2",
+    "TMEM100,CLDN5,RAMP2,ADGRL4,KDR,ACE,GNG11",
+    "VWF,ACKR1,MMRN1,PLVAP,SELP,ADGRL4,APOLD1",
+    "CD1C,FCER1A,S100A12,FCN1,CLEC4E,CD300E",
+    "PDGFRB,CSPG4,TGM2,FST,DES,CNN1",
+    "MZB1,POU2AF1,CD79A,TNFRSF17,CD19,MS4A1,CD27,CD38",
+    "MYH11,CNN1,LMOD1,DES,PLN,RERGL",
+    "MUC5B,FOXJ1,TP73,SOX2,KRT5,KRT15,KRT17,GPX2,CYP2F1"
   ),
-  caveats_notes = c(
-    "Mix of activation states; HPGDS/S100B hints mast/glial contamination; macrophage-dominant TAMs",
-    "Multiple T states (CD8 effector, Tfh-like CXCL13, some FOXP3^lo Treg); could sub-stratify",
-    "Classic lung alveolar macrophage signature; tissue-resident/immunoregulatory",
-    "Strong epithelial oncogenic program; includes proliferative subset",
-    "ECM-remodeling CAF program; mesenchymal; lacks strong iCAF chemokines",
-    "Airways secretory program; likely non-malignant; check CNV to confirm",
-    "AGER contamination from AT1 possible; endothelial program is clear",
-    "Mixed venous/HEV signature; some lymphatic admixture; not capillary",
-    "Mixture: cDC2 and FCN1^hi monocytes; separable by CD1C vs FCN1",
-    "Smooth muscle core; co-exists with c16; lack of CSPG4 favors ASM",
-    "Mature antibody-secreting program; MS4A1^low fits plasma bias",
-    "Contractile SMC with CSPG4; vascular SMC/pericyte",
-    "Mixed basal (KRT5/15/17, ITGB4) and ciliated (FOXJ1); continuum; may include squamous-like"
+  notes = c(
+    "Concordant IFN/inflammatory TAM; minor DC signal likely contamination.",
+    "Mix of exhausted CD8 (PD-1+, CXCR6+, GZMK+) and Tfh-like (CXCL13+); minimal Treg.",
+    "Alveolar/TAM program with immunoregulatory markers; robust across methods.",
+    "Strong epithelial tumor with proliferation and EGFR/MET activity.",
+    "Canonical matrix-remodeling CAF; KIT/WT1 likely noise/doublets.",
+    "Secretory/club phenotype; not classic AT2 (SFTPC absent).",
+    "Endothelial identity dominant; AGER/CA4 likely interface/ambient RNA.",
+    "Activated venous endothelium; some lymphatic markers reflect minor subfraction.",
+    "cDC2 mixed with inflammatory monocytes; peritumoral APC compartment.",
+    "Pericyte-skewed mural cells; contrasts with c16 contractile SMC.",
+    "Mature plasma cell program; very consistent.",
+    "Definitive contractile SMC signature.",
+    "Basal–ciliated transitional, typical of injury/repair."
+  ),
+  confidence = c(
+    "High","Medium","High","High","High","Medium","Medium","High","Medium","High","High","High","High"
   ),
   stringsAsFactors = FALSE
 )
@@ -532,7 +533,7 @@ FM_result$cluster <- factor(FM_result$cluster,
 top_mg <- FM_result %>%
   group_by(cluster) %>%
   arrange(desc(avg_log2FC), .by_group = TRUE) %>% 
-  slice_max(order_by = avg_log2FC, n = 10) %>%
+  slice_max(order_by = avg_log2FC, n = 20) %>%
   select(cluster, gene, avg_log2FC)
 
 # Combine into a new dataframe for LaTeX output

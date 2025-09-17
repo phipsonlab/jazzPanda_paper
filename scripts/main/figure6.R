@@ -142,31 +142,17 @@ clusters_df <- data.frame(
 plt_lst = list()
 for (cl in c("c1", "c5","c8")){
     anno_name = clusters_df[clusters_df$cluster==cl,"anno"]
-    gr10 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr10"]==cl,"gene"]
-    gr20 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr20"]==cl,"gene"]
-    gr30 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr30"]==cl,"gene"]
-    gr40 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr40"]==cl,"gene"]
-    gr50 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr50"]==cl,"gene"]
-    gr60 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr60"]==cl,"gene"]
-    gr70 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr70"]==cl,"gene"]
-    gr80 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr80"]==cl,"gene"]
-    gr90 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr90"]==cl,"gene"]
-    gr100 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr100"]==cl,"gene"]
-    
     df_mt =as.data.frame(matrix(FALSE,nrow=nrow(xenium_merged_df),ncol=10))
     row.names(df_mt) =xenium_merged_df$gene
     colnames(df_mt)=paste(paste(seq(10,100, by=10), "x", sep=""),
                           seq(10,100, by=10),sep="")
-    df_mt[gr10,"10x10"] = TRUE
-    df_mt[gr20,"20x20"] = TRUE
-    df_mt[gr30,"30x30"] = TRUE
-    df_mt[gr40,"40x40"] = TRUE
-    df_mt[gr50,"50x50"] = TRUE
-    df_mt[gr60,"60x60"] = TRUE
-    df_mt[gr70,"70x70"] = TRUE
-    df_mt[gr80,"80x80"] = TRUE
-    df_mt[gr90,"90x90"] = TRUE
-    df_mt[gr100,"100x100"] = TRUE
+    # fill each column
+    for (bin_l in seq(10, 100, by = 10)) {
+        cl_col <- paste0("top_cluster_gr", bin_l)
+        gr_genes <- xenium_merged_df[xenium_merged_df[, cl_col] == cl, "gene"]
+        col_nm <- paste0(bin_l, "x", bin_l)
+        df_mt[gr_genes, col_nm] <- TRUE
+    }
     p<-upset(df_mt,intersect=colnames(df_mt),
                                wrap=TRUE, keep_empty_groups= FALSE, name="",
                                themes=theme_grey(),
@@ -196,7 +182,7 @@ for (cl in c("c1", "c5","c8")){
     plt_lst[[cl]] <-p
 }  
 combined_plot <- wrap_plots(plt_lst, ncol = 3)
-pdf(file.path(fig6, "xenium_mg_ntiles.pdf"), height=6, width=18)
+pdf(file.path(fig6, "xenium_mg_ntiles.pdf"), height=6, width=15)
 print(combined_plot)
 dev.off()
 

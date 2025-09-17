@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --partition=regular
 #SBATCH --job-name=run_mg_merscope_human_breast_cancer_5core
-#SBATCH --output=slurm_workflowr/mg_merscope_human_breast_cancer_5core.out
-#SBATCH --error=slurm_workflowr/mg_merscope_human_breast_cancer_5core.err
+#SBATCH --output=slurm_out/mg_merscope_human_breast_cancer_5core.out
+#SBATCH --error=slurm_out/mg_merscope_human_breast_cancer_5core.err
 #SBATCH --time=12:00:00
 #SBATCH --mem=300G
 #SBATCH --cpus-per-task=12
@@ -39,13 +39,13 @@ msg 'Job ID ' ${SLURM_JOB_ID}          # Job ID
 msg 'Job name ' $SLURM_JOB_NAME        # Job name
 
 ################################################################################
-module load R/4.5.0
+module load R/4.5.1
 module load pandoc/3.2
 module load gdal/3.9.0
 module load ImageMagick/7.1.1
 module load gcc/14.2
 
-export TMPDIR=$(mktemp -d -p /vast/projects/xenium_5k/jazzPanda_analysis)
+export TMPDIR=$(mktemp -d -p .)
 /usr/bin/time -v Rscript mg_merscope_human_breast_cancer.R
 rm -rf  $TMPDIR
 

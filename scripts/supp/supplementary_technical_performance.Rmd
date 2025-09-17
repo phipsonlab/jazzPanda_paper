@@ -1,7 +1,7 @@
 ---
 title: "Supplementary figures for Technical performance"
 author: "Melody Jin"
-date: "2025-09-08"
+date: "2025-09-17"
 output:
   html_document:
     toc: true
@@ -24,6 +24,14 @@ library(here)
 library(spatstat.geom)
 
 source(here("scripts/utils.R"))
+
+ntils_theme <- theme(axis.text.x = element_text(size=15, angle=45, hjust=1, vjust=0.9),
+          axis.title.x = element_text(size=15),
+          legend.title=element_blank(),
+          legend.position = "right",   
+          axis.text.y = element_text(size=15),
+          plot.title = element_text(size = 18, face = "bold"),
+          axis.title.y = element_text(size=15))
 ```
 
 # Computational complexity 
@@ -179,13 +187,6 @@ dev.off()
 ```
 ## Impact of increasing the number of hex tiles used to create spatial vectors 
 ```{r}
-ntils_theme <- theme(axis.text.x = element_text(size=15, angle=45, hjust=1, vjust=0.9),
-          axis.title.x = element_text(size=15),
-          legend.title=element_blank(),
-          legend.position = "right",   
-          axis.text.y = element_text(size=15),
-          plot.title = element_text(size = 18, face = "bold"),
-          axis.title.y = element_text(size=15))
 # get all slurm array results for ngenes
 result_path <- here("scripts/main/discussion_complexity/ntiles_hexbin_result/")
 files <- list.files(path = result_path, pattern = "\\.csv$", full.names = TRUE)
@@ -271,7 +272,7 @@ dev.off()
 ```
 
 
-# Marker gene comparision vs number of tiles 
+# Marker gene comparision vs number of tiles (glm)
 ```{r}
 # get all slurm array results for marker genes vs ntiles (xenium human breast)
 result_path <- here("scripts/main/discussion_markergenes_vs_ntiles/")
@@ -287,7 +288,8 @@ colnames(xenium_merged_df)[1] = "gene"
 
 # get all slurm array results for marker genes vs ntiles (cosmx human liver cancer)
 
-cosmx_files <- list.files(path = result_path, pattern = "^cosmx.*\\.csv$", full.names = TRUE)
+cosmx_files <- list.files(path = result_path, 
+                          pattern = "^cosmx.*\\.csv$", full.names = TRUE)
 # Read all files into a list of data frames
 data_list <- lapply(cosmx_files, read.csv)
 
@@ -297,8 +299,37 @@ cosmx_merged_df <- Reduce(function(x, y) merge(x,y,
 colnames(cosmx_merged_df)[1] = "gene"
 ```
 
-## cosmx human liver cancer 
+## cosmx human liver cancer - correlation approach
 ```{r}
+
+n_rows <- nrow(cosmx_merged_df)
+n_cols <- 13
+df_names <- paste0("gr", seq(10, 100, by = 10),"_df")
+
+for (nm in df_names) {
+  df <- as.data.frame(matrix(FALSE, nrow = n_rows, ncol = n_cols))
+  rownames(df) <- cosmx_merged_df$gene
+  colnames(df) <- paste("c", 1:13, sep="")
+  assign(nm, df)
+}
+
+
+for (bin_l in seq(10, 100, 10)){
+    file_nm = paste0("cosmx_hliver_cancer_perm_lst_gr",bin_l,".Rds")
+    perm_lst = readRDS(file.path(result_path, file_nm))
+    obs_corr = get_cor(perm_lst)
+    perm_res = get_perm_adjp(perm_lst)
+    df <- get(paste0("gr", bin_l,"_df"))
+    for (cl in paste("c", 1:13, sep="")) {
+        perm_cl=intersect(row.names(perm_res[perm_res[,cl]<0.05,]),
+              row.names(obs_corr[obs_corr[, cl]>0.05,]))
+
+        df[perm_cl,cl] = TRUE
+    }
+    assign(paste0("gr", bin_l,"_df"), df) 
+
+}
+
 
 clusters_df <- data.frame(
   cluster =paste("c", 1:13, sep=""),
@@ -310,32 +341,18 @@ clusters_df <- data.frame(
   stringsAsFactors = FALSE
 )
 plt_lst = list()
-for (cl in setdiff(clusters_df$cluster, c("c11","c9","c12"))){
-  gr10 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr10"]==cl,"gene"]
-  gr20 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr20"]==cl,"gene"]
-  gr30 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr30"]==cl,"gene"]
-  gr40 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr40"]==cl,"gene"]
-  gr50 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr50"]==cl,"gene"]
-  gr60 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr60"]==cl,"gene"]
-  gr70 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr70"]==cl,"gene"]
-  gr80 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr80"]==cl,"gene"]
-  gr90 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr90"]==cl,"gene"]
-  gr100 = cosmx_merged_df[cosmx_merged_df[,"top_cluster_gr100"]==cl,"gene"]
-  
-  df_mt =as.data.frame(matrix(FALSE,nrow=nrow(cosmx_merged_df),ncol=10))
-  row.names(df_mt) =cosmx_merged_df$gene
- colnames(df_mt)=paste(paste(seq(10,100, by=10), "x", sep=""),
+for (cl in setdiff(clusters_df$cluster, c("c9", "c11", "c12","c13"))){
+    df_mt =as.data.frame(matrix(FALSE,nrow=nrow(cosmx_merged_df),ncol=10))
+    row.names(df_mt) =cosmx_merged_df$gene
+    colnames(df_mt)=paste(paste(seq(10,100, by=10), "x", sep=""),
                         seq(10,100, by=10),sep="")
-  df_mt[gr10,"10x10"] = TRUE
-  df_mt[gr20,"20x20"] = TRUE
-  df_mt[gr30,"30x30"] = TRUE
-  df_mt[gr40,"40x40"] = TRUE
-  df_mt[gr50,"50x50"] = TRUE
-  df_mt[gr60,"60x60"] = TRUE
-  df_mt[gr70,"70x70"] = TRUE
-  df_mt[gr80,"80x80"] = TRUE
-  df_mt[gr90,"90x90"] = TRUE
-  df_mt[gr100,"100x100"] = TRUE
+    for (bin_l in seq(10, 100, by = 10)) {
+        df_name <- paste0("gr", bin_l, "_df")  
+        gr_df   <- get(df_name)                
+        gr_rows <- rownames(gr_df[gr_df[, cl] == TRUE, , drop = FALSE])
+        col_nm <- paste0(bin_l, "x", bin_l)
+        df_mt[gr_rows, col_nm] <- TRUE
+    }
     anno_name = clusters_df[clusters_df$cluster==cl,"anno"]
   #pdf(paste(cl,"_xenium_upset.pdf", sep=""), height=6, width=8)
   p<- upset(df_mt,intersect=colnames(df_mt),
@@ -368,15 +385,74 @@ for (cl in setdiff(clusters_df$cluster, c("c11","c9","c12"))){
 }  
 
 combined_plot <- wrap_plots(plt_lst, ncol = 3)
-pdf(file.path(comp_PA, "cosmx_mg_ntiles.pdf"),  height=25, width=18)
+pdf(file.path(comp_PA, "cosmx_mg_ntiles_corr.pdf"),  height=20, width=18)
 combined_plot 
 dev.off()
 
+```
+## cosmx human liver cancer - linear modelling approach
+```{r}
 
+clusters_df <- data.frame(
+  cluster =paste("c", 1:13, sep=""),
+  anno =c("tumor_1","tumor_2","Macrophages","T",
+         "Periportal.LSECs","Stellate","B",
+         "Central.venous.LSECs","Cholangiocytes","Hep",
+         "Portal.endothelial",
+         "NK.like","Erthyroid"),
+  stringsAsFactors = FALSE
+)
+plt_lst = list()
+for (cl in setdiff(clusters_df$cluster, c("c11","c9","c12"))){
+    df_mt =as.data.frame(matrix(FALSE,nrow=nrow(cosmx_merged_df),ncol=10))
+    row.names(df_mt) =cosmx_merged_df$gene
+    colnames(df_mt)=paste(paste(seq(10,100, by=10), "x", sep=""),
+                        seq(10,100, by=10),sep="")
+    # fill each column
+    for (bin_l in seq(10, 100, by = 10)) {
+        cl_col <- paste0("top_cluster_gr", bin_l)
+        gr_genes <- cosmx_merged_df[cosmx_merged_df[, cl_col] == cl, "gene"]
+        col_nm <- paste0(bin_l, "x", bin_l)
+        df_mt[gr_genes, col_nm] <- TRUE
+    }
+    anno_name = clusters_df[clusters_df$cluster==cl,"anno"]
+    p<- upset(df_mt,intersect=colnames(df_mt),
+                wrap=TRUE, keep_empty_groups= FALSE, name="",
+                themes=theme_grey(),
+                stripes=upset_stripes(geom=geom_segment(size=5),colors=c('grey95', 'grey95', 'grey95')),
+                sort_intersections_by ="cardinality", sort_sets= FALSE,min_degree=1,
+                set_sizes = FALSE,
+                sort_intersections= "descending", warn_when_converting=FALSE,
+                warn_when_dropping_groups=TRUE,encode_sets=TRUE,
+                matrix=(intersection_matrix()+
+                    theme(axis.text.x=element_blank(),
+                          panel.background = element_rect(fill="NA"),
+                                                  axis.ticks = element_blank(),
+                                                  axis.title = element_blank())),
+                base_annotations=list('Intersection size'=(intersection_size(bar_number_threshold=1,color='grey9',fill='grey80',
+                                text = list(size = 3, vjust = -0.1))+
+                scale_y_continuous(expand = expansion(mult = c(0, 0.15)))+
+                theme(axis.text.x = element_blank(),
+                      axis.title.x = element_blank(),
+                      panel.background = element_rect(fill="NA"),
+                      panel.grid = element_line(color="grey90"),
+                      axis.ticks.x = element_blank()))),
+              width_ratio=0.5, height_ratio=0.7)+
+           ggtitle(paste(anno_name,"cells"))+
+               theme(
+    plot.title = element_text(size = 18, face = "bold"))
+         
+  plt_lst[[cl]] <- p
+}  
+
+combined_plot <- wrap_plots(plt_lst, ncol = 3)
+pdf(file.path(comp_PA, "cosmx_mg_ntiles_glm.pdf"),  height=25, width=18)
+combined_plot 
+dev.off()
 
 ```
 
-## Xenium huamn breast cancer samples
+## Xenium huamn breast cancer samples - Linerar modelling approach
 ```{r}
 
 clusters_df <- data.frame(
@@ -386,36 +462,20 @@ clusters_df <- data.frame(
   stringsAsFactors = FALSE
 )
 plt_lst = list()
-#for (cl in c("c1", "c8", "c5")){
 for (cl in clusters_df$cluster){
     anno_name = clusters_df[clusters_df$cluster==cl,"anno"]
-  gr10 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr10"]==cl,"gene"]
-  gr20 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr20"]==cl,"gene"]
-  gr30 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr30"]==cl,"gene"]
-  gr40 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr40"]==cl,"gene"]
-  gr50 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr50"]==cl,"gene"]
-  gr60 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr60"]==cl,"gene"]
-  gr70 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr70"]==cl,"gene"]
-  gr80 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr80"]==cl,"gene"]
-  gr90 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr90"]==cl,"gene"]
-  gr100 = xenium_merged_df[xenium_merged_df[,"top_cluster_gr100"]==cl,"gene"]
-  
-  df_mt =as.data.frame(matrix(FALSE,nrow=nrow(xenium_merged_df),ncol=10))
-  row.names(df_mt) =xenium_merged_df$gene
-  colnames(df_mt)=paste(paste(seq(10,100, by=10), "x", sep=""),
+    df_mt =as.data.frame(matrix(FALSE,nrow=nrow(xenium_merged_df),ncol=10))
+    row.names(df_mt) =xenium_merged_df$gene
+    colnames(df_mt)=paste(paste(seq(10,100, by=10), "x", sep=""),
                         seq(10,100, by=10),sep="")
-  df_mt[gr10,"10x10"] = TRUE
-  df_mt[gr20,"20x20"] = TRUE
-  df_mt[gr30,"30x30"] = TRUE
-  df_mt[gr40,"40x40"] = TRUE
-  df_mt[gr50,"50x50"] = TRUE
-  df_mt[gr60,"60x60"] = TRUE
-  df_mt[gr70,"70x70"] = TRUE
-  df_mt[gr80,"80x80"] = TRUE
-  df_mt[gr90,"90x90"] = TRUE
-  df_mt[gr100,"100x100"] = TRUE
-  # pdf(paste(paste(PA, anno_name,sep=""),"_gr10_100_upset_xenium_hbreast.pdf", sep=""), 
-  #     height=5, width=5)
+    # fill each column
+    for (bin_l in seq(10, 100, by = 10)) {
+        cl_col <- paste0("top_cluster_gr", bin_l)
+        gr_genes <- xenium_merged_df[xenium_merged_df[, cl_col] == cl, "gene"]
+        col_nm <- paste0(bin_l, "x", bin_l)
+        df_mt[gr_genes, col_nm] <- TRUE
+    }
+    
   p <- upset(df_mt,intersect=colnames(df_mt),
                 wrap=TRUE, keep_empty_groups= FALSE, name="",
                 themes=theme_grey(),
@@ -442,7 +502,6 @@ for (cl in clusters_df$cluster){
     plot.title = element_text(size = 18, face = "bold")
   )
     plt_lst[[cl]] <- p
-# dev.off()
 }  
 combined_plot <- wrap_plots(plt_lst, ncol = 3)
 pdf(file.path(comp_PA, "xenium_mg_ntiles.pdf"), height=20, width=18)

@@ -13,19 +13,13 @@ TOTAL_MEM_MB = TOTAL_MEM_ID+1
 
 
 args <- commandArgs(trailingOnly = TRUE)
-# script_dir <- if (any(grepl("^--file=", args))) {
-#     dirname(normalizePath(sub("^--file=", "", args[grep("^--file=", args)][1])))
-# } else {
-#     normalizePath(getwd())   # fallback if run interactively
-# }
-
 
 args_all   <- commandArgs(trailingOnly = FALSE)
 script_arg <- grep("^--file=", args_all, value = TRUE)
 script_dir <- if (length(script_arg)) {
     dirname(normalizePath(sub("^--file=", "", script_arg[1])))
 } else {
-    normalizePath(getwd())  # interactive fallback
+    normalizePath(getwd()) 
 }
 
 

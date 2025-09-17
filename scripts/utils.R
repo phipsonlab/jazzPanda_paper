@@ -56,6 +56,7 @@ get_xenium_data<-function(path,mtx_name, trans_name="transcript_info.csv.gz",
     data <- Read10X(data.dir = paste(path,mtx_name, sep=""))
     
     cm <- as.matrix(data$`Gene Expression`)
+    
     r_codeword <- as.matrix(data$`Negative Control Codeword`)
     
     r_probe <- as.matrix(data$`Negative Control Probe`)
@@ -63,6 +64,7 @@ get_xenium_data<-function(path,mtx_name, trans_name="transcript_info.csv.gz",
     cm_neg <- as.data.frame(rbind(r_probe, r_codeword))
     zero_cells <- colnames(cm)[colSums(cm)==0]
     
+    cm = cm[, setdiff(colnames(cm),zero_cells)]
     transcript_info$x <- as.numeric(transcript_info$x_location)
     transcript_info$y <- as.numeric(transcript_info$y_location)
     

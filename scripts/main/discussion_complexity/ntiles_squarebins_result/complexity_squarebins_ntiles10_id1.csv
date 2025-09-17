@@ -1,2 +1,2 @@
 "task_id","rd","grid_length","sv_Elapsed_Time_sec","sv_Peak_RAM_Used_MiB","glm_Elapsed_Time_sec","glm_Peak_RAM_Used_MiB","sv_lst_size","transcript_size","transcript_n","seed_number"
-1,1,10,592.269,3584.8,20.312,96.5999999999999,0.226982116699219,2288.84600830078,100000000,572
+1,1,10,602.891,3584.9,20.019,95.4000000000001,0.226982116699219,2288.84600830078,100000000,549

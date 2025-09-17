@@ -40,7 +40,7 @@ msg 'Job ID ' ${SLURM_JOB_ID}          # Job ID
 msg 'Job name ' $SLURM_JOB_NAME        # Job name
 
 ################################################################################
-module load R/4.5.0
+module load R/4.5.1
 module load pandoc/3.2
 module load gdal/3.9.0
 module load ImageMagick/7.1.1
@@ -50,7 +50,7 @@ module load gcc/14.2
 repeat_times=5
 tile_lens="10,20,30,40,50,60,70,80,90,100"
 
-export TMPDIR=$(mktemp -d -p /vast/projects/xenium_5k/jazzPanda_analysis)
+export TMPDIR=$(mktemp -d -p .)
 # Pass parameters and SLURM_ARRAY_TASK_ID to the R script
 Rscript complexity_ntiles_squarebin_simulation.R $SLURM_ARRAY_TASK_ID $repeat_times $tile_lens
 rm -rf  $TMPDIR

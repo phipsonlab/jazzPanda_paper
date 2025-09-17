@@ -113,7 +113,6 @@ clusters_info$cluster = as.character(clusters_info$cellTypes)
 clusters_info[clusters_info$cellTypes %in% c("Antibody.secreting.B.cells", "Mature.B.cells"),"cluster"] = "B"
 clusters_info[clusters_info$cellTypes %in% c("CD3+.alpha.beta.T.cells", "gamma.delta.T.cells.1"),"cluster"] = "T"
 clusters_info[clusters_info$cellTypes %in% c("Non.inflammatory.macrophages", "Inflammatory.macrophages"),"cluster"] = "Macrophages"
-# clusters_info[clusters_info$cellTypes %in% c("Hep.3","Hep.4", "Hep.5","Hep.6"),"cluster"] = "Hep3"
 ig_clusters = c("NotDet")
 
 clusters_info = clusters_info[clusters_info$cluster != "NotDet",]

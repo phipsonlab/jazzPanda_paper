@@ -6,7 +6,7 @@
 #SBATCH --array=1-10
 #SBATCH --time=02:00:00
 #SBATCH --mem=200G
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=16
 
 ################################################################################
 echo "------------------------------------------------------------------------"
@@ -40,7 +40,7 @@ msg 'Job ID ' ${SLURM_JOB_ID}          # Job ID
 msg 'Job name ' $SLURM_JOB_NAME        # Job name
 
 ################################################################################
-module load R/4.5.0
+module load R/4.5.1
 module load pandoc/3.2
 module load gdal/3.9.0
 module load ImageMagick/7.1.1

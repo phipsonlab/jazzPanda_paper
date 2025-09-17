@@ -4,7 +4,7 @@
 #SBATCH --output=slurm_out/ntr_comp_sim_%A_%a.out
 #SBATCH --error=slurm_out/ntr_comp_sim_%A_%a.err
 #SBATCH --array=1-35
-#SBATCH --time=03:00:00
+#SBATCH --time=05:00:00
 #SBATCH --mem=200G
 #SBATCH --cpus-per-task=6
 
@@ -40,7 +40,7 @@ msg 'Job ID ' ${SLURM_JOB_ID}          # Job ID
 msg 'Job name ' $SLURM_JOB_NAME        # Job name
 
 ################################################################################
-module load R/4.5.0
+module load R/4.5.1
 module load pandoc/3.2
 module load gdal/3.9.0
 module load ImageMagick/7.1.1
@@ -50,7 +50,7 @@ module load gcc/14.2
 repeat_times=5
 tr_numbers="1e6,5e6,1e7,5e7,1e8,5e8,1e9"
 
-export TMPDIR=$(mktemp -d -p /vast/projects/xenium_5k/jazzPanda_analysis)
+export TMPDIR=$(mktemp -d -p .)
 # Pass parameters and SLURM_ARRAY_TASK_ID to the R script
 Rscript complexity_ntr_simulation.R $SLURM_ARRAY_TASK_ID $repeat_times $tr_numbers
 rm -rf  $TMPDIR

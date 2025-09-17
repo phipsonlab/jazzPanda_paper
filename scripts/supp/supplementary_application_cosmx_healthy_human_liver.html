@@ -1638,7 +1638,8 @@ seu &lt;- subset(seu, cells = cluster_info$cell_id)
 nbins = 1600
 Idents(seu)=cluster_info$anno_name[match(colnames(seu), cluster_info$cell_id)]
 seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cell_id)]</code></pre>
-<pre class="r"><code>plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, 
+<pre class="r"><code>plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm,
+             fig_ratio = 1/1,
              my_colors = my_colors, ct_nm = &quot;anno_name&quot;)</code></pre>
 <pre><code>png 
   2 </code></pre>
@@ -1669,18 +1670,17 @@ nc_coords$category=factor(nc_coords$category,
                           levels =c(&quot;NegPrb&quot;,&quot;FalseCode&quot;))
 nc_coords$sample = &quot;sample1&quot;
 
-cat(&quot;#negative controls&quot;, length(unique((nc_coords$gene))), &quot;\n&quot;)</code></pre>
-<pre><code>#negative controls 0 </code></pre>
-<pre class="r"><code>jpeg(file.path(overview_PA, paste0(data_nm, &quot;_nc_xy.jpg&quot;)), 
-     width=1100*2, height=1000, res=200)
-ggplot(nc_coords, aes(x=x, y=y))+
-    geom_point(size=0.001, color=&quot;black&quot;, alpha=0.5)+
-    theme_bw()+
-    facet_wrap(~category, nrow=1)+
-    defined_theme+
-    theme(strip.text = element_text(size=8), 
-          strip.background = element_rect(fill =NA,colour = &quot;black&quot;))
-dev.off()</code></pre>
+
+# CosMx negative control category 
+bins_map &lt;- list(&quot;NegPrb&quot; = 3,
+                 &quot;FalseCode&quot; = 5)   
+
+plot_nc(nc_coords, &quot;sample1&quot;,&quot;NegPrb&quot; , fig_ratio = 1/1,
+        data_nm, fig2, bins_map = bins_map, width = 1100, height = 1100)</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>plot_nc(nc_coords, &quot;sample1&quot;, &quot;FalseCode&quot;, fig_ratio = 1/1,
+        data_nm, overview_PA, bins_map = bins_map, width = 1100, height = 1100)</code></pre>
 <pre><code>png 
   2 </code></pre>
 </div>
@@ -1723,14 +1723,16 @@ obs_corr = get_cor(perm_lst)</code></pre>
                     scale_fill_gradient(low=&quot;white&quot;, high=&quot;maroon4&quot;) + 
                     guides(fill = guide_colorbar(barheight = unit(0.3, &quot;npc&quot;), 
                                                  barwidth  = unit(0.02, &quot;npc&quot;)))+
-                    defined_theme+ theme(legend.position = &quot;right&quot;, 
-                              strip.background = element_rect(fill =NA,colour = NA),
-                              strip.text = element_text(size = rel(1.2)), 
-                              strip.text.y.right = element_blank(),
-                              legend.key.width = unit(2, &quot;cm&quot;),
-                              legend.title = element_text(size = 10),
-                              legend.text = element_text(size = 10),
-                               legend.key.height = unit(2, &quot;cm&quot;))
+                    defined_theme+ 
+            theme(legend.position = &quot;right&quot;, 
+                    aspect.ratio = 1/1,
+                    strip.background = element_rect(fill =NA,colour = NA),
+                    strip.text = element_text(size = rel(1.3)), 
+                    strip.text.y.right = element_blank(),
+                    legend.key.width = unit(2, &quot;cm&quot;),
+                    legend.title = element_text(size = 10),
+                    legend.text = element_text(size = 10),
+                    legend.key.height = unit(2, &quot;cm&quot;))
         
         cluster_data =  cluster_info[cluster_info$cluster==cl, ]
         cl_pt&lt;- ggplot(data =cluster_data,
@@ -1739,10 +1741,12 @@ obs_corr = get_cor(perm_lst)</code></pre>
                     geom_point(size=0.01)+
                     facet_wrap(~anno_name, nrow=1,strip.position = &quot;left&quot;)+
                     scale_color_manual(values = c(&quot;black&quot;))+
-                    defined_theme + theme(legend.position = &quot;none&quot;, 
-                              strip.background = element_blank(), 
-                              legend.key.width = unit(15, &quot;cm&quot;),
-                              strip.text = element_text(size = rel(1.2)))
+                    defined_theme + 
+            theme(legend.position = &quot;none&quot;, 
+                    aspect.ratio = 1/1,
+                    strip.background = element_blank(), 
+                    legend.key.width = unit(15, &quot;cm&quot;),
+                    strip.text = element_text(size = rel(1.3)))
 
         if (length(inters) == 2) {
             genes_plt &lt;- (genes_plt | plot_spacer()) + 
@@ -1762,6 +1766,7 @@ obs_corr = get_cor(perm_lst)</code></pre>
         dev.off()
     }
   }</code></pre>
+<pre><code>cluster: B </code></pre>
 <pre><code>cluster: Central.venous.LSECs </code></pre>
 <pre><code>cluster: Cholangiocytes </code></pre>
 <pre><code>cluster: Hep.1 </code></pre>
@@ -1831,9 +1836,9 @@ for (cl in cluster_names){
 }
 
 
-combined_plot &lt;- wrap_plots(plot_lst, ncol = 3)
+combined_plot &lt;- wrap_plots(plot_lst, ncol = 2)
 jpeg(file.path(mg_PA, paste0(data_nm, &quot;_corr_top3_vvplot.jpg&quot;)),
-    height = 500 * (ceiling(length(plot_lst)/3)), width = 4500, res=200)
+    height = 500 * (ceiling(length(plot_lst)/2)), width = 3000, res=200)
 combined_plot 
 dev.off()</code></pre>
 <pre><code>png 
@@ -1895,13 +1900,14 @@ print.xtable(latex_table, include.rownames = FALSE,
                                                  barwidth  = unit(0.02, &quot;npc&quot;)))+
                     defined_theme+ 
             theme(legend.position = &quot;right&quot;, 
+                  aspect.ratio = 1/1,
                   strip.background = element_rect(fill =NA,colour = NA),
-                  strip.text = element_text(size = rel(1.2)), 
+                  strip.text = element_text(size = rel(1.3)), 
                   strip.text.y.right = element_blank(),
                   legend.key.width = unit(2, &quot;cm&quot;),
                   legend.title = element_text(size = 10),
                   legend.text = element_text(size = 10),
-                   legend.key.height = unit(2, &quot;cm&quot;))
+                  legend.key.height = unit(2, &quot;cm&quot;))
 
         cluster_data =  cluster_info[cluster_info$cluster==cl, ]
         cl_pt&lt;- ggplot(data =cluster_data,
@@ -1909,10 +1915,12 @@ print.xtable(latex_table, include.rownames = FALSE,
                     geom_point(size=0.01)+
                     facet_wrap(~anno_name, nrow=1,strip.position = &quot;left&quot;)+
                     scale_color_manual(values = c(&quot;black&quot;))+
-                    defined_theme + theme(legend.position = &quot;none&quot;, 
-                              strip.background = element_blank(), 
-                              legend.key.width = unit(15, &quot;cm&quot;),
-                              strip.text = element_text(size = rel(1.2)))
+                    defined_theme + 
+            theme(legend.position = &quot;none&quot;, 
+                    strip.background = element_blank(), 
+                    aspect.ratio = 1/1,
+                    legend.key.width = unit(15, &quot;cm&quot;),
+                    strip.text = element_text(size = rel(1.3)))
         if (length(inters) == 2) {
             genes_plt &lt;- (genes_plt | plot_spacer()) + 
             plot_layout(widths = c(2, 1))
@@ -1994,9 +2002,9 @@ for (cl in cluster_names){
     
 }
 
-combined_plot &lt;- wrap_plots(plot_lst, ncol = 3)
+combined_plot &lt;- wrap_plots(plot_lst, ncol = 2)
 jpeg(file.path(mg_PA,paste0(data_nm, &quot;_glm_top3_vvplot.jpg&quot;)),
-    height = 500 * (ceiling(length(plot_lst)/3)), width = 4500, res=200)
+    height = 500 * (ceiling(length(plot_lst)/2)), width = 3000, res=200)
 combined_plot 
 dev.off()</code></pre>
 <pre><code>png 
@@ -2215,13 +2223,13 @@ dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 4.5.0 (2025-04-11)
+<pre><code>R version 4.5.1 (2025-06-13)
 Platform: x86_64-pc-linux-gnu
 Running under: Red Hat Enterprise Linux 9.3 (Plow)
 
 Matrix products: default
-BLAS:   /stornext/System/data/software/rhel/9/base/tools/R/4.5.0/lib64/R/lib/libRblas.so 
-LAPACK: /stornext/System/data/software/rhel/9/base/tools/R/4.5.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.1
+BLAS:   /stornext/System/data/software/rhel/9/base/tools/R/4.5.1/lib64/R/lib/libRblas.so 
+LAPACK: /stornext/System/data/software/rhel/9/base/tools/R/4.5.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.1
 
 locale:
  [1] LC_CTYPE=en_AU.UTF-8       LC_NUMERIC=C              
@@ -2243,7 +2251,7 @@ other attached packages:
  [3] limma_3.64.1                RColorBrewer_1.1-3         
  [5] patchwork_1.3.1             gridExtra_2.3              
  [7] ggrepel_0.9.6               ComplexUpset_1.3.3         
- [9] caret_7.0-1                 lattice_0.22-6             
+ [9] caret_7.0-1                 lattice_0.22-7             
 [11] glmnet_4.1-10               Matrix_1.7-3               
 [13] tidyr_1.3.1                 dplyr_1.1.4                
 [15] data.table_1.17.8           ggplot2_3.5.2              
@@ -2257,7 +2265,7 @@ other attached packages:
 [31] matrixStats_1.5.0           jazzPanda_0.2.4            
 
 loaded via a namespace (and not attached):
-  [1] RcppAnnoy_0.0.22        splines_4.5.0           later_1.4.2            
+  [1] RcppAnnoy_0.0.22        splines_4.5.1           later_1.4.2            
   [4] tibble_3.3.0            polyclip_1.10-7         hardhat_1.4.2          
   [7] pROC_1.19.0.1           rpart_4.1.24            fastDummies_1.7.5      
  [10] lifecycle_1.0.4         rprojroot_2.1.0         globals_0.18.0         
@@ -2276,7 +2284,7 @@ loaded via a namespace (and not attached):
  [49] UCSC.utils_1.4.0        farver_2.1.2            spatstat.explore_3.5-2 
  [52] jsonlite_2.0.0          progressr_0.15.1        ggridges_0.5.6         
  [55] survival_3.8-3          iterators_1.0.14        foreach_1.5.2          
- [58] tools_4.5.0             ica_1.0-3               Rcpp_1.1.0             
+ [58] tools_4.5.1             ica_1.0-3               Rcpp_1.1.0             
  [61] glue_1.8.0              prodlim_2025.04.28      SparseArray_1.8.1      
  [64] xfun_0.52               withr_3.0.2             fastmap_1.2.0          
  [67] digest_0.6.37           timechange_0.3.0        R6_2.6.1               
@@ -2290,11 +2298,11 @@ loaded via a namespace (and not attached):
  [91] png_0.1-8               gower_1.0.2             spatstat.univar_3.1-4  
  [94] knitr_1.50              reshape2_1.4.4          rjson_0.2.23           
  [97] nlme_3.1-168            cachem_1.1.0            zoo_1.8-14             
-[100] stringr_1.5.1           KernSmooth_2.23-26      parallel_4.5.0         
-[103] miniUI_0.1.2            pillar_1.11.0           grid_4.5.0             
+[100] stringr_1.5.1           KernSmooth_2.23-26      parallel_4.5.1         
+[103] miniUI_0.1.2            pillar_1.11.0           grid_4.5.1             
 [106] vctrs_0.6.5             RANN_2.6.2              promises_1.3.3         
 [109] cluster_2.1.8.1         evaluate_1.0.4          magick_2.8.7           
-[112] cli_3.6.5               compiler_4.5.0          rlang_1.1.6            
+[112] cli_3.6.5               compiler_4.5.1          rlang_1.1.6            
 [115] crayon_1.5.3            future.apply_1.20.0     labeling_0.4.3         
 [118] plyr_1.8.9              stringi_1.8.7           viridisLite_0.4.2      
 [121] deldir_2.0-4            BiocParallel_1.42.1     lazyeval_0.2.2         

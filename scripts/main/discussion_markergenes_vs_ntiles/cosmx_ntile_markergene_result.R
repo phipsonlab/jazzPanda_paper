@@ -30,24 +30,6 @@ metadata <- metadata[!apply(metadata[, qc_cols], 1, function(x) any(x == "Fail")
 cat("Total number of cells remaining after removing low quality cells: ", nrow(metadata))
 
 
-# load count matrix
-# gc(reset = TRUE)
-# load_cm_imem <- sum(gc()[, "(Mb)"])
-# counts <- seu[["RNA"]]@counts
-# 
-# cancer_cells = row.names(metadata)[metadata$slide_ID_numeric==2]
-# counts_cancer_sample = counts[, cancer_cells]
-# rm(counts)
-# 
-# load_cm_fmem <- sum(gc()[, "(Mb)"])
-# load_cm_dmem <- load_cm_fmem - load_cm_imem
-# 
-# cat("loading count matrix data for",nrow(counts_cancer_sample),"genes and",
-#     ncol(counts_cancer_sample),"cells took",round(load_cm_dmem / (1024),5),"GB memory")
-
-
-#gc(reset = TRUE)
-#load_cell_imem <- sum(gc()[, "(Mb)"])
 cell_info_cols = c("x_FOV_px", "y_FOV_px", "x_slide_mm", "y_slide_mm",
                    "nCount_negprobes","nFeature_negprobes","nCount_falsecode",
                    "nFeature_falsecode","slide_ID_numeric", "Run_Tissue_name",
@@ -157,10 +139,7 @@ clusters_info$sample = "cancer"
 clusters_info = clusters_info[!duplicated(clusters_info[,c("x","y")]),]
 clusters_info$x = clusters_info$x * 1000
 clusters_info$y = clusters_info$y * 1000
-# dim = 460164 12
-# duplicated 3169 rows
 
-#counts_cancer_sample = counts_cancer_sample[, clusters_info$cell_id]
 
 hl_cancer = all_transcripts_cancer[,c("x","y","feature_name")]
 all_genes = row.names(seu[["RNA"]]@counts)
@@ -175,14 +154,8 @@ negprobes_coords <- hl_cancer[grepl("^NegPrb", hl_cancer$feature_name), ]
 
 ### falsecode
 falsecode_coords <- hl_cancer[grepl("^FalseCode", hl_cancer$feature_name), ]
-# 
-# falsecode_coords$x = falsecode_coords$x * 1000
-# falsecode_coords$y = falsecode_coords$y * 1000
-# negprobes_coords$x = negprobes_coords$x * 1000
-# negprobes_coords$y = negprobes_coords$y * 1000
 
 
-# template starts here
 
 falsecode_coords$sample = "cancer"
 negprobes_coords$sample = "cancer"
@@ -209,6 +182,23 @@ curr_size <- tile_lens[tile_len_index]
 
 cat("curr_size =",curr_size,"\n")
 grid_length = curr_size
+
+
+perm_p = compute_permp(x= list("cancer" = hl_cancer),
+                       cluster_info=clusters_info, 
+                       perm.size=5000,
+                       bin_type="square",
+                       bin_param=c(grid_length,grid_length),
+                       test_genes= all_genes,
+                       correlation_method = "pearson", 
+                       n_cores = 5,
+                       correction_method="BH")
+
+
+saveRDS(perm_p, paste(paste("cosmx_hliver_cancer_perm_lst_gr", 
+                            curr_size, sep=""),".Rds", sep=""))
+rm(perm_p)
+###############################################################################
 gc(reset = TRUE)
 sv_st = Sys.time()
 sv_imem <- sum(gc()[, "(Mb)"])
@@ -264,7 +254,7 @@ saveRDS(jazzPanda_res_lst, paste(paste("cosmx_hliver_cancer_jazzPanda_res_lst_gr
 rm(nc_vectors,jazzPanda_res_lst,hliver_vector_lst)
 
 #Create a data frame to store the results
-results_df <- data.frame(
+glm_results_df <- data.frame(
     genes = all_genes,
     task_id = rep(task_id, length(all_genes)),
     curr_size = rep(curr_size, length(all_genes)),
@@ -272,9 +262,8 @@ results_df <- data.frame(
     glm_coef = curr_top_res[match(all_genes,curr_top_res$gene),"glm_coef"],
     seed_number=rep(989, length(all_genes))
 )
-colnames(results_df)[4] <- paste("top_cluster_gr", curr_size, sep="")
-colnames(results_df)[5] <- paste("glm_coef_gr", curr_size, sep="")
+colnames(glm_results_df)[4] <- paste("top_cluster_gr", curr_size, sep="")
+colnames(glm_results_df)[5] <- paste("glm_coef_gr", curr_size, sep="")
 
-output_file_name <- sprintf("cosmx_hlc_ntiles_mg_gr%d_id%d.csv",curr_size,task_id)
-
-write.csv(results_df, output_file_name, row.names = FALSE)
+output_file_name <- sprintf("cosmx_hlc_glm_ntiles_mg_gr%d_id%d.csv",curr_size,task_id)
+write.csv(glm_results_df, output_file_name, row.names = FALSE)

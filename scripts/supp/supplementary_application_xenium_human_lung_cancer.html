@@ -1526,30 +1526,28 @@ clusts &lt;- unique(cluster_info$cluster)
 cluster_names &lt;- clusts[order(as.numeric(sub(&quot;c&quot;, &quot;&quot;, clusts)))]
 anno_df &lt;- data.frame(
   cluster = c(&quot;c1&quot;,&quot;c2&quot;,&quot;c3&quot;,&quot;c4&quot;,&quot;c5&quot;,&quot;c6&quot;,&quot;c8&quot;,&quot;c9&quot;,&quot;c12&quot;,&quot;c13&quot;,&quot;c15&quot;,&quot;c16&quot;,&quot;c18&quot;),
-  major_class = c(
-    &quot;Myeloid&quot;,&quot;Lymphoid&quot;,&quot;Myeloid&quot;,&quot;Epithelial (tumor)&quot;,&quot;Stromal&quot;,&quot;Epithelial (non-malig.)&quot;,
-    &quot;Endothelial&quot;,&quot;Endothelial&quot;,&quot;Myeloid&quot;,&quot;Stromal&quot;,&quot;Lymphoid&quot;,&quot;Stromal&quot;,&quot;Epithelial (non-malig./mixed)&quot;
+    major_class = c(
+    &quot;Myeloid&quot;,&quot;Lymphoid&quot;,&quot;Myeloid&quot;,&quot;Epithelial (tumor)&quot;,&quot;Stromal&quot;,&quot;Epithelial&quot;,
+    &quot;Vascular&quot;,&quot;Vascular&quot;,&quot;Myeloid&quot;,&quot;Stromal&quot;,&quot;Lymphoid&quot;,&quot;Stromal&quot;,&quot;Epithelial&quot;
   ),
-  subclass = c(
-    &quot;Mononuclear phagocytes&quot;,&quot;T cells&quot;,&quot;Tissue-resident macrophages&quot;,&quot;Epithelial carcinoma&quot;,
-    &quot;Fibroblasts / CAFs&quot;,&quot;Secretory (airway/tracheobronchial)&quot;,&quot;Capillary/arterial endothelium&quot;,
-    &quot;Venous/HEV / lymphatic-skewed endothelium&quot;,&quot;Dendritic / inflammatory monocytes&quot;,
-    &quot;Smooth muscle (airway)&quot;,&quot;B lineage&quot;,&quot;Perivascular&quot;,&quot;Basal–ciliated airway lineage&quot;
+  sub_class = c(
+    &quot;Macrophage/monocyte&quot;,&quot;T cell&quot;,&quot;Macrophage&quot;,&quot;Carcinoma (luminal-like)&quot;,&quot;Fibroblast&quot;,&quot;Airway secretory&quot;,
+    &quot;Endothelium (capillary/arterial)&quot;,&quot;Endothelium (venous/activated)&quot;,&quot;Dendritic/monocyte&quot;,&quot;Vascular mural cell&quot;,&quot;B lineage&quot;,&quot;Vascular smooth muscle&quot;,&quot;Airway basal–ciliated transitional&quot;
   ),
-  specific_cell_type_state = c(
-    &quot;Activated TAM, CHIT1⁺/MMP^hi&quot;,
-    &quot;Activated/exhausted T cells (CD8⁺ GZMK⁺/PDCD1⁺) with Tfh/Treg admixture&quot;,
-    &quot;MARCO⁺/VSIG4⁺ alveolar-like macrophages (immunosuppressive)&quot;,
-    &quot;Lung adenocarcinoma cells (EPCAM⁺/MUC1⁺/EGFR⁺), cycling subset present&quot;,
-    &quot;Myofibroblastic CAFs (mCAFs)&quot;,
-    &quot;Club/Goblet-like secretory cells&quot;,
-    &quot;Capillary/arterial-like endothelium&quot;,
-    &quot;ACKR1⁺ venous/HEV-like endothelium with lymphatic features&quot;,
-    &quot;cDC2/Mono-DC (CD1C⁺/FCER1A⁺) + FCN1^hi monocytes&quot;,
-    &quot;Airway smooth muscle (ASM)&quot;,
-    &quot;Plasmablasts / plasma cells (MZB1⁺, CD27⁺, TNFRSF17⁺)&quot;,
-    &quot;Vascular smooth muscle / pericytes (MYH11⁺/CSPG4⁺)&quot;,
-    &quot;Basal/suprabasal &amp; ciliated mixed program (SOX2/TP73/FOXJ1)&quot;
+    cell_type = c(
+    &quot;IFN-activated TAM (CXCL9/10+, MMP-high)&quot;,
+    &quot;Exhausted/activated T (CXCR6+ PD-1+ GZMK+)&quot;,
+    &quot;MARCO+ alveolar/TAM (immunoreg.)&quot;,
+    &quot;Proliferating EGFR/MET+ tumor epi&quot;,
+    &quot;SFRP2/THBS2+ matrix CAF&quot;,
+    &quot;Club/serous secretory (SFTPD+ CFTR+)&quot;,
+    &quot;Capillary/arterial EC (TMEM100+ CLDN5+)&quot;,
+    &quot;Venous/activated EC (VWF+ ACKR1+ PLVAP+)&quot;,
+    &quot;cDC2 / inflammatory monocyte mix&quot;,
+    &quot;Pericyte-leaning mural cell&quot;,
+    &quot;Plasma cell (MZB1+ BCMA+)&quot;,
+    &quot;Contractile SMC&quot;,
+    &quot;Basal/ciliated transitional (KRT5/TP63 &amp; FOXJ1/TP73)&quot;
   ),
   anno_name = c(&quot;Inflammatory TAM&quot;,
                 &quot;Activated T cell&quot;,
@@ -1560,39 +1558,42 @@ anno_df &lt;- data.frame(
                 &quot;Capillary endothelium&quot;,
                 &quot;Venous/HEV endothelium&quot;,
                 &quot;cDC2 / Mono-DC&quot;,
-                &quot;Airway smooth muscle&quot;,
+                &quot;Vascular mural cell&quot;,
                 &quot;Plasma cell&quot;,
                 &quot;Vascular SMC / Pericyte&quot;,
                 &quot;Basal–ciliated epithelium&quot;), 
-  evidence_selected_markers = c(
-    &quot;CHIT1, LGMN, AIF1, FCGR1A, ITGAM, CD14, MS4A4A; MMP9/12, CXCL10, TREM2/HAVCR2&quot;,
-    &quot;IL7R, CXCL9, GZMK/GZMA, PDCD1, CTLA4, CXCR6, CD3D/E, CD247; low FOXP3/CXCL13&quot;,
-    &quot;MARCO, VSIG4, CD163, FCGR3A, ALOX5, AQP9, CXCL5, RETN&quot;,
-    &quot;EPCAM, MUC1, KRT7, TACSTD2, EGFR, MET; UBE2C, TOP2A, MKI67, CENPF, CCNB2, AREG/SEC61G&quot;,
-    &quot;THBS2, SFRP2, LTBP2, COL5A2, COL8A1, FBN1, THY1, IGF1, PDPN; PDGFRA/B&quot;,
-    &quot;SFTPD, SFTA3, DMBT1, TMPRSS2, CFTR, GKN2, PEBP4, DUOX1, PRG4&quot;,
-    &quot;TMEM100, CA4, ACE, CLDN5, RAMP2, CD34, KCNK3; AGER present&quot;,
-    &quot;VWF, PLVAP, ACKR1, SELP, ADGRL4; LYVE1/PROX1 (low), ECSCR&quot;,
-    &quot;FCN1, S100A12, CD1C, FCER1A, CLEC4E, CD300E, CLEC10A&quot;,
-    &quot;DES, MYH11, CNN1, PLN, LMOD1; TGM2, FST&quot;,
-    &quot;MZB1, POU2AF1, CD79A, TNFRSF17, CD27, CD38, FKBP11&quot;,
-    &quot;MYH11 (very high), DES, CNN1, LMOD1, PLN; CSPG4, RERGL&quot;,
-    &quot;FOXJ1, MUC5B, KRT5, KRT17, KRT15, SOX2, TP73, CYP2F1, AGR3; ITGB4, ELF3&quot;
+  supporting_genes = c(
+    &quot;CXCL9,CXCL10,IRF8,FCGR1A,CD86,CD14,MMP9,MMP12,CHIT1,LGMN&quot;,
+    &quot;PDCD1,CTLA4,CXCR6,GZMK,CD3D/E,CD8A,KLRB1,CXCL13&quot;,
+    &quot;MARCO,VSIG4,CD68,CD163,FCGR3A,TREM2,ALOX5&quot;,
+    &quot;EPCAM,KRT7,MUC1,TACSTD2,EGFR,MET,SEC61G,UBE2C,CCNB2,MKI67,TOP2A&quot;,
+    &quot;SFRP2,THBS2,COL5A2,COL8A1,FBN1,PDGFRA,PDGFRB,THY1,IGF1,LTBP2&quot;,
+    &quot;SFTPD,SFTA3,DMBT1,CFTR,TMPRSS2,DUOX1,GKN2&quot;,
+    &quot;TMEM100,CLDN5,RAMP2,ADGRL4,KDR,ACE,GNG11&quot;,
+    &quot;VWF,ACKR1,MMRN1,PLVAP,SELP,ADGRL4,APOLD1&quot;,
+    &quot;CD1C,FCER1A,S100A12,FCN1,CLEC4E,CD300E&quot;,
+    &quot;PDGFRB,CSPG4,TGM2,FST,DES,CNN1&quot;,
+    &quot;MZB1,POU2AF1,CD79A,TNFRSF17,CD19,MS4A1,CD27,CD38&quot;,
+    &quot;MYH11,CNN1,LMOD1,DES,PLN,RERGL&quot;,
+    &quot;MUC5B,FOXJ1,TP73,SOX2,KRT5,KRT15,KRT17,GPX2,CYP2F1&quot;
   ),
-  caveats_notes = c(
-    &quot;Mix of activation states; HPGDS/S100B hints mast/glial contamination; macrophage-dominant TAMs&quot;,
-    &quot;Multiple T states (CD8 effector, Tfh-like CXCL13, some FOXP3^lo Treg); could sub-stratify&quot;,
-    &quot;Classic lung alveolar macrophage signature; tissue-resident/immunoregulatory&quot;,
-    &quot;Strong epithelial oncogenic program; includes proliferative subset&quot;,
-    &quot;ECM-remodeling CAF program; mesenchymal; lacks strong iCAF chemokines&quot;,
-    &quot;Airways secretory program; likely non-malignant; check CNV to confirm&quot;,
-    &quot;AGER contamination from AT1 possible; endothelial program is clear&quot;,
-    &quot;Mixed venous/HEV signature; some lymphatic admixture; not capillary&quot;,
-    &quot;Mixture: cDC2 and FCN1^hi monocytes; separable by CD1C vs FCN1&quot;,
-    &quot;Smooth muscle core; co-exists with c16; lack of CSPG4 favors ASM&quot;,
-    &quot;Mature antibody-secreting program; MS4A1^low fits plasma bias&quot;,
-    &quot;Contractile SMC with CSPG4; vascular SMC/pericyte&quot;,
-    &quot;Mixed basal (KRT5/15/17, ITGB4) and ciliated (FOXJ1); continuum; may include squamous-like&quot;
+  notes = c(
+    &quot;Concordant IFN/inflammatory TAM; minor DC signal likely contamination.&quot;,
+    &quot;Mix of exhausted CD8 (PD-1+, CXCR6+, GZMK+) and Tfh-like (CXCL13+); minimal Treg.&quot;,
+    &quot;Alveolar/TAM program with immunoregulatory markers; robust across methods.&quot;,
+    &quot;Strong epithelial tumor with proliferation and EGFR/MET activity.&quot;,
+    &quot;Canonical matrix-remodeling CAF; KIT/WT1 likely noise/doublets.&quot;,
+    &quot;Secretory/club phenotype; not classic AT2 (SFTPC absent).&quot;,
+    &quot;Endothelial identity dominant; AGER/CA4 likely interface/ambient RNA.&quot;,
+    &quot;Activated venous endothelium; some lymphatic markers reflect minor subfraction.&quot;,
+    &quot;cDC2 mixed with inflammatory monocytes; peritumoral APC compartment.&quot;,
+    &quot;Pericyte-skewed mural cells; contrasts with c16 contractile SMC.&quot;,
+    &quot;Mature plasma cell program; very consistent.&quot;,
+    &quot;Definitive contractile SMC signature.&quot;,
+    &quot;Basal–ciliated transitional, typical of injury/repair.&quot;
+  ),
+  confidence = c(
+    &quot;High&quot;,&quot;Medium&quot;,&quot;High&quot;,&quot;High&quot;,&quot;High&quot;,&quot;Medium&quot;,&quot;Medium&quot;,&quot;High&quot;,&quot;Medium&quot;,&quot;High&quot;,&quot;High&quot;,&quot;High&quot;,&quot;High&quot;
   ),
   stringsAsFactors = FALSE
 )
@@ -1624,7 +1625,7 @@ seu &lt;- subset(seu, cells = cluster_info$cell_id)
 nbins = 4900
 Idents(seu)=cluster_info$anno_name[match(colnames(seu), cluster_info$cell_id)]
 seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cell_id)]</code></pre>
-<pre class="r"><code>plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, 
+<pre class="r"><code>plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm,fig_ratio=10/11,
              my_colors = my_colors, ct_nm = &quot;anno_name&quot;)</code></pre>
 <pre><code>png 
   2 </code></pre>
@@ -1639,30 +1640,30 @@ seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cell_id)]</co
 </div>
 <div id="load-blank-genes" class="section level1">
 <h1>load blank genes</h1>
-<pre class="r"><code>nc_coords &lt;- hl_cancer$trans_info[!(hl_cancer$trans_info$feature_name %in% c(hl_cancer$probe, hl_cancer$codeword)), ]
+<pre class="r"><code>nc_coords &lt;- hl_cancer$trans_info[(hl_cancer$trans_info$feature_name %in% 
+                                        c(hl_cancer$probe, hl_cancer$codeword)), ]
 nc_coords$category = &quot;negative control probe&quot;
 nc_coords[nc_coords$feature_name %in% c(hl_cancer$codeword), &quot;category&quot;] = &quot;negative control codeword&quot;
 cat(&quot;#negative controls&quot;, length(unique((nc_coords$feature_name))), &quot;\n&quot;)</code></pre>
-<pre><code>#negative controls 480 </code></pre>
+<pre><code>#negative controls 61 </code></pre>
 <pre class="r"><code>nc_coords$category=factor(nc_coords$category, 
                           levels =c(&quot;negative control probe&quot;,
                                    &quot;negative control codeword&quot;))
 nc_coords$sample = &quot;sample1&quot;
 
 
-cat(&quot;#negative controls&quot;, length(unique((nc_coords$gene))), &quot;\n&quot;)</code></pre>
-<pre><code>#negative controls 0 </code></pre>
-<pre class="r"><code>jpeg(file.path(overview_PA, paste0(data_nm, &quot;_nc_xy.jpg&quot;)), 
-     width=1100, height=1000, res=200)
-ggplot(nc_coords, aes(x=x, y=y))+
-    geom_point(size=0.01, color=&quot;black&quot;)+
-    theme_bw()+
-    facet_wrap(category~sample)+
-    scale_y_reverse()+
-    defined_theme+
-    theme(strip.text = element_text(size=8), 
-          strip.background = element_rect(fill =NA,colour = &quot;black&quot;))
-dev.off()</code></pre>
+# Xenium negative control category 
+bins_map &lt;- list(&quot;negative control probe&quot; = 1,
+                 &quot;negative control codeword&quot; = 1)   
+
+plot_nc(nc_coords, &quot;sample1&quot;,&quot;negative control probe&quot; , 
+        data_nm, overview_PA,fig_ratio=10/11,
+          bins_map = bins_map, width = 1100, height = 1100)</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>plot_nc(nc_coords, &quot;sample1&quot;, &quot;negative control codeword&quot;, 
+        data_nm, overview_PA,fig_ratio = 10/11,
+          bins_map = bins_map, width = 1100, height = 1100)</code></pre>
 <pre><code>png 
   2 </code></pre>
 </div>
@@ -1709,7 +1710,8 @@ obs_corr = get_cor(perm_lst)</code></pre>
                                                  barwidth  = unit(0.02, &quot;npc&quot;)))+
                     defined_theme+ theme(legend.position = &quot;right&quot;, 
                               strip.background = element_rect(fill =NA,colour = NA),
-                              strip.text = element_text(size = rel(1.2)), 
+                              strip.text = element_text(size = rel(1.3)), 
+                              aspect.ratio = 10/11,
                               strip.text.y.right = element_blank(),
                               legend.key.width = unit(2, &quot;cm&quot;),
                               legend.title = element_text(size = 10),
@@ -1724,9 +1726,10 @@ obs_corr = get_cor(perm_lst)</code></pre>
                     facet_wrap(~anno_name, nrow=1,strip.position = &quot;left&quot;)+
                     scale_color_manual(values = c(&quot;black&quot;))+
                     defined_theme + theme(legend.position = &quot;none&quot;, 
+                                          aspect.ratio = 10/11,
                               strip.background = element_blank(), 
                               legend.key.width = unit(15, &quot;cm&quot;),
-                              strip.text = element_text(size = rel(1.2)))
+                              strip.text = element_text(size = rel(1.3)))
 
         if (length(inters) == 2) {
             genes_plt &lt;- (genes_plt | plot_spacer()) + 
@@ -1818,9 +1821,9 @@ for (cl in cluster_names){
 }
 
 
-combined_plot &lt;- wrap_plots(plot_lst, ncol = 3)
+combined_plot &lt;- wrap_plots(plot_lst, ncol = 2)
 jpeg(file.path(mg_PA, paste0(data_nm, &quot;_corr_top3_vvplot.jpg&quot;)),
-    height = 500 * (ceiling(length(plot_lst)/3)), width = 4500, res=200)
+    height = 500 * (ceiling(length(plot_lst)/2)), width = 3000, res=200)
 combined_plot 
 dev.off()</code></pre>
 <pre><code>png 
@@ -1883,8 +1886,9 @@ print.xtable(latex_table, include.rownames = FALSE,
                                                  barwidth  = unit(0.02, &quot;npc&quot;)))+
                     defined_theme+ 
             theme(legend.position = &quot;right&quot;, 
+                  aspect.ratio = 10/11,
                   strip.background = element_rect(fill =NA,colour = NA),
-                  strip.text = element_text(size = rel(1.2)), 
+                  strip.text = element_text(size = rel(1.3)), 
                   strip.text.y.right = element_blank(),
                   legend.key.width = unit(2, &quot;cm&quot;),
                   legend.title = element_text(size = 10),
@@ -1901,7 +1905,8 @@ print.xtable(latex_table, include.rownames = FALSE,
                     defined_theme + theme(legend.position = &quot;none&quot;, 
                               strip.background = element_blank(), 
                               legend.key.width = unit(15, &quot;cm&quot;),
-                              strip.text = element_text(size = rel(1.2)))
+                              aspect.ratio = 10/11,
+                              strip.text = element_text(size = rel(1.3)))
         if (length(inters) == 2) {
             genes_plt &lt;- (genes_plt | plot_spacer()) + 
             plot_layout(widths = c(2, 1))
@@ -1986,9 +1991,9 @@ for (cl in cluster_names){
     
 }
 
-combined_plot &lt;- wrap_plots(plot_lst, ncol = 3)
+combined_plot &lt;- wrap_plots(plot_lst, ncol = 2)
 jpeg(file.path(mg_PA,paste0(data_nm, &quot;_glm_top3_vvplot.jpg&quot;)),
-    height = 500 * (ceiling(length(plot_lst)/3)), width = 4500, res=200)
+    height = 500 * (ceiling(length(plot_lst)/2)), width = 3000, res=200)
 combined_plot 
 dev.off()</code></pre>
 <pre><code>png 
@@ -2007,7 +2012,7 @@ FM_result$cluster &lt;- factor(FM_result$cluster,
 top_mg &lt;- FM_result %&gt;%
   group_by(cluster) %&gt;%
   arrange(desc(avg_log2FC), .by_group = TRUE) %&gt;% 
-  slice_max(order_by = avg_log2FC, n = 10) %&gt;%
+  slice_max(order_by = avg_log2FC, n = 20) %&gt;%
   select(cluster, gene, avg_log2FC)
 
 # Combine into a new dataframe for LaTeX output
@@ -2201,13 +2206,13 @@ dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 4.5.0 (2025-04-11)
+<pre><code>R version 4.5.1 (2025-06-13)
 Platform: x86_64-pc-linux-gnu
 Running under: Red Hat Enterprise Linux 9.3 (Plow)
 
 Matrix products: default
-BLAS:   /stornext/System/data/software/rhel/9/base/tools/R/4.5.0/lib64/R/lib/libRblas.so 
-LAPACK: /stornext/System/data/software/rhel/9/base/tools/R/4.5.0/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.1
+BLAS:   /stornext/System/data/software/rhel/9/base/tools/R/4.5.1/lib64/R/lib/libRblas.so 
+LAPACK: /stornext/System/data/software/rhel/9/base/tools/R/4.5.1/lib64/R/lib/libRlapack.so;  LAPACK version 3.12.1
 
 locale:
  [1] LC_CTYPE=en_AU.UTF-8       LC_NUMERIC=C              
@@ -2229,7 +2234,7 @@ other attached packages:
  [3] limma_3.64.1                RColorBrewer_1.1-3         
  [5] patchwork_1.3.1             gridExtra_2.3              
  [7] ggrepel_0.9.6               ComplexUpset_1.3.3         
- [9] caret_7.0-1                 lattice_0.22-6             
+ [9] caret_7.0-1                 lattice_0.22-7             
 [11] glmnet_4.1-10               Matrix_1.7-3               
 [13] tidyr_1.3.1                 dplyr_1.1.4                
 [15] data.table_1.17.8           ggplot2_3.5.2              
@@ -2243,7 +2248,7 @@ other attached packages:
 [31] matrixStats_1.5.0           jazzPanda_0.2.4            
 
 loaded via a namespace (and not attached):
-  [1] RcppAnnoy_0.0.22        splines_4.5.0           later_1.4.2            
+  [1] RcppAnnoy_0.0.22        splines_4.5.1           later_1.4.2            
   [4] R.oo_1.27.1             tibble_3.3.0            polyclip_1.10-7        
   [7] hardhat_1.4.2           pROC_1.19.0.1           rpart_4.1.24           
  [10] fastDummies_1.7.5       lifecycle_1.0.4         rprojroot_2.1.0        
@@ -2262,7 +2267,7 @@ loaded via a namespace (and not attached):
  [49] tidyselect_1.2.1        shape_1.4.6.1           UCSC.utils_1.4.0       
  [52] farver_2.1.2            spatstat.explore_3.5-2  jsonlite_2.0.0         
  [55] progressr_0.15.1        ggridges_0.5.6          survival_3.8-3         
- [58] iterators_1.0.14        foreach_1.5.2           tools_4.5.0            
+ [58] iterators_1.0.14        foreach_1.5.2           tools_4.5.1            
  [61] ica_1.0-3               Rcpp_1.1.0              glue_1.8.0             
  [64] prodlim_2025.04.28      SparseArray_1.8.1       xfun_0.52              
  [67] withr_3.0.2             fastmap_1.2.0           digest_0.6.37          
@@ -2277,11 +2282,11 @@ loaded via a namespace (and not attached):
  [94] png_0.1-8               gower_1.0.2             spatstat.univar_3.1-4  
  [97] knitr_1.50              reshape2_1.4.4          rjson_0.2.23           
 [100] nlme_3.1-168            cachem_1.1.0            zoo_1.8-14             
-[103] stringr_1.5.1           KernSmooth_2.23-26      parallel_4.5.0         
-[106] miniUI_0.1.2            pillar_1.11.0           grid_4.5.0             
+[103] stringr_1.5.1           KernSmooth_2.23-26      parallel_4.5.1         
+[106] miniUI_0.1.2            pillar_1.11.0           grid_4.5.1             
 [109] vctrs_0.6.5             RANN_2.6.2              promises_1.3.3         
 [112] cluster_2.1.8.1         evaluate_1.0.4          magick_2.8.7           
-[115] cli_3.6.5               compiler_4.5.0          rlang_1.1.6            
+[115] cli_3.6.5               compiler_4.5.1          rlang_1.1.6            
 [118] crayon_1.5.3            future.apply_1.20.0     labeling_0.4.3         
 [121] plyr_1.8.9              stringi_1.8.7           viridisLite_0.4.2      
 [124] deldir_2.0-4            BiocParallel_1.42.1     lazyeval_0.2.2         

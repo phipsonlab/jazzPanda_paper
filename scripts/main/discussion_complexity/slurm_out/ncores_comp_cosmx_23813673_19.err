@@ -1,0 +1,42 @@
+/var/spool/slurmd/job23813896/slurm_script: line 33: msg: command not found
+/var/spool/slurmd/job23813896/slurm_script: line 34: msg: command not found
+/var/spool/slurmd/job23813896/slurm_script: line 35: msg: command not found
+/var/spool/slurmd/job23813896/slurm_script: line 36: msg: command not found
+/var/spool/slurmd/job23813896/slurm_script: line 37: msg: command not found
+/var/spool/slurmd/job23813896/slurm_script: line 38: msg: command not found
+/var/spool/slurmd/job23813896/slurm_script: line 39: msg: command not found
+/var/spool/slurmd/job23813896/slurm_script: line 40: msg: command not found
+Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Registered S3 method overwritten by 'pROC':
+  method   from            
+  plot.roc spatstat.explore
+
+Attaching package: ‘tidyr’
+
+The following object is masked from ‘package:reshape2’:
+
+    smiths
+
+
+Attaching package: ‘dplyr’
+
+The following object is masked from ‘package:matrixStats’:
+
+    count
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
