@@ -1506,70 +1506,114 @@ library(xtable)
 source(here(&quot;scripts/utils.R&quot;))</code></pre>
 <div id="load-the-data" class="section level1">
 <h1>load the data</h1>
-<pre class="r"><code>rep1=get_xenium_data(path=&quot;/stornext/Bioinf/data/lab_phipson/data/xenium_Mm_brain/xenium_prerelease_jun20_mBrain_replicates/mBrain_ff_rep1/&quot;, 
-              mtx_name = &quot;cell_feature_matrix_mtx/&quot;)
+<pre class="r"><code>rep1=get_xenium_data(path=&quot;/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Xenium_mouse_brain/Xenium_V1_FF_Mouse_Brain_MultiSection_1_outs/&quot;, 
+                     mtx_name = &quot;cell_feature_matrix/&quot;,
+                     trans_name = &quot;transcripts.csv.gz&quot;,
+                     cells_name=&quot;cells.csv.gz&quot;)
 
-rep2=get_xenium_data(path=&quot;/stornext/Bioinf/data/lab_phipson/data/xenium_Mm_brain/xenium_prerelease_jun20_mBrain_replicates/mBrain_ff_rep2/&quot;, 
-              mtx_name = &quot;cell_feature_matrix_mtx/&quot;)
+rep2=get_xenium_data(path=&quot;/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Xenium_mouse_brain/Xenium_V1_FF_Mouse_Brain_MultiSection_2_outs/&quot;, 
+                     mtx_name = &quot;cell_feature_matrix/&quot;,
+                     trans_name = &quot;transcripts.csv.gz&quot;,
+                     cells_name=&quot;cells.csv.gz&quot;)
 
-rep3=get_xenium_data(path=&quot;/stornext/Bioinf/data/lab_phipson/data/xenium_Mm_brain/xenium_prerelease_jun20_mBrain_replicates/mBrain_ff_rep3/&quot;, 
-              mtx_name = &quot;cell_feature_matrix_mtx/&quot;)
+rep3=get_xenium_data(path=&quot;/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Xenium_mouse_brain/Xenium_V1_FF_Mouse_Brain_MultiSection_3_outs/&quot;, 
+                     mtx_name = &quot;cell_feature_matrix/&quot;,
+                     trans_name = &quot;transcripts.csv.gz&quot;,
+                     cells_name=&quot;cells.csv.gz&quot;)
 
 rep1$trans_info = rep1$trans_info[rep1$trans_info$qv &gt;=20 &amp; rep1$trans_info$cell_id != -1 &amp; !(rep1$trans_info$cell_id %in% rep1$zero_cells), ]
 rep2$trans_info = rep2$trans_info[rep2$trans_info$qv &gt;=20 &amp;  rep2$trans_info$cell_id != -1 &amp; !(rep2$trans_info$cell_id %in% rep2$zero_cells), ]
 rep3$trans_info = rep3$trans_info[rep3$trans_info$qv &gt;=20 &amp; rep3$trans_info$cell_id != -1 &amp; !(rep3$trans_info$cell_id %in% rep3$zero_cells), ]
 
 data_nm  &lt;- &quot;xenium_mbrain&quot;
-# load geenrated data
+# load generated data
 cluster_info = readRDS(here(data_path,paste0(data_nm, &quot;_clusters.Rds&quot;)))
+cluster_names = paste0(&quot;c&quot;,1:9)
+
 anno_df &lt;- data.frame(
-  cluster = c(&quot;c0&quot;,&quot;c1&quot;,&quot;c2&quot;,&quot;c3&quot;,&quot;c4&quot;,&quot;c5&quot;,&quot;c6&quot;,&quot;c7&quot;,&quot;c8&quot;,&quot;c9&quot;),
-  major_class = c(&quot;Glia&quot;,
-                  &quot;Neuron (Glut)&quot;,
-                  &quot;Neuron (Glut)&quot;,
-                  &quot;Neuron (GABA)&quot;,
-                  &quot;Non-neuronal&quot;,
-                  &quot;Neuron (Glut)&quot;,
-                  &quot;Neuron (Glut)&quot;,
-                  &quot;Neuron (Glut)&quot;,
-                  &quot;Immune&quot;,
-                  &quot;Neuron (Glut)&quot;),
-  subclass = c(&quot;OL lineage / Astrocytes&quot;,
-               &quot;IT (intratelencephalic)&quot;,
-               &quot;Projection (CT)&quot;,
-               &quot;Interneuron&quot;,
-               &quot;Vascular / Stromal&quot;,
-               &quot;Hippocampal excitatory&quot;,
-               &quot;Hippocampal excitatory&quot;,
-               &quot;PT (subcortical-projecting)&quot;,
-               &quot;Microglia&quot;,
-               &quot;IT&quot;),
-  anno_name = c(&quot;Astro-OPC/OL mix&quot;,
-                &quot;IT L2/3-4&quot;,
-                &quot;CT-like L6&quot;,
-                &quot;Pvalb interneuron&quot;,
-                &quot;Vascular/ChP fibro-endo&quot;,
-                &quot;CA pyramidal&quot;,
-                &quot;DG granule&quot;,
-                &quot;PT L5&quot;,
-                &quot;Microglia&quot;,
-                &quot;IT Hpcal1&quot;),
-  Notes = c(&quot;Diffuse background, mix of astrocytic (Gfap) and oligodendrocytic (Opalin, Sox10) signals&quot;,
-            &quot;Strong superficial cortical band, Cux1/2, Satb2, Rorb&quot;,
-            &quot;Deep cortical band, Foxp2, Slc17a6, Nell1&quot;,
-            &quot;Sparse across cortex, Gad1/2, Pvalb, Syt2&quot;,
-            &quot;Strands and CP region, Igf2, Pecam1, Col1a1&quot;,
-            &quot;CA1–CA3 band, Slc17a7, Car4, Neurod6&quot;,
-            &quot;Clear DG granule cell layer, Prox1, Calb1&quot;,
-            &quot;Deep cortical stripe, Bcl11b, Penk&quot;,
-            &quot;Scattered puncta, Trem2, Cd68, Siglech&quot;,
-            &quot;Edge-localized cluster, Hpcal1, Cdh4&quot;),
+    cluster = cluster_names,
+    major_class = c(
+    &quot;Inhibitory neuron&quot;,
+    &quot;Oligodendrocyte lineage&quot;,
+    &quot;Excitatory neuron&quot;,
+    &quot;Excitatory neuron&quot;,
+    &quot;Non-neuronal (barrier/stromal mix)&quot;,
+    &quot;Inhibitory projection neuron&quot;,
+    &quot;Excitatory neuron&quot;,
+    &quot;Excitatory neuron&quot;,
+    &quot;Cholinergic neuron&quot;
+  ),
+  sub_class = c(
+    &quot;L2/3 LAMP5/VIP interneuron&quot;,
+    &quot;Mature oligodendrocyte (myelinating)&quot;,
+    &quot;IT L2/3&quot;,
+    &quot;Corticothalamic-like&quot;,
+    &quot;Choroid plexus &amp; vascular/stromal admixture&quot;,
+    &quot;Striatal medium spiny neuron (MSN)&quot;,
+    &quot;Dentate gyrus granule&quot;,
+    &quot;IT L6 corticocortical (Neurod6+)&quot;,
+    &quot;Cortical/striatal cholinergic interneuron&quot;
+  ),
+  cell_type = c(
+    &quot;VIP/LAMP5 (CPLX3+, ID2+)&quot;,
+    &quot;MOL (Opalin+/Gjc3+/Sox10+)&quot;,
+    &quot;IT-L2/3 (BHLHE22+/HPcal1+)&quot;,
+    &quot;L6 CT-like (FOXP2+/NTSR2+/VGlut2+)&quot;,
+    &quot;Choroid plexus epithelium–enriched&quot;,
+    &quot;MSN (DARPP-32+, GABAergic)&quot;,
+    &quot;DG granule (Prox1+/Calb1+)&quot;,
+    &quot;IT-L6/CC (Neurod6+/Wfs1+/Shisa6+)&quot;,
+    &quot;ChAT+/SNCG+ interneuron&quot;
+  ),
+  supporting_genes = c(
+    &quot;JP: Id2, Lamp5, Vip, Cplx3, Crh, Cort; FM: Lamp5, Vip, Cplx3, Satb2&quot;,
+    &quot;JP: Opalin, Gjc3, Sox10; FM: Opalin, Sox10, Gjc3, Spag16&quot;,
+    &quot;JP: Slc17a7, Bhlhe22, Hpcal1, Cdh13; FM: Cabp7, Bhlhe22, Syt17&quot;,
+    &quot;JP: Slc17a6, Foxp2, Ntsr2, Rims3; FM: Slc17a6, Foxp2, Rims3&quot;,
+    &quot;JP: Igf2, Slc13a4, Kdr, Pecam1, Emcn, Col1a1, Acta2; FM: Fmod, Aldh1a2, Igf2, Col1a1, Spp1&quot;,
+    &quot;JP: Ppp1r1b, Gad1/2, Penk, Pdyn, Meis2; FM: Penk, Pdyn, Ppp1r1b, Gad2&quot;,
+    &quot;JP: Prox1, Calb1, Prdm8; FM: Prox1, Calb1&quot;,
+    &quot;JP: Neurod6, Wfs1, Shisa6, Igfbp4; FM: Neurod6, Pou3f1, Shisa6, Wfs1&quot;,
+    &quot;JP: Chat, Sncg, Syt6; FM: Chat, Sncg, Tacr1, Kctd8&quot;
+  ),
+  notes = c(
+    &quot;Robust LAMP5/VIP signal (Id2/Lamp5/Cplx3). SATB2/CUX2 likely ambient; minor immune genes likely contamination.&quot;,
+    &quot;Opalin+Gjc3+Sox10 define mature oligos; low Gpr17 argues against OPC.&quot;,
+    &quot;Slc17a7+ with IT adhesion/signaling genes; endothelial/immune hits in FM likely contaminants.&quot;,
+    &quot;Foxp2+Ntsr2+ with Slc17a6 (VGlut2) suggest L6 corticothalamic-like; some L4/5 IT (Rorb) admixture.&quot;,
+    &quot;Strong CP markers (Igf2, Slc13a4) with endothelial/smc/fibro mix → perivascular/meningeal CP neighborhood; ependymal Trp73 low.&quot;,
+    &quot;Classic MSN signature (DARPP-32 + Gad1/2 + Penk/Pdyn); indicates striatal tissue present.&quot;,
+    &quot;Prox1 hallmark of DG granule; Calb1 supportive.&quot;,
+    &quot;Canonical Neurod6 IT-L6 corticocortical program; small PT marker bleed-through possible.&quot;,
+    &quot;Clear ChAT/SNCG cholinergic identity; Syt6 hints at small L6 CT admixture.&quot;
+  ),
+  anno_name=c(
+  &quot;Inh_L23_LAMP5_VIP&quot;,        
+  &quot;Oligo_Mature_MOL&quot;,         
+  &quot;Exc_L23_IT&quot;,               
+  &quot;Exc_L6_CTlike&quot;,            
+  &quot;NonNeur_CP_VascStromal&quot;,   
+  &quot;Inh_Striatal_MSN&quot;,         
+  &quot;Exc_DG_Granule&quot;,           
+  &quot;Exc_L6_IT_CC&quot;,            
+  &quot;Cholin_ChAT_SNCG&quot;),
+  confidence = c(
+    &quot;Medium-High&quot;,
+    &quot;High&quot;,
+    &quot;Medium&quot;,
+    &quot;Medium&quot;,
+    &quot;Medium-Low&quot;,
+    &quot;High&quot;,
+    &quot;High&quot;,
+    &quot;Medium-High&quot;,
+    &quot;High&quot;
+  ),
   stringsAsFactors = FALSE
 )
 
 
 cluster_info = merge(cluster_info, anno_df, by=&quot;cluster&quot;)
-cluster_names = paste0(&quot;c&quot;,0:9 )
+
 cluster_info$cluster = factor(cluster_info$cluster,
                               levels=cluster_names)
 # cluster_info = cluster_info[order(cluster_info$cluster), ]
@@ -1582,26 +1626,89 @@ cluster_info = cluster_info[order(cluster_info$anno_name), ]
 jazzPanda_res_lst = readRDS(here(data_path,paste0(data_nm, &quot;_jazzPanda_res_lst.Rds&quot;)))
 fit.cont = readRDS(here(data_path,paste0(data_nm, &quot;_fit_cont_obj.Rds&quot;)))
 FM_result= readRDS(here(data_path,paste0(data_nm, &quot;_seu_markers.Rds&quot;)))
-sv_lst = readRDS(here(data_path,paste0(data_nm, &quot;_sq20_vector_lst.Rds&quot;)))
+sv_lst = readRDS(here(data_path,paste0(data_nm, &quot;_sq50_vector_lst.Rds&quot;)))
 seu = readRDS(here(data_path,paste0(data_nm, &quot;_seu.Rds&quot;)))
-
-Idents(seu)=cluster_info$anno_name[match(colnames(seu), cluster_info$cells)]
-seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cells)]</code></pre>
+se = readRDS(here(data_path,paste0(data_nm, &quot;_se.Rds&quot;)))
+nbins = 2500
+Idents(seu)=cluster_info$anno_name[match(colnames(seu), cluster_info$cell_id)]
+seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cell_id)]</code></pre>
 </div>
 <div id="dataset-overview" class="section level1">
 <h1>Dataset overview</h1>
-<pre class="r"><code>plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, height = 1400,
-             my_colors = my_colors, ct_nm = &quot;anno_name&quot;)</code></pre>
+<pre class="r"><code>plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, height = 700,
+             my_colors = my_colors, ct_nm = &quot;anno_name&quot;, 
+             fig_ratio = 7365 / 10117)</code></pre>
 <pre><code>png 
   2 </code></pre>
 <pre class="r"><code>plot_cluster_props(cluster_info=cluster_info,file_prefix = data_nm, 
                    my_colors = my_colors, ct_nm = &quot;anno_name&quot;)</code></pre>
 <pre><code>png 
   2 </code></pre>
-<pre class="r"><code>plot_umap_seu(cluster_info=cluster_info,seu=seu, file_prefix = data_nm, 
-              my_colors = my_colors, ct_nm = &quot;anno_name&quot;,fig_w = 3000)</code></pre>
+<pre class="r"><code>umap_bkm &lt;- as.data.frame(reducedDim(se, &quot;UMAP_M1_lam0.2&quot;))
+umap_bkm$cluster &lt;- paste0(&quot;c&quot;, colData(se)$clust_M1_lam0.2_k50_res0.1)
+umap_bkm$sample_id &lt;- se$sample_id  # adjust if needed
+umap_bkm$anno_name &lt;- cluster_info$anno_name[match(row.names(umap_bkm),
+                                                 cluster_info$cell_id)]
+umap_bkm$anno_name =factor(umap_bkm$anno_name, 
+                           levels = anno_df$ann_name)
+umap_bkm = umap_bkm[order(umap_bkm$anno_name), ]
+label_df &lt;- umap_bkm %&gt;%
+    group_by(cluster, sample_id) %&gt;%
+    summarise(V1 = mean(V1), V2 = mean(V2), .groups = &quot;drop&quot;)
+
+
+rm(se)
+
+out_file &lt;- here(overview_PA, paste0(data_nm, &quot;_UMAP&quot;, &quot;.jpg&quot;))
+jpeg(out_file, width=1000*3, height=1000, res=200)
+
+ggplot(umap_bkm, aes(x = V1, y = V2, color = anno_name)) +
+    ggrastr::geom_point_rast(size = 0.01, alpha = 0.8) +
+    defined_theme +
+    facet_wrap(~sample_id, nrow=1)+
+    scale_color_manual(values = my_colors)+
+    guides(color = guide_legend(override.aes = list(size = 3), 
+                                ncol = 1, title = &quot;&quot;)) +
+    labs(title = &quot; &quot;, x = &quot;UMAP1&quot;, y = &quot;UMAP2&quot;, fill=&quot; &quot;) +
+    theme(strip.background = element_blank(),
+          strip.text = element_text(size = 20, face = &quot;plain&quot;),
+          legend.position = &quot;right&quot;,
+          legend.text = element_text(size = 12),
+          panel.border = element_rect(colour = &quot;black&quot;, 
+                                      fill = NA, linewidth = 0.3),
+          axis.line = element_blank(),
+          legend.justification = &quot;center&quot;,
+          axis.ticks = element_blank(),
+          legend.box.just = &quot;center&quot;, 
+          axis.text = element_blank(),
+          axis.title = element_blank())
+dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
+<pre class="r"><code># 
+# jpeg(paste0(&quot;xy_persample.jpg&quot;), width=1000*5, height=700*3, res=200)
+# 
+# ggplot(cluster_info, aes(x = x, y = y, color = cluster)) +
+#     ggrastr::geom_point_rast(size = 0.01, alpha = 0.8) +
+#     defined_theme +
+#     facet_grid(sample~cluster)+
+#     scale_color_manual(values = my_colors)+
+#     guides(color = guide_legend(override.aes = list(size = 3), 
+#                                 ncol = 1, title = &quot;&quot;)) +
+#     labs(title = &quot; &quot;, x = &quot;UMAP1&quot;, y = &quot;UMAP2&quot;, fill=&quot; &quot;) +
+#     theme(strip.background = element_blank(),
+#           strip.text = element_text(size = 20, face = &quot;plain&quot;),
+#           legend.position = &quot;right&quot;,
+#           legend.text = element_text(size = 12),
+#           panel.border = element_rect(colour = &quot;black&quot;, 
+#                                       fill = NA, linewidth = 0.3),
+#           axis.line = element_blank(),
+#           legend.justification = &quot;center&quot;,
+#           axis.ticks = element_blank(),
+#           legend.box.just = &quot;center&quot;, 
+#           axis.text = element_blank(),
+#           axis.title = element_blank())
+# dev.off()</code></pre>
 </div>
 <div id="spatial-pattern-of-negative-controls" class="section level1">
 <h1>Spatial pattern of negative controls</h1>
@@ -1633,17 +1740,20 @@ bins_map &lt;- list(&quot;negative control probe&quot; = 1,
 
 
 for (cat in unique(nc_sp1$category)) {
-  plot_nc(nc_sp1, &quot;replicate1&quot;, cat, data_nm, overview_PA,fig_ratio=4/3,
+  plot_nc(nc_sp1, &quot;replicate1&quot;, cat, data_nm, overview_PA,
+          fig_ratio = 7365 / 10117,
           bins_map = bins_map, width = 600, height = 800)
 }
 
 for (cat in unique(nc_sp2$category)) {
-  plot_nc(nc_sp2, &quot;replicate2&quot;, cat, data_nm, overview_PA,fig_ratio=4/3,
+  plot_nc(nc_sp2, &quot;replicate2&quot;, cat, data_nm, overview_PA,
+          fig_ratio = 7365 / 10117,
           bins_map = bins_map, width = 600, height = 800)
 }
 
 for (cat in unique(nc_sp3$category)) {
-  plot_nc(nc_sp3, &quot;replicate3&quot;, cat, data_nm, overview_PA,fig_ratio=4/3,
+  plot_nc(nc_sp3, &quot;replicate3&quot;, cat, data_nm, overview_PA,
+          fig_ratio = 7365 / 10117,
           bins_map = bins_map, width = 600, height = 800)
 }</code></pre>
 </div>
@@ -1665,10 +1775,11 @@ latex_table &lt;- xtable(output_data, caption=&quot;Detected marker genes for ea
 print.xtable(latex_table, include.rownames = FALSE, hline.after = c(-1, 0, nrow(output_data)), comment = FALSE)</code></pre>
 <div id="top3-marker-genes-by-jazzpanda-glm" class="section level2">
 <h2>top3 marker genes by jazzPanda-glm</h2>
-<pre class="r"><code>xr &lt;- c(0, 3000)
-yr &lt;- c(0, 4135)
+<pre class="r"><code>x_range &lt;- c(0, 11000)
+y_range &lt;- c(0, 7500)
+
 plot_lst=list()
-for (cl in paste(&quot;c&quot;, 0:9, sep=&quot;&quot;)){
+for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, &quot;anno_name&quot;]
     inters=jazzPanda_res[jazzPanda_res$top_cluster==cl,&quot;gene&quot;]
     rounded_val=signif(as.numeric(jazzPanda_res[inters,&quot;glm_coef&quot;]),
@@ -1719,7 +1830,7 @@ for (cl in paste(&quot;c&quot;, 0:9, sep=&quot;&quot;)){
               strip.text = element_text(size = rel(1.3)), 
               strip.text.y.right = element_blank(),
               legend.key.width = unit(2, &quot;cm&quot;),
-              aspect.ratio = 4/3,
+              aspect.ratio = 7365 / 10117,
               legend.title = element_text(size = 10),
               legend.text = element_text(size = 10),
                legend.key.height = unit(2, &quot;cm&quot;))
@@ -1734,25 +1845,26 @@ for (cl in paste(&quot;c&quot;, 0:9, sep=&quot;&quot;)){
                     #geom_hex(bins = 100)+
                     geom_point(size=0.01)+
                     facet_wrap(~label, nrow=3,strip.position = &quot;left&quot;)+
-                    scale_x_reverse() +
+                    scale_x_reverse(limits = rev(x_range)) +  # enforce global x
+                    scale_y_continuous(limits = y_range) +  # enforce global y
+
                     scale_color_manual(values = c(&quot;black&quot;,&quot;black&quot;,&quot;black&quot;))+
                     defined_theme + 
             theme(legend.position = &quot;none&quot;, 
                   strip.background = element_blank(), 
-                  aspect.ratio = 4/3,
+                  aspect.ratio = 7365 / 10117,
                   legend.key.width = unit(15, &quot;cm&quot;),
-                  strip.text = element_text(size = rel(1.3)))
+                  strip.text = element_text(size = rel(1.2)))
 
         lyt &lt;-p_cl | genes_plt
         layout_design &lt;- lyt + patchwork::plot_layout(heights = c(1,1),widths = c(1, 3)) 
         cat(&quot;cluster:&quot;, cl,&quot;\n&quot;)
         jpeg(file.path(mg_PA,paste0(data_nm, &quot;_glm_&quot;, cl,&quot;_top3.jpg&quot;)),
-             width=600*4, height=800*3, res=200)
+             width=800*4, height=650*3, res=200)
         print(layout_design)
         dev.off()
     }
   }</code></pre>
-<pre><code>cluster: c0 </code></pre>
 <pre><code>cluster: c1 </code></pre>
 <pre><code>cluster: c2 </code></pre>
 <pre><code>cluster: c3 </code></pre>
@@ -1766,7 +1878,6 @@ for (cl in paste(&quot;c&quot;, 0:9, sep=&quot;&quot;)){
 <div id="cluster-vector-versus-marker-gene-vector" class="section level2">
 <h2>cluster vector versus marker gene vector</h2>
 <pre class="r"><code>plot_lst=list()
-nbins = 400
 for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, &quot;anno_name&quot;]
     inters_df=jazzPanda_res[jazzPanda_res$top_cluster==cl,]
@@ -1780,9 +1891,9 @@ for (cl in cluster_names){
                               sv_lst$gene_mt[,mk_genes]))
     colnames(dff) = c(&quot;cluster&quot;, mk_genes)
     dff$sample= &quot;replicate1&quot;
-    dff[400:800,&quot;sample&quot;] = &quot;replicate2&quot;
-    dff[800:1200,&quot;sample&quot;] = &quot;replicate3&quot;
-    dff$vector_id = c(1:400, 1:400, 1:400)
+    dff[nbins:(nbins*2),&quot;sample&quot;] = &quot;replicate2&quot;
+    dff[(nbins*2):(nbins*3),&quot;sample&quot;] = &quot;replicate3&quot;
+    dff$vector_id = c(1:nbins, 1:nbins, 1:nbins)
     long_df &lt;- dff %&gt;% 
     pivot_longer(cols = -c(cluster, sample, vector_id), names_to = &quot;gene&quot;, 
                values_to = &quot;vector_count&quot;)
@@ -1844,14 +1955,14 @@ dev.off()</code></pre>
 <h2>FindMarker and limma result</h2>
 <pre class="r"><code>table(FM_result$cluster)
 
-FM_result$cluster &lt;- factor(FM_result$cluster, levels = paste0(&quot;c&quot;, 0:9))
+FM_result$cluster &lt;- factor(FM_result$cluster, levels = cluster_names)
 
 top_mg &lt;- FM_result %&gt;%
   group_by(cluster) %&gt;%
   arrange(desc(avg_log2FC), .by_group = TRUE) %&gt;% 
   slice_max(order_by = avg_log2FC, n = 20) %&gt;%
   select(cluster, gene, avg_log2FC)
-uni_clusters &lt;-paste0(&quot;c&quot;, 0:9)
+uni_clusters &lt;-cluster_names
 
 # Combine into a new dataframe for LaTeX output
 output_data &lt;- do.call(rbind, lapply(uni_clusters, function(cl) {
@@ -1866,21 +1977,21 @@ latex_table &lt;- xtable(output_data, caption=&quot;Detected marker genes for ea
 print.xtable(latex_table, include.rownames = FALSE, hline.after = c(-1, 0, nrow(output_data)), comment = FALSE)</code></pre>
 <pre class="r"><code>limma_dt &lt;- decideTests(fit.cont)
 summary(limma_dt)</code></pre>
-<pre><code>        c0  c1  c2  c3  c4  c5  c6  c7  c8  c9
-Down   201 120 155 132 189 171 212 207 176 158
-NotSig   4  20  10  14  11  15   3   5  38  35
-Up      79 144 119 138  84  98  69  72  70  91</code></pre>
+<pre><code>        c1  c2  c3  c4  c5  c6  c7  c8  c9
+Down   117 120  85 119 157 145 189 181 187
+NotSig   3  11  10   6   5   8   1   6   3
+Up     128 117 153 123  86  95  58  61  58</code></pre>
 </div>
 <div id="cumulative-rank-plot" class="section level2">
 <h2>Cumulative rank plot</h2>
 <pre class="r"><code>plot_lst=list()
 cor_M = cor(sv_lst$gene_mt,
-            sv_lst$cluster_mt[, paste0(&quot;c&quot;, 0:9)],
-            method = &quot;spearman&quot;)
-cor_M[cor_M &lt;= 0.5] = 0
-cor_M[cor_M &gt; 0.5]=1
-Idents(seu)=cluster_info$cluster[match(colnames(seu), cluster_info$cells)]
-for (cl in paste(&quot;c&quot;, 0:9, sep=&quot;&quot;)){
+            sv_lst$cluster_mt[, cluster_names],
+            method = &quot;pearson&quot;)
+cor_M[cor_M &lt;= 0.6] = 0
+cor_M[cor_M &gt; 0.6]=1
+Idents(seu)=cluster_info$cluster[match(colnames(seu), cluster_info$cell_id)]
+for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, &quot;anno_name&quot;]
     fm_cl=FindMarkers(seu, ident.1 = cl, only.pos = TRUE,
             logfc.threshold = 0.25)
@@ -1918,7 +2029,7 @@ for (cl in paste(&quot;c&quot;, 0:9, sep=&quot;&quot;)){
                                     &quot;Wilcoxon Rank Sum Test&quot; = &quot;blue&quot;,
                                     &quot;jazzPanda-glm&quot; = &quot;red&quot;)) +
         labs(title = ct_nm, x = &quot;Rank of marker genes&quot;,
-             y = &quot;Cumulative count of genes with correlation &gt;0.5&quot;,
+             y = &quot;Cumulative count of genes with correlation &gt;0.6&quot;,
              color = NULL) +
         theme_classic(base_size = 12) +
         theme(plot.title = element_text(hjust = 0.5),
@@ -1938,7 +2049,7 @@ for (cl in paste(&quot;c&quot;, 0:9, sep=&quot;&quot;)){
 
 combined_plot &lt;- wrap_plots(plot_lst, ncol = 3)
 pdf(file.path(comp_PA, paste0(data_nm, &quot;_mg_compare_rank.pdf&quot;)),
-    height = 20, width = 15)
+    height = 15, width = 15)
 combined_plot 
 dev.off()</code></pre>
 <pre><code>png 
@@ -1947,7 +2058,7 @@ dev.off()</code></pre>
 <div id="upset-plot" class="section level2">
 <h2>upset plot</h2>
 <pre class="r"><code>plot_lst=list()
-for (cl in paste(&quot;c&quot;, 0:9, sep=&quot;&quot;)){
+for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, &quot;anno_name&quot;]
     findM_sig &lt;- FM_result[FM_result$cluster==cl,&quot;gene&quot;]
     limma_sig &lt;- row.names(limma_dt[limma_dt[,cl]==1,])
@@ -1988,9 +2099,9 @@ for (cl in paste(&quot;c&quot;, 0:9, sep=&quot;&quot;)){
 }
 
 
-combined_plot &lt;- wrap_plots(plot_lst, ncol = 4)
+combined_plot &lt;- wrap_plots(plot_lst, ncol = 3)
 pdf(file.path(comp_PA, paste0(data_nm, &quot;_mg_compare_upset.pdf&quot;)),
-     height =4* (ceiling(length(cluster_names)/4)), width = 16)
+     height =4* (ceiling(length(cluster_names)/3)), width = 12)
 combined_plot 
 dev.off()</code></pre>
 <pre><code>png 
@@ -2062,27 +2173,29 @@ loaded via a namespace (and not attached):
  [64] prodlim_2025.04.28      SparseArray_1.8.1       xfun_0.52              
  [67] withr_3.0.2             fastmap_1.2.0           digest_0.6.37          
  [70] timechange_0.3.0        R6_2.6.1                mime_0.13              
- [73] colorspace_2.1-1        scattermore_1.2         tensor_1.5.1           
- [76] spatstat.data_3.1-8     R.methodsS3_1.8.2       hexbin_1.28.5          
- [79] recipes_1.3.1           class_7.3-23            httr_1.4.7             
- [82] htmlwidgets_1.6.4       S4Arrays_1.8.1          uwot_0.2.3             
- [85] ModelMetrics_1.2.2.2    pkgconfig_2.0.3         gtable_0.3.6           
- [88] timeDate_4041.110       lmtest_0.9-40           XVector_0.48.0         
- [91] htmltools_0.5.8.1       dotCall64_1.2           scales_1.4.0           
- [94] png_0.1-8               gower_1.0.2             spatstat.univar_3.1-4  
- [97] knitr_1.50              reshape2_1.4.4          rjson_0.2.23           
-[100] nlme_3.1-168            cachem_1.1.0            zoo_1.8-14             
-[103] stringr_1.5.1           KernSmooth_2.23-26      parallel_4.5.1         
-[106] miniUI_0.1.2            pillar_1.11.0           grid_4.5.1             
-[109] vctrs_0.6.5             RANN_2.6.2              promises_1.3.3         
-[112] cluster_2.1.8.1         evaluate_1.0.4          magick_2.8.7           
-[115] cli_3.6.5               compiler_4.5.1          rlang_1.1.6            
-[118] crayon_1.5.3            future.apply_1.20.0     labeling_0.4.3         
-[121] plyr_1.8.9              stringi_1.8.7           viridisLite_0.4.2      
-[124] deldir_2.0-4            BiocParallel_1.42.1     lazyeval_0.2.2         
-[127] spatstat.geom_3.5-0     RcppHNSW_0.6.0          future_1.67.0          
-[130] statmod_1.5.0           shiny_1.11.1            ROCR_1.0-11            
-[133] igraph_2.1.4            bslib_0.9.0            </code></pre>
+ [73] colorspace_2.1-1        Cairo_1.6-2             scattermore_1.2        
+ [76] tensor_1.5.1            spatstat.data_3.1-8     R.methodsS3_1.8.2      
+ [79] hexbin_1.28.5           recipes_1.3.1           class_7.3-23           
+ [82] httr_1.4.7              htmlwidgets_1.6.4       S4Arrays_1.8.1         
+ [85] uwot_0.2.3              ModelMetrics_1.2.2.2    pkgconfig_2.0.3        
+ [88] gtable_0.3.6            timeDate_4041.110       lmtest_0.9-40          
+ [91] XVector_0.48.0          htmltools_0.5.8.1       dotCall64_1.2          
+ [94] scales_1.4.0            png_0.1-8               gower_1.0.2            
+ [97] spatstat.univar_3.1-4   knitr_1.50              reshape2_1.4.4         
+[100] rjson_0.2.23            nlme_3.1-168            cachem_1.1.0           
+[103] zoo_1.8-14              stringr_1.5.1           KernSmooth_2.23-26     
+[106] vipor_0.4.7             parallel_4.5.1          miniUI_0.1.2           
+[109] ggrastr_1.0.2           pillar_1.11.0           grid_4.5.1             
+[112] vctrs_0.6.5             RANN_2.6.2              promises_1.3.3         
+[115] cluster_2.1.8.1         beeswarm_0.4.0          evaluate_1.0.4         
+[118] magick_2.8.7            cli_3.6.5               compiler_4.5.1         
+[121] rlang_1.1.6             crayon_1.5.3            future.apply_1.20.0    
+[124] labeling_0.4.3          ggbeeswarm_0.7.2        plyr_1.8.9             
+[127] stringi_1.8.7           viridisLite_0.4.2       deldir_2.0-4           
+[130] BiocParallel_1.42.1     lazyeval_0.2.2          spatstat.geom_3.5-0    
+[133] RcppHNSW_0.6.0          bit64_4.6.0-1           future_1.67.0          
+[136] statmod_1.5.0           shiny_1.11.1            ROCR_1.0-11            
+[139] igraph_2.1.4            bslib_0.9.0             bit_4.6.0              </code></pre>
 </div>
 </div>
 

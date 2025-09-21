@@ -10,17 +10,27 @@ library(speckle)
 library(peakRAM)
 library(here)
 source(here("scripts/utils.R"))
+library(Banksy)
+library(SpatialExperiment)
+library(harmony)
+
 ###############################################################################
 # load data
 
-rep1=get_xenium_data(path="/stornext/Bioinf/data/lab_phipson/data/xenium_Mm_brain/xenium_prerelease_jun20_mBrain_replicates/mBrain_ff_rep1/", 
-                     mtx_name = "cell_feature_matrix_mtx/")
+rep1=get_xenium_data(path="/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Xenium_mouse_brain/Xenium_V1_FF_Mouse_Brain_MultiSection_1_outs/", 
+                     mtx_name = "cell_feature_matrix/",
+                     trans_name = "transcripts.csv.gz",
+                     cells_name="cells.csv.gz")
 
-rep2=get_xenium_data(path="/stornext/Bioinf/data/lab_phipson/data/xenium_Mm_brain/xenium_prerelease_jun20_mBrain_replicates/mBrain_ff_rep2/", 
-                     mtx_name = "cell_feature_matrix_mtx/")
+rep2=get_xenium_data(path="/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Xenium_mouse_brain/Xenium_V1_FF_Mouse_Brain_MultiSection_2_outs/", 
+                     mtx_name = "cell_feature_matrix/",
+                     trans_name = "transcripts.csv.gz",
+                     cells_name="cells.csv.gz")
 
-rep3=get_xenium_data(path="/stornext/Bioinf/data/lab_phipson/data/xenium_Mm_brain/xenium_prerelease_jun20_mBrain_replicates/mBrain_ff_rep3/", 
-                     mtx_name = "cell_feature_matrix_mtx/")
+rep3=get_xenium_data(path="/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Xenium_mouse_brain/Xenium_V1_FF_Mouse_Brain_MultiSection_3_outs/", 
+                     mtx_name = "cell_feature_matrix/",
+                     trans_name = "transcripts.csv.gz",
+                     cells_name="cells.csv.gz")
 
 rep1$trans_info = rep1$trans_info[rep1$trans_info$qv >=20 & rep1$trans_info$cell_id != -1 & !(rep1$trans_info$cell_id %in% rep1$zero_cells), ]
 rep2$trans_info = rep2$trans_info[rep2$trans_info$qv >=20 &  rep2$trans_info$cell_id != -1 & !(rep2$trans_info$cell_id %in% rep2$zero_cells), ]
@@ -29,7 +39,6 @@ rep3$trans_info = rep3$trans_info[rep3$trans_info$qv >=20 & rep3$trans_info$cell
 
 cm1 = rep1$cm
 colnames(cm1) = paste("r1-", colnames(cm1), sep="")
-cm1 =cm1[, colnames(cm1)!="r1-6128"]
 
 cm2 = rep2$cm
 colnames(cm2) = paste("r2-", colnames(cm2), sep="")
@@ -46,98 +55,96 @@ codeword_coords <- as.data.frame(rbind(cbind(sample="replicate1",rep1$trans_info
                                        cbind(sample="replicate2",rep2$trans_info[rep2$trans_info$feature_name %in% rep2$codeword, c("feature_name","x","y")]),
                                        cbind(sample="replicate3",rep3$trans_info[rep3$trans_info$feature_name %in% rep3$codeword, c("feature_name","x","y")])
 ))
-ordered_feature = probe_coords %>% group_by(feature_name) %>% count() %>% arrange(desc(n))%>% pull(feature_name) 
-probe_tb = as.data.frame(probe_coords %>% group_by(sample, feature_name) %>% count())
-colnames(probe_tb) = c("sample","feature_name","value_count")
-probe_tb$feature_name = factor(probe_tb$feature_name, levels= ordered_feature)
 
 
+# List of source directories
+sps <- c("1", "2", "3")
 
-codeword_coords <- as.data.frame(rbind(cbind(sample="replicate1",rep1$trans_info[rep1$trans_info$feature_name %in% rep1$codeword, c("feature_name","x","y")]),
-                                       cbind(sample="replicate2",rep2$trans_info[rep2$trans_info$feature_name %in% rep2$codeword, c("feature_name","x","y")]),
-                                       cbind(sample="replicate3",rep3$trans_info[rep3$trans_info$feature_name %in% rep3$codeword, c("feature_name","x","y")])
-))
-ordered_feature = codeword_coords %>% group_by(feature_name) %>% count() %>% arrange(desc(n))%>% pull(feature_name) 
-codeword_tb = as.data.frame(codeword_coords %>% group_by(sample, feature_name) %>% count())
-colnames(codeword_tb) = c("sample","feature_name","value_count")
-codeword_tb$feature_name = factor(codeword_tb$feature_name, levels= ordered_feature)
-
-codeword_tb = codeword_tb[order(codeword_tb$feature_name), ]
-
-rep1_seu <- CreateSeuratObject(counts = cm1, project = "replicate1")
-rep2_seu <- CreateSeuratObject(counts = cm2, project = "replicate2")
-rep3_seu <- CreateSeuratObject(counts = cm3, project = "replicate3")
-
-set.seed(9858)
-rep1_seu <- NormalizeData(rep1_seu,normalization.method ="LogNormalize")
-rep1_seu = FindVariableFeatures(rep1_seu, selection.method = "vst", 
-                                nfeatures = nrow(rep1$cm), verbose = FALSE)
-
-rep2_seu <- NormalizeData(rep2_seu,normalization.method ="LogNormalize")
-rep2_seu = FindVariableFeatures(rep2_seu, selection.method = "vst", 
-                                nfeatures = nrow(rep2$cm), verbose = FALSE)
-
-rep3_seu <- NormalizeData(rep3_seu,normalization.method ="LogNormalize")
-rep3_seu = FindVariableFeatures(rep3_seu, selection.method = "vst", 
-                                nfeatures = nrow(rep3$cm), verbose = FALSE)
-
-all_seu<- list(rep1_seu, rep2_seu, rep3_seu)
-features <- SelectIntegrationFeatures(object.list = all_seu)
-all_seu <- lapply(X = all_seu, FUN = function(x) {
-    x <- ScaleData(x, features = features, verbose = FALSE)
-    x <- RunPCA(x, features = features, verbose = FALSE)
+spe_list <- lapply(sps, function(id) {
+    rp =  get(paste0("rep", id))
+    cell_info <-rp$cell_info
+    cell_info$cells = paste0("r", id, "-",cell_info$cell_id)
+    cm <-get(paste0("cm", id))
+    # Subset and rename cells
+    sub_info <- cell_info[, c("x_centroid", "y_centroid", "cells")]
+    colnames(sub_info) = c("x", "y", "cells")
+    rownames(sub_info) <- sub_info$cells
+    sub_info = sub_info[colnames(cm),]
+    coords <- as.matrix(sub_info[, c("x", "y")])
+    
+    # Construct SpatialExperiment
+    SpatialExperiment(
+        assays = list(counts = cm),
+        spatialCoords = coords,
+        sample_id = paste0("replicate",as.character(id))
+    )
 })
 
-anchors <- FindIntegrationAnchors(object.list = all_seu, 
-                                  anchor.features = features, reduction = "rpca")
+se <- do.call(cbind, spe_list)
 
-# Integrate data
-mbrain_integrated <- IntegrateData(anchorset = anchors, dims = 1:30)
-mbrain_integrated <- ScaleData(mbrain_integrated, verbose = FALSE)
-mbrain_integrated <- RunPCA(mbrain_integrated, npcs = 50, verbose = FALSE)
+# Convert to Seurat and normalize
+seu <- as.Seurat(se, data = NULL)
+seu <- NormalizeData(seu, normalization.method = "LogNormalize")
+seu <- FindVariableFeatures(seu, nfeatures = nrow(seu))
 
-mbrain_integrated <- FindNeighbors(mbrain_integrated, dims = 1:30)
-mbrain_integrated <- RunUMAP(mbrain_integrated, dims = 1:30, 
-                             verbose = FALSE)
-mbrain_integrated <- FindClusters(mbrain_integrated, resolution = 0.05)
-#saveRDS(mbrain_integrated, "mbrain_integrated.Rds")
+# Back to SpatialExperiment
+aname <- "logcounts"
+# assay(se, aname) <- GetAssayData(seu)
 
-mbrain_integrated$clusters = paste("c", mbrain_integrated$seurat_clusters, sep="")
+logcounts_mat <- GetAssayData(seu, slot = "data")[, colnames(se)]
+assay(se, "logcounts", withDimnames = FALSE) <- logcounts_mat
 
-clusters = as.data.frame(mbrain_integrated$seurat_clusters)
-colnames(clusters) = "cluster"
-clusters$cluster = paste("c",clusters$cluster, sep="")
-clusters$cells = row.names(clusters)
-clusters$sample =clusters$cells
-clusters$sample =  sub("-.*", "", clusters$cells)
-clusters[clusters$sample=="r1","sample"]="replicate1"
-clusters[clusters$sample=="r2","sample"]="replicate2"
-clusters[clusters$sample=="r3","sample"]="replicate3"
-clusters$sample=factor(clusters$sample, 
-                       levels=c("replicate1","replicate2","replicate3"))
 
-clusters$x = 0
-clusters$y = 0
+# Re-split by sample
+spe_list <- split(seq_len(ncol(se)), se$sample_id) |>
+    lapply(function(cols) se[, cols])
 
-all_data = list(rep1, rep2, rep3)
+lambda <- c(0.2)
+k_geom <- 15
+use_agf <- TRUE
+compute_agf <- TRUE
 
-for (i in 1:3){
-    rp=all_data[[i]]
-    rp_nm = paste("replicate", i, sep="")
-    curr_cells = rp$cell_info
-    row.names(curr_cells)= paste("r",paste(as.character(i),curr_cells$cell_id, sep="-"),sep="")
-    curr_cells = curr_cells[row.names(curr_cells) %in% clusters$cells,]
-    clusters[clusters$sample==rp_nm, "x"] = curr_cells[match(row.names(curr_cells),clusters[clusters$sample==rp_nm, "cells"] ),"x_centroid"]
-    clusters[clusters$sample==rp_nm, "y"] = curr_cells[match(row.names(curr_cells),clusters[clusters$sample==rp_nm, "cells"] ),"y_centroid"]
-}
+spe_list <- lapply(spe_list, computeBanksy, assay_name = aname, 
+                   compute_agf = compute_agf, k_geom = k_geom)
+
+spe_joint <- do.call(cbind, spe_list)
+
+spe_joint <- runBanksyPCA(spe_joint, use_agf = use_agf, 
+                          lambda = lambda, group = "sample_id", seed = 1000)
+
+spe_joint <- runBanksyUMAP(spe_joint, use_agf = use_agf, 
+                           lambda = lambda, seed = 1000)
+
+cat("Clustering starts\n")
+spe_joint <- clusterBanksy(spe_joint, use_agf = use_agf, lambda = lambda,
+                           resolution = c(0.1, 0.5), seed = 1000)
+
+spe_joint <- connectClusters(spe_joint)
+# 
+# spe_joint$banksy_multisample = paste0("c",spe_joint$clust_M1_lam0.2_k50_res0.5)
+# spe_joint$banksy_multisample= factor(spe_joint$banksy_multisample,
+#                                      levels = paste0("c", 1:length(unique(spe_joint$clust_M1_lam0.2_k50_res0.5))))
+# 
+
+clusters <- data.frame(
+    x = spatialCoords(spe_joint)[, 1],
+    y = spatialCoords(spe_joint)[, 2],
+    cell_id = colnames(spe_joint), 
+    cluster = paste0("c", colData(spe_joint)$clust_M1_lam0.2_k50_res0.1),  
+    sample = colData(spe_joint)$sample_id
+)
+
 
 
 ###############################################################################
 # FindMarkers
+rownames(clusters) <- clusters$cell_id
 
-Idents(mbrain_integrated)=clusters$cluster
+# Reorder clusters$cluster to match Seurat cells
+Idents(seu) <- clusters$cluster[match(colnames(seu), rownames(clusters))]
+
 usage_fm= peakRAM({
-find_markers_result <- FindAllMarkers(mbrain_integrated, only.pos = TRUE,
+find_markers_result <- FindAllMarkers(seu, only.pos = TRUE,
                                       logfc.threshold = 0.25)
 })
 
@@ -146,7 +153,7 @@ find_markers_result <- FindAllMarkers(mbrain_integrated, only.pos = TRUE,
 # limma
 
 all.bct <- factor(clusters$cluster)
-sample <- mbrain_integrated$orig.ident
+sample <- spe_joint$sample_id
 y <- DGEList(cbind(cm1, cm2, cm3))
 y$genes <-row.names(rep1$cm)
 
@@ -171,8 +178,6 @@ fit.cont <- eBayes(fit.cont,trend=TRUE,robust=TRUE)
 
 fit.cont$genes <-row.names(rep1$cm)
 limma_dt <- decideTests(fit.cont)
-#treat.all <- treat(fit.cont,lfc=0.25)
-#limma_dt <- decideTests(treat.all)
 })
 summary(limma_dt)
 
@@ -182,7 +187,7 @@ usage_sv= peakRAM({
 
 
 all_genes =row.names(rep1$cm)
-grid_length=20
+grid_length=50
 
 # get spatial vectors
 all_vectors = get_vectors(x= list("replicate1" = rep1$trans_info,
@@ -201,7 +206,7 @@ nc_vectors = create_genesets(x=list("replicate1" = rep1$trans_info,
                              name_lst=list(probe=rep1$probe, 
                                            codeword=rep1$codeword),
                              bin_type="square",
-                             bin_param=c(20,20), 
+                             bin_param=c(grid_length,grid_length), 
                              cluster_info = NULL)
 })
 
@@ -254,8 +259,9 @@ saveRDS(clusters,"xenium_mbrain_clusters.Rds")
 saveRDS(jazzPanda_res_lst,"xenium_mbrain_jazzPanda_res_lst.Rds")
 saveRDS(fit.cont, "xenium_mbrain_fit_cont_obj.Rds")
 saveRDS(find_markers_result, "xenium_mbrain_seu_markers.Rds")
-saveRDS(mbrain_integrated, "xenium_mbrain_seu.Rds")
-saveRDS(all_vectors,"xenium_mbrain_sq20_vector_lst.Rds")
+saveRDS(seu, "xenium_mbrain_seu.Rds")
+saveRDS(spe_joint, "xenium_mbrain_se.Rds")
+saveRDS(all_vectors,"xenium_mbrain_sq50_vector_lst.Rds")
 
 # Write the results to a CSV file
 write.csv(results_df, output_file_name, row.names = FALSE)

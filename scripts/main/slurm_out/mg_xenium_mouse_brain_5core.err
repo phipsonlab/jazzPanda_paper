@@ -1,11 +1,11 @@
-/var/spool/slurmd/job23813638/slurm_script: line 32: msg: command not found
-/var/spool/slurmd/job23813638/slurm_script: line 33: msg: command not found
-/var/spool/slurmd/job23813638/slurm_script: line 34: msg: command not found
-/var/spool/slurmd/job23813638/slurm_script: line 35: msg: command not found
-/var/spool/slurmd/job23813638/slurm_script: line 36: msg: command not found
-/var/spool/slurmd/job23813638/slurm_script: line 37: msg: command not found
-/var/spool/slurmd/job23813638/slurm_script: line 38: msg: command not found
-/var/spool/slurmd/job23813638/slurm_script: line 39: msg: command not found
+/var/spool/slurmd/job23860782/slurm_script: line 32: msg: command not found
+/var/spool/slurmd/job23860782/slurm_script: line 33: msg: command not found
+/var/spool/slurmd/job23860782/slurm_script: line 34: msg: command not found
+/var/spool/slurmd/job23860782/slurm_script: line 35: msg: command not found
+/var/spool/slurmd/job23860782/slurm_script: line 36: msg: command not found
+/var/spool/slurmd/job23860782/slurm_script: line 37: msg: command not found
+/var/spool/slurmd/job23860782/slurm_script: line 38: msg: command not found
+/var/spool/slurmd/job23860782/slurm_script: line 39: msg: command not found
 Loading required package: SeuratObject
 Loading required package: sp
 
@@ -38,115 +38,269 @@ Loaded glmnet 4.1-10
 Loading required package: ggplot2
 Loading required package: lattice
 here() starts at /vast/projects/xenium_5k/jazzPanda_paper
+Loading required package: SingleCellExperiment
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘matrixStats’
+
+The following object is masked from ‘package:dplyr’:
+
+    count
+
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+Loading required package: generics
+
+Attaching package: ‘generics’
+
+The following object is masked from ‘package:caret’:
+
+    train
+
+The following object is masked from ‘package:dplyr’:
+
+    explain
+
+The following objects are masked from ‘package:base’:
+
+    as.difftime, as.factor, as.ordered, intersect, is.element, setdiff,
+    setequal, union
+
+
+Attaching package: ‘BiocGenerics’
+
+The following object is masked from ‘package:limma’:
+
+    plotMA
+
+The following object is masked from ‘package:dplyr’:
+
+    combine
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, saveRDS, table, tapply, unique,
+    unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:Matrix’:
+
+    expand, unname
+
+The following objects are masked from ‘package:dplyr’:
+
+    first, rename
+
+The following objects are masked from ‘package:data.table’:
+
+    first, second
+
+The following object is masked from ‘package:utils’:
+
+    findMatches
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+
+Attaching package: ‘IRanges’
+
+The following objects are masked from ‘package:dplyr’:
+
+    collapse, desc, slice
+
+The following object is masked from ‘package:data.table’:
+
+    shift
+
+The following object is masked from ‘package:sp’:
+
+    %over%
+
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+
+Attaching package: ‘SummarizedExperiment’
+
+The following object is masked from ‘package:Seurat’:
+
+    Assays
+
+The following object is masked from ‘package:SeuratObject’:
+
+    Assays
+
+
+Attaching package: ‘SingleCellExperiment’
+
+The following object is masked from ‘package:edgeR’:
+
+    cpm
+
+Loading required package: Rcpp
 10X data contains more than one type and is being returned as a list containing matrices of each type.
 10X data contains more than one type and is being returned as a list containing matrices of each type.
 10X data contains more than one type and is being returned as a list containing matrices of each type.
-Warning: Data is of class matrix. Coercing to dgCMatrix.
-Warning: Data is of class matrix. Coercing to dgCMatrix.
-Warning: Data is of class matrix. Coercing to dgCMatrix.
-Normalizing layer: counts
-Performing log-normalization
-0%   10   20   30   40   50   60   70   80   90   100%
-[----|----|----|----|----|----|----|----|----|----|
-**************************************************|
-Normalizing layer: counts
-Performing log-normalization
-0%   10   20   30   40   50   60   70   80   90   100%
-[----|----|----|----|----|----|----|----|----|----|
-**************************************************|
-Normalizing layer: counts
-Performing log-normalization
-0%   10   20   30   40   50   60   70   80   90   100%
-[----|----|----|----|----|----|----|----|----|----|
-**************************************************|
-Scaling features for provided objects
-Computing within dataset neighborhoods
-Finding all pairwise anchors
-Projecting new data onto SVD
-Projecting new data onto SVD
-Finding neighborhoods
-Finding anchors
-	Found 41801 anchors
-Projecting new data onto SVD
-Projecting new data onto SVD
-Finding neighborhoods
-Finding anchors
-	Found 38773 anchors
-Projecting new data onto SVD
-Projecting new data onto SVD
-Finding neighborhoods
-Finding anchors
-	Found 40835 anchors
-Warning message:
-The `slot` argument of `GetAssayData()` is deprecated as of SeuratObject 5.0.0.
-ℹ Please use the `layer` argument instead.
-ℹ The deprecated feature was likely used in the Seurat package.
-  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
-Merging dataset 1 into 2
-Extracting anchors for merged samples
-Finding integration vectors
-Finding integration vector weights
-0%   10   20   30   40   50   60   70   80   90   100%
-[----|----|----|----|----|----|----|----|----|----|
-**************************************************|
-Integrating data
-Warning: Layer counts isn't present in the assay object; returning NULL
-Merging dataset 3 into 2 1
-Extracting anchors for merged samples
-Finding integration vectors
-Warning: Different cells in new layer data than already exists for scale.data
-Finding integration vector weights
-0%   10   20   30   40   50   60   70   80   90   100%
-[----|----|----|----|----|----|----|----|----|----|
-**************************************************|
-Integrating data
-Warning: Layer counts isn't present in the assay object; returning NULL
-Warning message:
-The `slot` argument of `SetAssayData()` is deprecated as of SeuratObject 5.0.0.
-ℹ Please use the `layer` argument instead.
-ℹ The deprecated feature was likely used in the Seurat package.
-  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
-Computing nearest neighbor graph
-Computing SNN
-Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
-To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
-This message will be shown once per session
-0%   10   20   30   40   50   60   70   80   90   100%
-[----|----|----|----|----|----|----|----|----|----|
-**************************************************|
-Calculating cluster c9
-Calculating cluster c0
-Calculating cluster c2
-Calculating cluster c5
-Calculating cluster c6
-Calculating cluster c4
-Calculating cluster c8
-Calculating cluster c3
-Calculating cluster c1
-Calculating cluster c7
 Warning message:
 `PackageCheck()` was deprecated in SeuratObject 5.0.0.
 ℹ Please use `rlang::check_installed()` instead.
 ℹ The deprecated feature was likely used in the Seurat package.
   Please report the issue at <https://github.com/satijalab/seurat/issues>. 
+Performing log-normalization
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+Warning messages:
+1: The `slot` argument of `SetAssayData()` is deprecated as of SeuratObject 5.0.0.
+ℹ Please use the `layer` argument instead.
+ℹ The deprecated feature was likely used in the Seurat package.
+  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
+2: The `slot` argument of `GetAssayData()` is deprecated as of SeuratObject 5.0.0.
+ℹ Please use the `layer` argument instead.
+ℹ The deprecated feature was likely used in the Seurat package.
+  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
+Calculating gene variances
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+Calculating feature variances of standardized and clipped values
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+Computing neighbors...
+Spatial mode is kNN_median
+Parameters: k_geom=15
+Done
+Computing neighbors...
+Spatial mode is kNN_median
+Parameters: k_geom=15
+Done
+Done
+Centering
+Done
+Computing neighbors...
+Spatial mode is kNN_median
+Parameters: k_geom=15
+Done
+Computing neighbors...
+Spatial mode is kNN_median
+Parameters: k_geom=15
+Done
+Done
+Centering
+Done
+Computing neighbors...
+Spatial mode is kNN_median
+Parameters: k_geom=15
+Done
+Computing neighbors...
+Spatial mode is kNN_median
+Parameters: k_geom=15
+Done
+Done
+Centering
+Done
+Scaling logcounts
+Group: replicate1
+Group: replicate2
+Group: replicate3
+Scaling harmonic m = 0
+Group: replicate1
+Group: replicate2
+Group: replicate3
+Scaling harmonic m = 1
+Group: replicate1
+Group: replicate2
+Group: replicate3
+Using seed=1000
+Using seed=1000
+Using seed=1000
+Using seed=1000
+clust_M1_lam0.2_k50_res0.5 --> clust_M1_lam0.2_k50_res0.1
+Calculating cluster c3
+Calculating cluster c6
+Calculating cluster c1
+Calculating cluster c2
+Calculating cluster c5
+Calculating cluster c4
+Calculating cluster c8
+Calculating cluster c9
+Calculating cluster c7
+Warning messages:
+1: 1 point was rejected as lying outside the specified window 
+2: 6 points were rejected as lying outside the specified window 
 	Command being timed: "Rscript mg_xenium_mouse_brain.R"
-	User time (seconds): 617.66
-	System time (seconds): 27.39
-	Percent of CPU this job got: 85%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 12:32.87
+	User time (seconds): 3765.76
+	System time (seconds): 165.01
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:05:10
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 9660140
+	Maximum resident set size (kbytes): 49411940
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 13399
-	Minor (reclaiming a frame) page faults: 17578576
-	Voluntary context switches: 49506
-	Involuntary context switches: 1140
+	Major (requiring I/O) page faults: 124299
+	Minor (reclaiming a frame) page faults: 154806944
+	Voluntary context switches: 435279
+	Involuntary context switches: 37252
 	Swaps: 0
-	File system inputs: 143384
-	File system outputs: 3264080
+	File system inputs: 16248
+	File system outputs: 28576992
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0

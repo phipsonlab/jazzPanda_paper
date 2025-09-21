@@ -43,70 +43,114 @@ source(here("scripts/utils.R"))
 
 # load the data
 ```{r load-raw}
-rep1=get_xenium_data(path="/stornext/Bioinf/data/lab_phipson/data/xenium_Mm_brain/xenium_prerelease_jun20_mBrain_replicates/mBrain_ff_rep1/", 
-              mtx_name = "cell_feature_matrix_mtx/")
+rep1=get_xenium_data(path="/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Xenium_mouse_brain/Xenium_V1_FF_Mouse_Brain_MultiSection_1_outs/", 
+                     mtx_name = "cell_feature_matrix/",
+                     trans_name = "transcripts.csv.gz",
+                     cells_name="cells.csv.gz")
 
-rep2=get_xenium_data(path="/stornext/Bioinf/data/lab_phipson/data/xenium_Mm_brain/xenium_prerelease_jun20_mBrain_replicates/mBrain_ff_rep2/", 
-              mtx_name = "cell_feature_matrix_mtx/")
+rep2=get_xenium_data(path="/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Xenium_mouse_brain/Xenium_V1_FF_Mouse_Brain_MultiSection_2_outs/", 
+                     mtx_name = "cell_feature_matrix/",
+                     trans_name = "transcripts.csv.gz",
+                     cells_name="cells.csv.gz")
 
-rep3=get_xenium_data(path="/stornext/Bioinf/data/lab_phipson/data/xenium_Mm_brain/xenium_prerelease_jun20_mBrain_replicates/mBrain_ff_rep3/", 
-              mtx_name = "cell_feature_matrix_mtx/")
+rep3=get_xenium_data(path="/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Xenium_mouse_brain/Xenium_V1_FF_Mouse_Brain_MultiSection_3_outs/", 
+                     mtx_name = "cell_feature_matrix/",
+                     trans_name = "transcripts.csv.gz",
+                     cells_name="cells.csv.gz")
 
 rep1$trans_info = rep1$trans_info[rep1$trans_info$qv >=20 & rep1$trans_info$cell_id != -1 & !(rep1$trans_info$cell_id %in% rep1$zero_cells), ]
 rep2$trans_info = rep2$trans_info[rep2$trans_info$qv >=20 &  rep2$trans_info$cell_id != -1 & !(rep2$trans_info$cell_id %in% rep2$zero_cells), ]
 rep3$trans_info = rep3$trans_info[rep3$trans_info$qv >=20 & rep3$trans_info$cell_id != -1 & !(rep3$trans_info$cell_id %in% rep3$zero_cells), ]
 
 data_nm  <- "xenium_mbrain"
-# load geenrated data
+# load generated data
 cluster_info = readRDS(here(data_path,paste0(data_nm, "_clusters.Rds")))
+cluster_names = paste0("c",1:9)
+
 anno_df <- data.frame(
-  cluster = c("c0","c1","c2","c3","c4","c5","c6","c7","c8","c9"),
-  major_class = c("Glia",
-                  "Neuron (Glut)",
-                  "Neuron (Glut)",
-                  "Neuron (GABA)",
-                  "Non-neuronal",
-                  "Neuron (Glut)",
-                  "Neuron (Glut)",
-                  "Neuron (Glut)",
-                  "Immune",
-                  "Neuron (Glut)"),
-  subclass = c("OL lineage / Astrocytes",
-               "IT (intratelencephalic)",
-               "Projection (CT)",
-               "Interneuron",
-               "Vascular / Stromal",
-               "Hippocampal excitatory",
-               "Hippocampal excitatory",
-               "PT (subcortical-projecting)",
-               "Microglia",
-               "IT"),
-  anno_name = c("Astro-OPC/OL mix",
-                "IT L2/3-4",
-                "CT-like L6",
-                "Pvalb interneuron",
-                "Vascular/ChP fibro-endo",
-                "CA pyramidal",
-                "DG granule",
-                "PT L5",
-                "Microglia",
-                "IT Hpcal1"),
-  Notes = c("Diffuse background, mix of astrocytic (Gfap) and oligodendrocytic (Opalin, Sox10) signals",
-            "Strong superficial cortical band, Cux1/2, Satb2, Rorb",
-            "Deep cortical band, Foxp2, Slc17a6, Nell1",
-            "Sparse across cortex, Gad1/2, Pvalb, Syt2",
-            "Strands and CP region, Igf2, Pecam1, Col1a1",
-            "CA1–CA3 band, Slc17a7, Car4, Neurod6",
-            "Clear DG granule cell layer, Prox1, Calb1",
-            "Deep cortical stripe, Bcl11b, Penk",
-            "Scattered puncta, Trem2, Cd68, Siglech",
-            "Edge-localized cluster, Hpcal1, Cdh4"),
+    cluster = cluster_names,
+    major_class = c(
+    "Inhibitory neuron",
+    "Oligodendrocyte lineage",
+    "Excitatory neuron",
+    "Excitatory neuron",
+    "Non-neuronal (barrier/stromal mix)",
+    "Inhibitory projection neuron",
+    "Excitatory neuron",
+    "Excitatory neuron",
+    "Cholinergic neuron"
+  ),
+  sub_class = c(
+    "L2/3 LAMP5/VIP interneuron",
+    "Mature oligodendrocyte (myelinating)",
+    "IT L2/3",
+    "Corticothalamic-like",
+    "Choroid plexus & vascular/stromal admixture",
+    "Striatal medium spiny neuron (MSN)",
+    "Dentate gyrus granule",
+    "IT L6 corticocortical (Neurod6+)",
+    "Cortical/striatal cholinergic interneuron"
+  ),
+  cell_type = c(
+    "VIP/LAMP5 (CPLX3+, ID2+)",
+    "MOL (Opalin+/Gjc3+/Sox10+)",
+    "IT-L2/3 (BHLHE22+/HPcal1+)",
+    "L6 CT-like (FOXP2+/NTSR2+/VGlut2+)",
+    "Choroid plexus epithelium–enriched",
+    "MSN (DARPP-32+, GABAergic)",
+    "DG granule (Prox1+/Calb1+)",
+    "IT-L6/CC (Neurod6+/Wfs1+/Shisa6+)",
+    "ChAT+/SNCG+ interneuron"
+  ),
+  supporting_genes = c(
+    "JP: Id2, Lamp5, Vip, Cplx3, Crh, Cort; FM: Lamp5, Vip, Cplx3, Satb2",
+    "JP: Opalin, Gjc3, Sox10; FM: Opalin, Sox10, Gjc3, Spag16",
+    "JP: Slc17a7, Bhlhe22, Hpcal1, Cdh13; FM: Cabp7, Bhlhe22, Syt17",
+    "JP: Slc17a6, Foxp2, Ntsr2, Rims3; FM: Slc17a6, Foxp2, Rims3",
+    "JP: Igf2, Slc13a4, Kdr, Pecam1, Emcn, Col1a1, Acta2; FM: Fmod, Aldh1a2, Igf2, Col1a1, Spp1",
+    "JP: Ppp1r1b, Gad1/2, Penk, Pdyn, Meis2; FM: Penk, Pdyn, Ppp1r1b, Gad2",
+    "JP: Prox1, Calb1, Prdm8; FM: Prox1, Calb1",
+    "JP: Neurod6, Wfs1, Shisa6, Igfbp4; FM: Neurod6, Pou3f1, Shisa6, Wfs1",
+    "JP: Chat, Sncg, Syt6; FM: Chat, Sncg, Tacr1, Kctd8"
+  ),
+  notes = c(
+    "Robust LAMP5/VIP signal (Id2/Lamp5/Cplx3). SATB2/CUX2 likely ambient; minor immune genes likely contamination.",
+    "Opalin+Gjc3+Sox10 define mature oligos; low Gpr17 argues against OPC.",
+    "Slc17a7+ with IT adhesion/signaling genes; endothelial/immune hits in FM likely contaminants.",
+    "Foxp2+Ntsr2+ with Slc17a6 (VGlut2) suggest L6 corticothalamic-like; some L4/5 IT (Rorb) admixture.",
+    "Strong CP markers (Igf2, Slc13a4) with endothelial/smc/fibro mix → perivascular/meningeal CP neighborhood; ependymal Trp73 low.",
+    "Classic MSN signature (DARPP-32 + Gad1/2 + Penk/Pdyn); indicates striatal tissue present.",
+    "Prox1 hallmark of DG granule; Calb1 supportive.",
+    "Canonical Neurod6 IT-L6 corticocortical program; small PT marker bleed-through possible.",
+    "Clear ChAT/SNCG cholinergic identity; Syt6 hints at small L6 CT admixture."
+  ),
+  anno_name=c(
+  "Inh_L23_LAMP5_VIP",        
+  "Oligo_Mature_MOL",         
+  "Exc_L23_IT",               
+  "Exc_L6_CTlike",            
+  "NonNeur_CP_VascStromal",   
+  "Inh_Striatal_MSN",         
+  "Exc_DG_Granule",           
+  "Exc_L6_IT_CC",            
+  "Cholin_ChAT_SNCG"),
+  confidence = c(
+    "Medium-High",
+    "High",
+    "Medium",
+    "Medium",
+    "Medium-Low",
+    "High",
+    "High",
+    "Medium-High",
+    "High"
+  ),
   stringsAsFactors = FALSE
 )
 
 
 cluster_info = merge(cluster_info, anno_df, by="cluster")
-cluster_names = paste0("c",0:9 )
+
 cluster_info$cluster = factor(cluster_info$cluster,
                               levels=cluster_names)
 # cluster_info = cluster_info[order(cluster_info$cluster), ]
@@ -119,23 +163,90 @@ cluster_info = cluster_info[order(cluster_info$anno_name), ]
 jazzPanda_res_lst = readRDS(here(data_path,paste0(data_nm, "_jazzPanda_res_lst.Rds")))
 fit.cont = readRDS(here(data_path,paste0(data_nm, "_fit_cont_obj.Rds")))
 FM_result= readRDS(here(data_path,paste0(data_nm, "_seu_markers.Rds")))
-sv_lst = readRDS(here(data_path,paste0(data_nm, "_sq20_vector_lst.Rds")))
+sv_lst = readRDS(here(data_path,paste0(data_nm, "_sq50_vector_lst.Rds")))
 seu = readRDS(here(data_path,paste0(data_nm, "_seu.Rds")))
-
-Idents(seu)=cluster_info$anno_name[match(colnames(seu), cluster_info$cells)]
-seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cells)]
+se = readRDS(here(data_path,paste0(data_nm, "_se.Rds")))
+nbins = 2500
+Idents(seu)=cluster_info$anno_name[match(colnames(seu), cluster_info$cell_id)]
+seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cell_id)]
 
 ```
 
 # Dataset overview
 ```{r}
-plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, height = 1400,
-             my_colors = my_colors, ct_nm = "anno_name")
+
+    
+plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, height = 700,
+             my_colors = my_colors, ct_nm = "anno_name", 
+             fig_ratio = 7365 / 10117)
 plot_cluster_props(cluster_info=cluster_info,file_prefix = data_nm, 
                    my_colors = my_colors, ct_nm = "anno_name")
 
-plot_umap_seu(cluster_info=cluster_info,seu=seu, file_prefix = data_nm, 
-              my_colors = my_colors, ct_nm = "anno_name",fig_w = 3000)
+
+umap_bkm <- as.data.frame(reducedDim(se, "UMAP_M1_lam0.2"))
+umap_bkm$cluster <- paste0("c", colData(se)$clust_M1_lam0.2_k50_res0.1)
+umap_bkm$sample_id <- se$sample_id  
+umap_bkm$anno_name <- cluster_info$anno_name[match(row.names(umap_bkm),
+                                                 cluster_info$cell_id)]
+umap_bkm$anno_name =factor(umap_bkm$anno_name, 
+                           levels = anno_df$anno_name)
+umap_bkm = umap_bkm[order(umap_bkm$anno_name), ]
+label_df <- umap_bkm %>%
+    group_by(cluster, sample_id) %>%
+    summarise(V1 = mean(V1), V2 = mean(V2), .groups = "drop")
+
+
+rm(se)
+
+out_file <- here(overview_PA, paste0(data_nm, "_UMAP", ".jpg"))
+jpeg(out_file, width=1000*3, height=1000, res=200)
+
+ggplot(umap_bkm, aes(x = V1, y = V2, color = anno_name)) +
+    ggrastr::geom_point_rast(size = 0.01, alpha = 0.8) +
+    defined_theme +
+    facet_wrap(~sample_id, nrow=1)+
+    scale_color_manual(values = my_colors)+
+    guides(color = guide_legend(override.aes = list(size = 3), 
+                                ncol = 1, title = "")) +
+    labs(title = " ", x = "UMAP1", y = "UMAP2", fill=" ") +
+    theme(strip.background = element_blank(),
+          strip.text = element_text(size = 20, face = "plain"),
+          legend.position = "right",
+          legend.text = element_text(size = 12),
+          panel.border = element_rect(colour = "black", 
+                                      fill = NA, linewidth = 0.3),
+          axis.line = element_blank(),
+          legend.justification = "center",
+          axis.ticks = element_blank(),
+          legend.box.just = "center", 
+          axis.text = element_blank(),
+          axis.title = element_blank())
+dev.off()
+
+# 
+# jpeg(paste0("xy_persample.jpg"), width=1000*5, height=700*3, res=200)
+# 
+# ggplot(cluster_info, aes(x = x, y = y, color = cluster)) +
+#     ggrastr::geom_point_rast(size = 0.01, alpha = 0.8) +
+#     defined_theme +
+#     facet_grid(sample~cluster)+
+#     scale_color_manual(values = my_colors)+
+#     guides(color = guide_legend(override.aes = list(size = 3), 
+#                                 ncol = 1, title = "")) +
+#     labs(title = " ", x = "UMAP1", y = "UMAP2", fill=" ") +
+#     theme(strip.background = element_blank(),
+#           strip.text = element_text(size = 20, face = "plain"),
+#           legend.position = "right",
+#           legend.text = element_text(size = 12),
+#           panel.border = element_rect(colour = "black", 
+#                                       fill = NA, linewidth = 0.3),
+#           axis.line = element_blank(),
+#           legend.justification = "center",
+#           axis.ticks = element_blank(),
+#           legend.box.just = "center", 
+#           axis.text = element_blank(),
+#           axis.title = element_blank())
+# dev.off()
 ```
 
 # Spatial pattern of negative controls
@@ -169,18 +280,21 @@ bins_map <- list("negative control probe" = 1,
 
 
 for (cat in unique(nc_sp1$category)) {
-  plot_nc(nc_sp1, "replicate1", cat, data_nm, overview_PA,fig_ratio=4/3,
-          bins_map = bins_map, width = 600, height = 800)
+  plot_nc(nc_sp1, "replicate1", cat, data_nm, overview_PA,
+          fig_ratio = 7365 / 10117,
+          bins_map = bins_map, width = 1000, height = 800)
 }
 
 for (cat in unique(nc_sp2$category)) {
-  plot_nc(nc_sp2, "replicate2", cat, data_nm, overview_PA,fig_ratio=4/3,
-          bins_map = bins_map, width = 600, height = 800)
+  plot_nc(nc_sp2, "replicate2", cat, data_nm, overview_PA,
+          fig_ratio = 7365 / 10117,
+          bins_map = bins_map, width = 1000, height = 800)
 }
 
 for (cat in unique(nc_sp3$category)) {
-  plot_nc(nc_sp3, "replicate3", cat, data_nm, overview_PA,fig_ratio=4/3,
-          bins_map = bins_map, width = 600, height = 800)
+  plot_nc(nc_sp3, "replicate3", cat, data_nm, overview_PA,
+          fig_ratio = 7365 / 10117,
+          bins_map = bins_map, width = 1000, height = 800)
 }
 
 ```
@@ -209,10 +323,11 @@ print.xtable(latex_table, include.rownames = FALSE, hline.after = c(-1, 0, nrow(
 
 ## top3 marker genes by jazzPanda-glm
 ```{r  top3-gene-vis-xy, fig.width=10, fig.height=6}
-xr <- c(0, 3000)
-yr <- c(0, 4135)
+x_range <- c(0, 11000)
+y_range <- c(0, 7500)
+
 plot_lst=list()
-for (cl in paste("c", 0:9, sep="")){
+for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
     inters=jazzPanda_res[jazzPanda_res$top_cluster==cl,"gene"]
     rounded_val=signif(as.numeric(jazzPanda_res[inters,"glm_coef"]),
@@ -263,7 +378,7 @@ for (cl in paste("c", 0:9, sep="")){
               strip.text = element_text(size = rel(1.3)), 
               strip.text.y.right = element_blank(),
               legend.key.width = unit(2, "cm"),
-              aspect.ratio = 4/3,
+              aspect.ratio = 7365 / 10117,
               legend.title = element_text(size = 10),
               legend.text = element_text(size = 10),
                legend.key.height = unit(2, "cm"))
@@ -278,20 +393,22 @@ for (cl in paste("c", 0:9, sep="")){
                     #geom_hex(bins = 100)+
                     geom_point(size=0.01)+
                     facet_wrap(~label, nrow=3,strip.position = "left")+
-                    scale_x_reverse() +
+                    scale_x_reverse(limits = rev(x_range)) +  # enforce global x
+                    scale_y_continuous(limits = y_range) +  # enforce global y
+
                     scale_color_manual(values = c("black","black","black"))+
                     defined_theme + 
             theme(legend.position = "none", 
                   strip.background = element_blank(), 
-                  aspect.ratio = 4/3,
+                  aspect.ratio = 7365 / 10117,
                   legend.key.width = unit(15, "cm"),
-                  strip.text = element_text(size = rel(1.3)))
+                  strip.text = element_text(size = rel(1.2)))
 
         lyt <-p_cl | genes_plt
         layout_design <- lyt + patchwork::plot_layout(heights = c(1,1),widths = c(1, 3)) 
         cat("cluster:", cl,"\n")
         jpeg(file.path(mg_PA,paste0(data_nm, "_glm_", cl,"_top3.jpg")),
-             width=600*4, height=800*3, res=200)
+             width=800*4, height=650*3, res=200)
         print(layout_design)
         dev.off()
     }
@@ -302,7 +419,6 @@ for (cl in paste("c", 0:9, sep="")){
 ## cluster vector versus marker gene vector 
 ```{r}
 plot_lst=list()
-nbins = 400
 for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
     inters_df=jazzPanda_res[jazzPanda_res$top_cluster==cl,]
@@ -316,9 +432,9 @@ for (cl in cluster_names){
                               sv_lst$gene_mt[,mk_genes]))
     colnames(dff) = c("cluster", mk_genes)
     dff$sample= "replicate1"
-    dff[400:800,"sample"] = "replicate2"
-    dff[800:1200,"sample"] = "replicate3"
-    dff$vector_id = c(1:400, 1:400, 1:400)
+    dff[nbins:(nbins*2),"sample"] = "replicate2"
+    dff[(nbins*2):(nbins*3),"sample"] = "replicate3"
+    dff$vector_id = c(1:nbins, 1:nbins, 1:nbins)
     long_df <- dff %>% 
     pivot_longer(cols = -c(cluster, sample, vector_id), names_to = "gene", 
                values_to = "vector_count")
@@ -378,14 +494,14 @@ dev.off()
 ```{r fm-mg,eval=FALSE}
 table(FM_result$cluster)
 
-FM_result$cluster <- factor(FM_result$cluster, levels = paste0("c", 0:9))
+FM_result$cluster <- factor(FM_result$cluster, levels = cluster_names)
 
 top_mg <- FM_result %>%
   group_by(cluster) %>%
   arrange(desc(avg_log2FC), .by_group = TRUE) %>% 
   slice_max(order_by = avg_log2FC, n = 20) %>%
   select(cluster, gene, avg_log2FC)
-uni_clusters <-paste0("c", 0:9)
+uni_clusters <-cluster_names
 
 # Combine into a new dataframe for LaTeX output
 output_data <- do.call(rbind, lapply(uni_clusters, function(cl) {
@@ -408,12 +524,12 @@ summary(limma_dt)
 ```{r}
 plot_lst=list()
 cor_M = cor(sv_lst$gene_mt,
-            sv_lst$cluster_mt[, paste0("c", 0:9)],
-            method = "spearman")
-cor_M[cor_M <= 0.5] = 0
-cor_M[cor_M > 0.5]=1
-Idents(seu)=cluster_info$cluster[match(colnames(seu), cluster_info$cells)]
-for (cl in paste("c", 0:9, sep="")){
+            sv_lst$cluster_mt[, cluster_names],
+            method = "pearson")
+cor_M[cor_M <= 0.6] = 0
+cor_M[cor_M > 0.6]=1
+Idents(seu)=cluster_info$cluster[match(colnames(seu), cluster_info$cell_id)]
+for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
     fm_cl=FindMarkers(seu, ident.1 = cl, only.pos = TRUE,
             logfc.threshold = 0.25)
@@ -451,7 +567,7 @@ for (cl in paste("c", 0:9, sep="")){
                                     "Wilcoxon Rank Sum Test" = "blue",
                                     "jazzPanda-glm" = "red")) +
         labs(title = ct_nm, x = "Rank of marker genes",
-             y = "Cumulative count of genes with correlation >0.5",
+             y = "Cumulative count of genes with correlation >0.6",
              color = NULL) +
         theme_classic(base_size = 12) +
         theme(plot.title = element_text(hjust = 0.5),
@@ -471,7 +587,7 @@ for (cl in paste("c", 0:9, sep="")){
 
 combined_plot <- wrap_plots(plot_lst, ncol = 3)
 pdf(file.path(comp_PA, paste0(data_nm, "_mg_compare_rank.pdf")),
-    height = 20, width = 15)
+    height = 15, width = 15)
 combined_plot 
 dev.off()
 
@@ -479,7 +595,7 @@ dev.off()
 ## upset plot
 ```{r upset-mg-comparison, fig.width=12, fig.height=18}
 plot_lst=list()
-for (cl in paste("c", 0:9, sep="")){
+for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
     findM_sig <- FM_result[FM_result$cluster==cl,"gene"]
     limma_sig <- row.names(limma_dt[limma_dt[,cl]==1,])
@@ -520,9 +636,9 @@ for (cl in paste("c", 0:9, sep="")){
 }
 
 
-combined_plot <- wrap_plots(plot_lst, ncol = 4)
+combined_plot <- wrap_plots(plot_lst, ncol = 3)
 pdf(file.path(comp_PA, paste0(data_nm, "_mg_compare_upset.pdf")),
-     height =4* (ceiling(length(cluster_names)/4)), width = 16)
+     height =4* (ceiling(length(cluster_names)/3)), width = 12)
 combined_plot 
 dev.off()
 ```
