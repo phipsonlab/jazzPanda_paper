@@ -3,8 +3,8 @@
 #SBATCH --job-name=run_mg_merscope_human_breast_cancer_5core
 #SBATCH --output=slurm_out/mg_merscope_human_breast_cancer_5core.out
 #SBATCH --error=slurm_out/mg_merscope_human_breast_cancer_5core.err
-#SBATCH --time=12:00:00
-#SBATCH --mem=300G
+#SBATCH --time=15:00:00
+#SBATCH --mem=400G
 #SBATCH --cpus-per-task=12
 
 ################################################################################

@@ -1506,109 +1506,80 @@ library(data.table)
 source(here(&quot;scripts/utils.R&quot;))</code></pre>
 <div id="load-the-data" class="section level1">
 <h1>load the data</h1>
-<pre class="r"><code>raw_data_PA =&quot;/stornext/Bioinf/data/lab_phipson/givanna/merscope_data/20231220/&quot;
+<pre class="r"><code>raw_data_PA =&quot;/stornext/Bioinf/data/lab_phipson/givanna/merscope_data/HumanBreastCancerPatient1/&quot;
+
 transcript_df&lt;-fread(paste0(raw_data_PA,&quot;detected_transcripts.csv&quot;))
 
 transcript_df$x &lt;- transcript_df$global_x
 transcript_df$y &lt;- transcript_df$global_y
+transcript_df$gene = make.names(transcript_df$gene)
 transcript_df$feature_name = transcript_df$gene
 
-transcript_df$x &lt;- transcript_df$x+ 40
-transcript_df$y &lt;- transcript_df$y + 300
 
 data_nm  &lt;- &quot;merscope_hbreast&quot;
 # load geenrated data
 cluster_info = readRDS(here(data_path,paste0(data_nm, &quot;_clusters.Rds&quot;)))
-cluster_names = paste0(&quot;c&quot;, 0:15)
+cluster_names = paste0(&quot;c&quot;, 1:10)
 anno_df &lt;- data.frame(
-  cluster = c(&quot;c0&quot;,&quot;c1&quot;,&quot;c2&quot;,&quot;c3&quot;,&quot;c4&quot;,&quot;c5&quot;,&quot;c6&quot;,&quot;c7&quot;,&quot;c8&quot;,&quot;c9&quot;,&quot;c10&quot;,&quot;c11&quot;,&quot;c12&quot;,&quot;c13&quot;,&quot;c14&quot;,&quot;c15&quot;),
+    cluster = cluster_names,
   major_class = c(
-    &quot;Epithelial&quot;,&quot;Stromal&quot;,&quot;Epithelial&quot;,&quot;Epithelial&quot;,&quot;Epithelial&quot;,&quot;Epithelial&quot;,
-    &quot;Immune&quot;,&quot;Epithelial&quot;,&quot;Immune&quot;,&quot;Epithelial&quot;,&quot;Immune&quot;,&quot;Immune&quot;,&quot;Epithelial&quot;,
-    &quot;Stromal&quot;,&quot;Immune&quot;,&quot;Immune&quot;
+    &quot;Epithelial tumor&quot;,&quot;Stromal&quot;,&quot;Epithelial tumor&quot;,&quot;Epithelial tumor&quot;,
+    &quot;Myeloid&quot;,&quot;Myeloid&quot;,&quot;Lymphoid&quot;,&quot;Endothelial / Vascular&quot;,&quot;B lineage&quot;,&quot;Dendritic cell&quot;
   ),
   sub_class = c(
-    &quot;Tumor epithelial&quot;,&quot;Fibroblast (CAF)&quot;,&quot;Tumor epithelial&quot;,&quot;Tumor epithelial&quot;,
-    &quot;Tumor epithelial (IFN/MHC-II+)&quot;,&quot;Tumor epithelial (cycling)&quot;,
-    &quot;Myeloid (Macrophage/TAM)&quot;,&quot;Tumor epithelial (cycling)&quot;,
-    &quot;Myeloid (Macrophage/TAM)&quot;,&quot;Tumor epithelial&quot;,&quot;Myeloid (Mono→MΦ)&quot;,
-    &quot;T/NK&quot;,&quot;Tumor epithelial&quot;,&quot;Endothelial&quot;,&quot;B lineage&quot;,&quot;Dendritic cell&quot;
+    &quot;Luminal-like / ERBB2-high&quot;,&quot;Cancer-associated fibroblast (CAF)&quot;,&quot;IFN-γ–licensed&quot;,&quot;Cycling (G2/M)&quot;,
+    &quot;Tumor-associated macrophage (TAM)&quot;,&quot;Inflammatory/angiogenic TAM&quot;,&quot;T cells (activated)&quot;,&quot;Blood endothelial&quot;,&quot;Plasma cell / plasmablast&quot;,&quot;Langerhans / cDC2-like&quot;
   ),
   cell_type = c(
-    &quot;WNT/ERBB-active luminal-progenitor–like&quot;,
-    &quot;Myofibroblastic CAF (myCAF)&quot;,
-    &quot;Basal/EMT-high invasive&quot;,
-    &quot;G2/M cycling carcinoma&quot;,
-    &quot;Antigen-presenting tumor epithelial (AP-TEC)&quot;,
-    &quot;S-phase/replication-high carcinoma&quot;,
-    &quot;SPP1+ inflammatory TAM&quot;,
-    &quot;G2/M hyper-proliferative/stem-like&quot;,
-    &quot;C1QC+/MRC1+ immunoregulatory TAM&quot;,
-    &quot;Stress/EMT/stem-like (ERBB/LGR5/SOD2)&quot;,
-    &quot;FCGR3A+ inflammatory monocyte/macrophage&quot;,
-    &quot;Activated TILs (mixed CD8+/Th1; partial exhaustion/Treg admixture)&quot;,
-    &quot;Inflammatory/hypoxic (COX-2/PTGS2+)&quot;,
-    &quot;Angiogenic/tip endothelium&quot;,
-    &quot;Plasma cell&quot;,
-    &quot;Langerhans-like / cDC2-skewed DC&quot;
+    &quot;Carcinoma—proliferative ERBB2/EGFR⁺&quot;,
+    &quot;myCAF / iCAF hybrid&quot;,
+    &quot;Carcinoma—MHC-II⁺ (APC-like)&quot;,
+    &quot;Carcinoma—G2/M cycling&quot;,
+    &quot;C1QC⁺ M2-like TAM&quot;,
+    &quot;SPP1⁺ (osteopontin) TAM&quot;,
+    &quot;Mixed CD4/CD8 with Treg features&quot;,
+    &quot;Endothelium—PLVAP/KDR⁺&quot;,
+    &quot;Plasma cells&quot;,
+    &quot;CD207⁺ APC&quot;
   ),
   supporting_genes = c(
-    &quot;DKK1, EPHB3, ERBB2/3, FGFR2, LRP6, EPCAM, LGR5&quot;,
-    &quot;COL1A1, COL11A1, COL6A3, ACTA2, FN1, FAP, PDGFRA/B, TNC&quot;,
-    &quot;MMP7, LAMC2, LAMB3, SOD2, SOX9, EPCAM&quot;,
-    &quot;MCM2, PCNA, PLK1, BIRC5, MYBL2, FOXM1, EPCAM&quot;,
-    &quot;HLA-DRA/DRB1/DPA1, CIITA, TAP1/2, EPCAM, ERBB2/3&quot;,
-    &quot;MKI67, PCNA, CCNE1, CDK4/6, AURKA/B, BIRC5, MYBL2&quot;,
-    &quot;SPP1, MMP9/12, CXCL8, VEGFA, ITGAX, IL1B, MARCO&quot;,
-    &quot;FOXM1, BIRC5, PLK1, MKI67, AURKA/B, SOX2&quot;,
-    &quot;C1QC, MRC1, CD163, CSF1R, CD14, CD209&quot;,
-    &quot;SOD2, MMP7, SOX9, LGR5, FGFR2, ICAM1, VEGFA&quot;,
-    &quot;LYZ, FCGR3A, ITGB2, CYBB, CCR1, CCL2, MSR1, TREM2&quot;,
-    &quot;TRAC, CD3E/D/G, CD8A, GZMA/H, CCL5, CXCR3, TIGIT, LAG3, PDCD1, FOXP3&quot;,
-    &quot;PTGS2, VEGFA, ICAM1, MMP7, LAMC2/LAMB3, MUC1&quot;,
-    &quot;PECAM1, VWF, KDR/FLT1, FLT4, PLVAP, CLDN5, ANGPT2, MMRN2, PGF&quot;,
-    &quot;XBP1, MZB1, IRF4, POU2AF1, CD79A/B, TNFRSF13C&quot;,
-    &quot;CD207, FCER1A, CD1C/B/E, CCL22, LAMP3, CX3CR1&quot;
+    &quot;EPCAM, ERBB2, ERBB3, EGFR, CDH1, MYC, FOXM1, MYBL2, MCM2, PCNA, CCNB1, LGR5, DKK1, FZD7, EPHB3&quot;,
+    &quot;FN1, COL1A1, COL11A1, COL6A3, COL5A1, ACTA2, PDGFRA, TNC, FAP, CXCL12, IL6, SERPINE1, MFAP5, ELN, LOX&quot;,
+    &quot;CDH1, EPCAM, HLA-DPB1/DRB1, CIITA, IDO1, TNFSF10, TGFB2, CEACAM1&quot;,
+    &quot;BIRC5, PLK1, CCNB1, AURKA, AURKB, FOXM1, MYBL2, MCM2, TP53&quot;,
+    &quot;C1QC, LYZ, FCGR3A, CD14, MRC1, CD163, MSR1, CSF1R, TREM2, LGALS9&quot;,
+    &quot;SPP1, VEGFA, MMP9, MMP12, CXCL8, SERPINE1, TGFBI, ICAM1, ATF3&quot;,
+    &quot;TRAC, CD3D/E/G, CD2, CD8A, GZMA/H/K, NKG7, CXCR3, TIGIT, ICOS, FOXP3, CCR7, TBX21, EOMES&quot;,
+    &quot;PECAM1, VWF, CDH5, KDR, FLT1, CLDN5, PLVAP, MMRN2, ANGPT2, PGF, CLEC14A&quot;,
+    &quot;XBP1, MZB1, IRF4, POU2AF1, CD79A/B, DERL3, FCRL5&quot;,
+    &quot;CD207, FCER1A, CD1C, CD1B/E, CCL22, CSF1R&quot;
   ),
   notes = c(
-    &quot;Epithelial RTK/WNT program; stem-like cues; non-cycling.&quot;,
-    &quot;Highly concordant ECM/myofibroblast signature across methods.&quot;,
-    &quot;Invasive/EMT markers with epithelial core; not strongly cell-cycle.&quot;,
-    &quot;Robust proliferative program; epithelial identity retained.&quot;,
-    &quot;Clear CIITA/MHC-II induction in carcinoma cells.&quot;,
-    &quot;FM shows strong S-phase; jazzPanda sparse likely coverage.&quot;,
-    &quot;Inflammatory/angiogenic TAM subtype distinct from C1QC+ state.&quot;,
-    &quot;Mitotic peak with SOX2; minor immune transcripts likely bleed-through.&quot;,
-    &quot;Regulatory/resident TAM program; distinct from inflammatory TAMs.&quot;,
-    &quot;Oxidative stress + EMT/stem features; epithelial confirmed.&quot;,
-    &quot;Mono-derived activation; distinct from TAM states in c6/c8.&quot;,
-    &quot;Mixture of CD8+, Th1, Treg and exhaustion markers—heterogeneous TILs.&quot;,
-    &quot;COX-2/hypoxia/inflammation in epithelium; weaker specificity than c4.&quot;,
-    &quot;Canonical endothelial with tip/angiogenic features.&quot;,
-    &quot;Textbook plasma-cell program; very strong.&quot;,
-    &quot;Langerin+ with cDC2 features; likely migratory LAMP3+ DC admixture.&quot;
+    &quot;Luminal-like/HER2-high epithelial tumor with strong proliferation and WNT cues.&quot;,
+    &quot;Mixed myCAF/iCAF phenotype; ECM deposition and inflammatory signaling coexist.&quot;,
+    &quot;IFN-γ–induced antigen presentation by tumor cells; epithelial identity preserved.&quot;,
+    &quot;Mitotic (G2/M) program dominates; classic cycling-tumor signature.&quot;,
+    &quot;Immunoregulatory TAMs with M2-like polarization; chemokine-rich.&quot;,
+    &quot;Angiogenic/remodeling TAMs; SPP1/VEGFA/MMP axis.&quot;,
+    &quot;Activated T cells with cytotoxic and Treg subsets co-enriched.&quot;,
+    &quot;Activated tumor endothelium; tip/stalk features (PLVAP/ANGPT2).&quot;,
+    &quot;Canonical plasma cell program; minor contamination unlikely to change call.&quot;,
+    &quot;Langerin+ dendritic cells bridging cDC2/Langerhans features.&quot;
   ),
-  confidence = c(
-    &quot;Medium&quot;,&quot;High&quot;,&quot;Medium&quot;,&quot;High&quot;,&quot;High&quot;,&quot;Medium&quot;,
-    &quot;High&quot;,&quot;High&quot;,&quot;High&quot;,&quot;Medium-High&quot;,&quot;High&quot;,&quot;Medium&quot;,
-    &quot;Medium&quot;,&quot;High&quot;,&quot;High&quot;,&quot;Medium-High&quot;
-  ),
-anno_name = c(&quot;Tumor-LP/WNT&quot;,
-                &quot;CAF-myCAF&quot;, 
-                &quot;Tumor-Basal/EMT&quot;,
-                &quot;Tumor-Luminal/Cycling&quot;,
-                &quot;Tumor-MHCII+&quot;,
-                &quot;Tumor-G2M&quot;,
-                &quot;TAM (SPP1+)&quot;,
-                &quot;Cycling carcinoma&quot;,
-                &quot;TAM-C1QC/M2&quot;,
-                &quot;EMT/stress carcinoma&quot;,
-                &quot;TAM-CD16/TREM2&quot;,
-                &quot;Tcell-Mixed&quot;,
-                &quot;Tumor-Inflam/Hypoxia&quot;,
-                &quot;Endothelium (angiogenic)&quot;,
-                &quot;Plasma cell&quot;,
-                &quot;DC-cDC2/Langerin&quot;)
+    confidence = c(&quot;High&quot;,&quot;High&quot;,&quot;High&quot;,&quot;High&quot;,&quot;High&quot;,&quot;High&quot;,
+                 &quot;Medium&quot;,&quot;High&quot;,&quot;High&quot;,&quot;High&quot;),
+  
+    anno_name = c(&quot;Tumor_Luminal_ERBB2&quot;, 
+                &quot;CAF_Mixed&quot;,             
+                &quot;Tumor_IFNg_APC&quot;,        
+                &quot;Tumor_Cycling_G2M&quot;,     
+                &quot;TAM_C1QC&quot;,             
+                &quot;TAM_SPP1&quot;,              
+                &quot;Tcell_Activated&quot;,       
+                &quot;Endo_Blood&quot;,            
+                &quot;Plasma&quot;,           
+                &quot;DC_Langerhans_cDC2&quot;),
+stringsAsFactors = FALSE
 )
 
 
@@ -1633,6 +1604,7 @@ perm_lst = readRDS(here(data_path,paste0(data_nm, &quot;_perm_lst.Rds&quot;)))
 FM_result= readRDS(here(data_path,paste0(data_nm, &quot;_seu_markers.Rds&quot;)))
 sv_lst = readRDS(here(data_path,paste0(data_nm, &quot;_sq50_vector_lst.Rds&quot;)))
 seu = readRDS(here(data_path,paste0(data_nm, &quot;_seu.Rds&quot;)))
+se = readRDS(here(data_path,paste0(data_nm, &quot;_se.Rds&quot;)))
 nbins = 2500
 Idents(seu)=cluster_info$anno_name[match(colnames(seu), cluster_info$cell_id)]
 seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cell_id)]</code></pre>
@@ -1645,14 +1617,49 @@ seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cell_id)]</co
                    my_colors = my_colors, ct_nm = &quot;anno_name&quot;)</code></pre>
 <pre><code>png 
   2 </code></pre>
-<pre class="r"><code>plot_umap_seu(cluster_info=cluster_info,seu=seu, file_prefix = data_nm, 
-              my_colors = my_colors, ct_nm = &quot;anno_name&quot;,fig_w = 1400)</code></pre>
+<pre class="r"><code>umap_bkm &lt;- as.data.frame(reducedDim(se, &quot;UMAP_M1_lam0.2&quot;))
+umap_bkm$cluster &lt;- paste0(&quot;c&quot;, colData(se)$clust_M1_lam0.2_k50_res0.5)
+umap_bkm$sample_id &lt;- se$sample_id  
+umap_bkm$anno_name &lt;- cluster_info$anno_name[match(row.names(umap_bkm),
+                                                 cluster_info$cell_id)]
+umap_bkm$anno_name =factor(umap_bkm$anno_name, 
+                           levels = anno_df$anno_name)
+umap_bkm = umap_bkm[order(umap_bkm$anno_name), ]
+
+
+
+#rm(se)
+
+out_file &lt;- here(overview_PA, paste0(data_nm, &quot;_UMAP&quot;, &quot;.jpg&quot;))
+jpeg(out_file, width=1400, height=1000, res=200)
+
+ggplot(umap_bkm, aes(x = V1, y = V2, color = anno_name)) +
+    geom_point(size = 0.001) +
+    defined_theme +
+    facet_wrap(~sample_id, nrow=1)+
+    scale_color_manual(values = my_colors)+
+    guides(color = guide_legend(override.aes = list(size = 3), 
+                                ncol = 1, title = &quot;&quot;)) +
+    labs(title = &quot; &quot;, x = &quot;UMAP1&quot;, y = &quot;UMAP2&quot;, fill=&quot; &quot;) +
+    theme(strip.background = element_blank(),
+          strip.text = element_text(size = 20, face = &quot;plain&quot;),
+          legend.position = &quot;right&quot;,
+          legend.text = element_text(size = 12),
+          panel.border = element_rect(colour = &quot;black&quot;, 
+                                      fill = NA, linewidth = 0.3),
+          axis.line = element_blank(),
+          legend.justification = &quot;center&quot;,
+          axis.ticks = element_blank(),
+          legend.box.just = &quot;center&quot;, 
+          axis.text = element_blank(),
+          axis.title = element_blank())
+dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
 </div>
 <div id="load-blank-genes" class="section level1">
 <h1>load blank genes</h1>
-<pre class="r"><code>real_genes &lt;- row.names(seu)
+<pre class="r"><code>real_genes &lt;- row.names(se)
 nc_coords &lt;- transcript_df[!(transcript_df$gene %in% real_genes), ]
 nc_coords$feature_name &lt;- nc_coords$gene
 nc_coords$sample &lt;- &quot;sample1&quot;
@@ -1672,6 +1679,9 @@ plot_nc(nc_coords, &quot;sample1&quot;,&quot;negative control probe&quot; ,
 obs_corr = get_cor(perm_lst)</code></pre>
 <div id="top3-marker-genes-by-jazzpanda_correlation" class="section level2">
 <h2>top3 marker genes by jazzPanda_correlation</h2>
+<pre class="r"><code>cat(&quot;\n corr approach \n&quot;)</code></pre>
+<pre><code>
+ corr approach </code></pre>
 <pre class="r"><code>for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, &quot;anno_name&quot;]
     obs_cutoff = quantile(obs_corr[, cl], 0.75)
@@ -1697,11 +1707,14 @@ obs_corr = get_cor(perm_lst)</code></pre>
         vis_r1$text_label=factor(vis_r1$text_label, levels=inters_df$text)
     
         vis_r1 = vis_r1[order(vis_r1$text_label),]
-
+        cat(&quot;-------cluster=&quot;, cl, &quot;\n&quot;)
+        print(table(vis_r1$feature_name))
+        
         genes_plt&lt;- ggplot(data = vis_r1,
                     aes(x = x, y = y))+ 
                     #geom_point(size=0.0001)+
-                    geom_hex(bins = auto_hex_bin(mean(table(vis_r1$feature_name))))+
+                     geom_hex(bins = auto_hex_bin(min(table(vis_r1$feature_name)),
+                                                 target_points_per_bin = 15))+
                     facet_wrap(~text_label, nrow=1)+
                     scale_fill_gradient(low=&quot;white&quot;, high=&quot;maroon4&quot;) + 
                     guides(fill = guide_colorbar(barheight = unit(0.3, &quot;npc&quot;), 
@@ -1747,22 +1760,56 @@ obs_corr = get_cor(perm_lst)</code></pre>
         dev.off()
     }
   }</code></pre>
-<pre><code>cluster: c0 </code></pre>
-<pre><code>cluster: c1 </code></pre>
-<pre><code>cluster: c2 </code></pre>
-<pre><code>cluster: c3 </code></pre>
-<pre><code>cluster: c4 </code></pre>
-<pre><code>cluster: c5 </code></pre>
-<pre><code>cluster: c6 </code></pre>
-<pre><code>cluster: c7 </code></pre>
-<pre><code>cluster: c8 </code></pre>
-<pre><code>cluster: c9 </code></pre>
-<pre><code>cluster: c10 </code></pre>
-<pre><code>cluster: c11 </code></pre>
-<pre><code>cluster: c12 </code></pre>
-<pre><code>cluster: c13 </code></pre>
-<pre><code>cluster: c14 </code></pre>
-<pre><code>cluster: c15 </code></pre>
+<pre><code>-------cluster= c1 
+
+   PTK2 SMARCA4    TP53 
+3759619  955920 2192515 
+cluster: c1 </code></pre>
+<pre><code>-------cluster= c2 
+
+ COL11A1   COL1A1   TGFBR2 
+ 1385037 10919570   659559 
+cluster: c2 </code></pre>
+<pre><code>-------cluster= c3 
+
+   CDH1    PTK2   TAPBP 
+5554730 3759619 8707698 
+cluster: c3 </code></pre>
+<pre><code>-------cluster= c4 
+
+   BRD4    PTK2    RELA 
+3038517 3759619 2452032 
+cluster: c4 </code></pre>
+<pre><code>-------cluster= c5 
+
+   C1QC    CD14  FCGR3A 
+1706934 1133398 1723671 
+cluster: c5 </code></pre>
+<pre><code>-------cluster= c6 
+
+  CXCL8   MMP12    SPP1 
+ 158413  212256 7373952 
+cluster: c6 </code></pre>
+<pre><code>-------cluster= c7 
+
+   CD2   CD3E   TRAC 
+200251 210606 315474 
+cluster: c7 </code></pre>
+<pre><code>-------cluster= c8 
+
+ MMRN2  PLVAP    VWF 
+177537 738271 407285 
+cluster: c8 </code></pre>
+<pre><code>-------cluster= c9 
+
+  CD79A    MZB1 POU2AF1 
+  84387  124577   83030 
+cluster: c9 </code></pre>
+<pre><code>-------cluster= c10 
+
+  CD1C  CD207 FCER1A 
+ 67869 343529 101700 
+cluster: c10 </code></pre>
 </div>
 <div id="cluster-vector-versus-marker-gene-vector" class="section level2">
 <h2>cluster vector versus marker gene vector</h2>
@@ -1852,6 +1899,9 @@ print.xtable(latex_table, include.rownames = FALSE,
              hline.after = c(-1, 0, nrow(output_data)), comment = FALSE)</code></pre>
 <div id="top3-marker-genes-by-jazzpanda_glm" class="section level2">
 <h2>top3 marker genes by jazzPanda_glm</h2>
+<pre class="r"><code>cat(&quot;\n glm approach \n&quot;)</code></pre>
+<pre><code>
+ glm approach </code></pre>
 <pre class="r"><code>for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, &quot;anno_name&quot;]
     inters=jazzPanda_res[jazzPanda_res$top_cluster==cl,&quot;gene&quot;]
@@ -1861,7 +1911,9 @@ print.xtable(latex_table, include.rownames = FALSE,
     inters_df$value = as.numeric(inters_df$value)
     inters_df=inters_df[order(inters_df$value, decreasing = TRUE),]
     inters_df$text= paste(inters_df$gene,inters_df$value,sep=&quot;: &quot;)
-    
+    cat(&quot;-------cluster=&quot;, cl, &quot;\n&quot;)
+        print(table(vis_r1$feature_name))
+        
     if (length(inters &gt; 0)){
         inters_df = inters_df[1:min(3, nrow(inters_df)),]
         inters = inters_df$gene
@@ -1880,7 +1932,8 @@ print.xtable(latex_table, include.rownames = FALSE,
         genes_plt&lt;- ggplot(data = vis_r1,
                     aes(x = x, y = y))+ 
                     #geom_point(size=0.0001)+
-                    geom_hex(bins = auto_hex_bin(mean(table(vis_r1$feature_name))))+
+                    geom_hex(bins = auto_hex_bin(min(table(vis_r1$feature_name)),
+                                                 target_points_per_bin = 10))+
                     facet_wrap(~text_label, nrow=1)+
                     scale_fill_gradient(low=&quot;white&quot;, high=&quot;maroon4&quot;) + 
                     guides(fill = guide_colorbar(barheight = unit(0.3, &quot;npc&quot;), 
@@ -1927,19 +1980,55 @@ print.xtable(latex_table, include.rownames = FALSE,
         dev.off()
     }
   }</code></pre>
-<pre><code>cluster: c0 </code></pre>
-<pre><code>cluster: c1 </code></pre>
-<pre><code>cluster: c4 </code></pre>
-<pre><code>cluster: c6 </code></pre>
-<pre><code>cluster: c7 </code></pre>
-<pre><code>cluster: c8 </code></pre>
-<pre><code>cluster: c9 </code></pre>
-<pre><code>cluster: c10 </code></pre>
-<pre><code>cluster: c11 </code></pre>
-<pre><code>cluster: c12 </code></pre>
-<pre><code>cluster: c13 </code></pre>
-<pre><code>cluster: c14 </code></pre>
-<pre><code>cluster: c15 </code></pre>
+<pre><code>-------cluster= c1 
+
+  CD1C  CD207 FCER1A 
+ 67869 343529 101700 
+cluster: c1 </code></pre>
+<pre><code>-------cluster= c2 
+
+    CD40      MYC    TAPBP 
+ 5065255 11847240  8707698 
+cluster: c2 </code></pre>
+<pre><code>-------cluster= c3 
+
+   ACTA2   COL1A1      FN1 
+ 3018640 10919570 18201925 
+cluster: c3 </code></pre>
+<pre><code>-------cluster= c4 
+
+    CDH1 HLA.DPB1 HLA.DRB1 
+ 5554730  2725502  3845659 
+-------cluster= c5 
+
+    CDH1 HLA.DPB1 HLA.DRB1 
+ 5554730  2725502  3845659 
+cluster: c5 </code></pre>
+<pre><code>-------cluster= c6 
+
+   C1QC  FCGR3A     LYZ 
+1706934 1723671 1711402 
+cluster: c6 </code></pre>
+<pre><code>-------cluster= c7 
+
+   SOD2    SPP1   VEGFA 
+8084694 7373952 7728370 
+cluster: c7 </code></pre>
+<pre><code>-------cluster= c8 
+
+  CCL5   CD3E   TRAC 
+389962 210606 315474 
+cluster: c8 </code></pre>
+<pre><code>-------cluster= c9 
+
+ COL4A1  PDGFRB   PLVAP 
+2805453 1312462  738271 
+cluster: c9 </code></pre>
+<pre><code>-------cluster= c10 
+
+   IRF4    MZB1    XBP1 
+ 155178  124577 2307905 
+cluster: c10 </code></pre>
 </div>
 <div id="cluster-vector-versus-marker-gene-vector-1" class="section level2">
 <h2>cluster vector versus marker gene vector</h2>
@@ -2028,10 +2117,10 @@ latex_table &lt;- xtable(output_data, caption=&quot;Detected marker genes for ea
 print.xtable(latex_table, include.rownames = FALSE, hline.after = c(-1, 0, nrow(output_data)), comment = FALSE)</code></pre>
 <pre class="r"><code>limma_dt &lt;- decideTests(fit.cont)
 summary(limma_dt)</code></pre>
-<pre><code>        c0  c1  c2  c3  c4  c5  c6  c7  c8  c9 c10 c11 c12 c13 c14 c15
-Down   184 396 394 294 118 473 435 159 393 123 243 327 220 355 350 350
-NotSig  12   7   7  21   7   0   3  11  10  10  25  16  27  16  37  42
-Up     304  97  99 185 375  27  62 330  97 367 232 157 253 129 113 108</code></pre>
+<pre><code>        c1  c2  c3  c4  c5  c6  c7  c8  c9 c10
+Down   135 411 234 424 298 455 280 335 333 261
+NotSig   3   2  12   4  13   3  19  20  43  65
+Up     362  87 254  72 189  42 201 145 124 174</code></pre>
 </div>
 <div id="cumulative-rank-plot" class="section level2">
 <h2>Cumulative rank plot</h2>

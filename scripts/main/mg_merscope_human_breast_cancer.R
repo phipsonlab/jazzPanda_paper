@@ -9,45 +9,81 @@ library(edgeR)
 library(speckle)
 library(peakRAM)
 library(dplyr) 
+library(SpatialExperimentIO)
+library(SpatialExperiment)
+library(Seurat)
+library(Banksy)
+se =  readMerscopeSXE(dirName = "/stornext/Bioinf/data/lab_phipson/givanna/merscope_data/HumanBreastCancerPatient1/",
+                      countMatPattern = "cell_by_gene.csv", metaDataPattern = "cell_metadata.csv")
+x_avg <- (se@colData$min_x + se@colData$max_x) / 2
+y_avg <- (se@colData$min_y + se@colData$max_y) / 2
+
+# create a matrix
+coords <- cbind(x = x_avg, y = y_avg)
+
+# assign to spatialCoordiantes
+SpatialExperiment::spatialCoords(se) <- coords
+
+blank_genes <- grep("^Blank", rownames(se), value = TRUE)
 
 
-# load count matrix 
-cm =  fread("/stornext/Bioinf/data/lab_phipson/melody/spaceMarker_analysis/analysis/merscope_processed_count_matrix.csv", header=TRUE)
+blank_idx <- grep("^Blank", rownames(se))
+se <- se[-blank_idx, ]
 
-all_gene_names <- cm[["V1"]]
-cm = as.matrix(cm[, 2:ncol(cm)])
-row.names(cm) <- all_gene_names
+lib_size <- Matrix::colSums(assay(se, "counts"))
+colData(se)$lib_size <- lib_size
 
-cells_meta =  fread("/stornext/Bioinf/data/lab_phipson/melody/spaceMarker_analysis/analysis/merscope_cell_meta.csv")
+# Filter cells with library size between 30 and 2500
+se <- se[, lib_size > 30 & lib_size < 2500]
 
-cells_meta$cell_id = cells_meta$V1
+seu <- as.Seurat(se, data = NULL)
+seu <- NormalizeData(seu, normalization.method = "LogNormalize")
+seu <- FindVariableFeatures(seu, nfeatures = nrow(seu))
 
+# copy log-normalized data back to se
+aname <- "logcounts"
+logcounts_mat <- GetAssayData(seu, slot = "data")[, colnames(se)]
+assay(se, aname, withDimnames = FALSE) <- logcounts_mat
 
-transcript_df<-fread("/stornext/Bioinf/data/lab_phipson/givanna/merscope_data/20231220/detected_transcripts.csv")
+lambda <- 0.2
+k_geom <- 15
+use_agf <- TRUE
+
+se <- computeBanksy(se, assay_name = aname,
+                    compute_agf = TRUE, k_geom = k_geom)
+
+se <- runBanksyPCA(se, use_agf = use_agf, lambda = lambda, seed = 1000)
+se <- runBanksyUMAP(se, use_agf = use_agf, lambda = lambda, seed = 1000)
+
+cat("Clustering starts\n")
+se <- clusterBanksy(se, use_agf = use_agf, lambda = lambda,
+                    resolution = c(0.5, 0.8), seed = 1000)
+
+se <- connectClusters(se)
+
+# saveRDS(se, "merscope_hbreast_se.Rds")
+
+# se = readRDS("/vast/projects/xenium_5k/jazzPanda_paper/scripts/main/merscope_hbreast_se.Rds")
+clusters_info <- data.frame(
+    x = spatialCoords(se)[, 1],
+    y = spatialCoords(se)[, 2],
+    cell_id = colnames(se), 
+    cluster = paste0("c", colData(se)$clust_M1_lam0.2_k50_res0.5),  
+    sample ="sample01"
+)
+
+clusters_info$cluster = factor(clusters_info$cluster,
+                               levels = paste0("c",sort(unique(colData(se)$clust_M1_lam0.2_k50_res0.5))))
+cat("Loading transcripts\n")
+transcript_df<-fread("/stornext/Bioinf/data/lab_phipson/givanna/merscope_data/HumanBreastCancerPatient1/detected_transcripts.csv")
+
 transcript_df$x <- transcript_df$global_x
 transcript_df$y <- transcript_df$global_y
+transcript_df$gene = make.names(transcript_df$gene)
 transcript_df$feature_name = transcript_df$gene
-
-clusters_info <- as.data.frame(cells_meta[, c("min_x","min_y","max_x", "max_y","leiden","cell_id")])
-clusters_info$cluster <- paste("c", clusters_info$leiden,sep="")
-clusters_info$cluster <- factor(clusters_info$cluster, levels=paste("c", 0:15, sep=""))
-clusters_info$sample <- "sample1"
-
-
-clusters_info$x <- (clusters_info$min_x + clusters_info$max_x)/2 + 40
-clusters_info$y <- (clusters_info$min_y + clusters_info$max_y)/2 + 300
-clusters_info <- clusters_info[!duplicated(clusters_info[,c("x","y","cluster")]),]
-
-cluster_names <- paste("c",0:15, sep="")
-clusters_info <- na.omit(clusters_info)
-dim(clusters_info)
-
-transcript_df$x <- transcript_df$x+ 40
-transcript_df$y <- transcript_df$y + 300
-# hb_s1 <-transcript_df[,c("x","y","feature_name")]
-real_genes <- row.names(cm)
+cat("Transcripts loaded \n")
+real_genes <- row.names(se)
 nc_coords <- transcript_df[!(transcript_df$gene %in% real_genes), ]
-
 
 nc_coords$feature_name <- nc_coords$gene
 nc_coords$feature_name <-factor(nc_coords$feature_name)
@@ -55,62 +91,70 @@ nc_coords$feature_name <-factor(nc_coords$feature_name)
 ###############################################################################
 
 grid_length =50
-
+cat("Running get_vectors \n")
 usage_sv= peakRAM({
-hbreast_vector_lst<-get_vectors(x=list("sample1" = transcript_df), 
-                                sample_names = "sample1",
+hbreast_vector_lst<-get_vectors(x=list("sample01" = transcript_df), 
+                                sample_names = "sample01",
                                 cluster_info = clusters_info,
                                 bin_type="square",
                                 bin_param=c(grid_length,grid_length),
-                                test_genes = row.names(cm),n_cores = 5)
+                                test_genes = row.names(se),
+                                n_cores = 5)
 })
+cat("get_vectors completed \n")
 ###############################################################################
-## jazzPanda
-### permutation approach
-all_genes_names = row.names(cm)
-
-seed_number<-589
-set.seed(seed_number)
-usage_perm= peakRAM({
-perm_p <- compute_permp(x=list("sample1" = transcript_df),
-                        cluster_info=clusters_info, 
-                        perm.size=5000,
-                        bin_type="square",
-                        bin_param=c(grid_length,grid_length),
-                        test_genes=all_genes_names,
-                        correlation_method = "spearman", 
-                        n_cores=5, 
-                        correction_method="BH")
-})
-###############################################################################
+#saveRDS(hbreast_vector_lst, "hbreast_vector_lst.Rds")
 ### linear modelling approach 
 nc_names <- unique(nc_coords$feature_name)
-nc_coords$sample <- "sample1"
+nc_coords$sample <- "sample01"
 kpt_cols <- c("x","y","feature_name","sample","barcode_id")
 nc_coords_mapped = as.data.frame(nc_coords)[,kpt_cols]
 
 
-nc_vectors <- create_genesets(x=list("sample1" = nc_coords), 
-                              sample_names = "sample1",
+nc_vectors <- create_genesets(x=list("sample01" = nc_coords), 
+                              sample_names = "sample01",
                               name_lst=list(blanks=nc_names),
                               bin_type="square",
                               bin_param=c(grid_length, grid_length),
                               cluster_info = NULL)
-
+saveRDS(nc_vectors, "nc_vectors.Rds")
 set.seed(589)
+cat("Running lasso_markers \n")
 usage_glm= peakRAM({
 jazzPanda_res_lst <- lasso_markers(gene_mt=hbreast_vector_lst$gene_mt,
                                    cluster_mt = hbreast_vector_lst$cluster_mt,
-                                   sample_names=c("sample1"),
+                                   sample_names=c("sample01"),
                                    keep_positive=TRUE,
                                    background=nc_vectors,
                                    n_fold = 10)
 
 })
-
+cat("lasso_markers completed \n")
+###############################################################################
+## jazzPanda
+### permutation approach
+all_genes_names = row.names(se)
+cat("Running compute_permp \n")
+seed_number<-589
+set.seed(seed_number)
+usage_perm= peakRAM({
+    perm_p <- compute_permp(x=list("sample01" = transcript_df),
+                            cluster_info=clusters_info, 
+                            perm.size=5000,
+                            bin_type="square",
+                            bin_param=c(grid_length,grid_length),
+                            test_genes=all_genes_names,
+                            correlation_method = "spearman", 
+                            n_cores=5, 
+                            correction_method="BH")
+})
+cat("compute_permp completed \n")
 ###############################################################################
 # limma
-y <- DGEList(cm[,clusters_info$cell_id])
+cat("Running limma \n")
+cm <- assay(se, "counts")
+
+y <- DGEList(cm)
 y$genes <-row.names(cm)
 
 logcounts <- speckle::normCounts(y,log=TRUE,prior.count=0.1)
@@ -134,9 +178,10 @@ fit.cont <- eBayes(fit.cont,trend=TRUE,robust=TRUE)
 limma_dt<-decideTests(fit.cont)
 
 })
+cat("limma completed \n")
 ###############################################################################
 
-hbm_seu<-CreateSeuratObject(counts = cm[,clusters_info$cell_id], 
+hbm_seu<-CreateSeuratObject(counts = cm,
                             project = "hbreast")
 Idents(hbm_seu) <- clusters_info[match(colnames(hbm_seu), clusters_info$cell_id),"cluster"]
 hbm_seu <- NormalizeData(hbm_seu, verbose = FALSE,
@@ -145,12 +190,12 @@ hbm_seu <- FindVariableFeatures(hbm_seu, selection.method = "vst",
                                 nfeatures = 1000, verbose = FALSE)
 hbm_seu <- ScaleData(hbm_seu, verbose = FALSE)
 
-set.seed(989)
-# print(ElbowPlot(seu, ndims = 50))
-hbm_seu <- RunPCA(hbm_seu, features = row.names(hbm_seu), 
-                  npcs = 50, verbose = FALSE)
-
-hbm_seu <- RunUMAP(object = hbm_seu, dims = 1:20)
+# set.seed(989)
+# # print(ElbowPlot(seu, ndims = 50))
+# hbm_seu <- RunPCA(hbm_seu, features = row.names(hbm_seu), 
+#                   npcs = 50, verbose = FALSE)
+# 
+# hbm_seu <- RunUMAP(object = hbm_seu, dims = 1:20)
 
 usage_fm= peakRAM({
 seu_markers <- FindAllMarkers(hbm_seu, only.pos = TRUE,logfc.threshold = 0.25)
@@ -200,6 +245,7 @@ saveRDS(jazzPanda_res_lst,"merscope_hbreast_jazzPanda_res_lst.Rds")
 saveRDS(fit.cont, "merscope_hbreast_fit_cont_obj.Rds")
 saveRDS(seu_markers, "merscope_hbreast_seu_markers.Rds")
 saveRDS(hbm_seu, "merscope_hbreast_seu.Rds")
+saveRDS(se, "merscope_hbreast_se.Rds")
 saveRDS(perm_p,"merscope_hbreast_perm_lst.Rds")
 saveRDS(hbreast_vector_lst,"merscope_hbreast_sq50_vector_lst.Rds")
 

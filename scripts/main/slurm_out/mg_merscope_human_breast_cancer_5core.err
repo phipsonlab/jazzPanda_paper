@@ -1,11 +1,11 @@
-/var/spool/slurmd/job23813642/slurm_script: line 32: msg: command not found
-/var/spool/slurmd/job23813642/slurm_script: line 33: msg: command not found
-/var/spool/slurmd/job23813642/slurm_script: line 34: msg: command not found
-/var/spool/slurmd/job23813642/slurm_script: line 35: msg: command not found
-/var/spool/slurmd/job23813642/slurm_script: line 36: msg: command not found
-/var/spool/slurmd/job23813642/slurm_script: line 37: msg: command not found
-/var/spool/slurmd/job23813642/slurm_script: line 38: msg: command not found
-/var/spool/slurmd/job23813642/slurm_script: line 39: msg: command not found
+/var/spool/slurmd/job23882979/slurm_script: line 32: msg: command not found
+/var/spool/slurmd/job23882979/slurm_script: line 33: msg: command not found
+/var/spool/slurmd/job23882979/slurm_script: line 34: msg: command not found
+/var/spool/slurmd/job23882979/slurm_script: line 35: msg: command not found
+/var/spool/slurmd/job23882979/slurm_script: line 36: msg: command not found
+/var/spool/slurmd/job23882979/slurm_script: line 37: msg: command not found
+/var/spool/slurmd/job23882979/slurm_script: line 38: msg: command not found
+/var/spool/slurmd/job23882979/slurm_script: line 39: msg: command not found
 Loading required package: SeuratObject
 Loading required package: sp
 
@@ -37,46 +37,226 @@ Loading required package: Matrix
 Loaded glmnet 4.1-10
 Loading required package: ggplot2
 Loading required package: lattice
+Loading required package: SingleCellExperiment
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘matrixStats’
+
+The following object is masked from ‘package:dplyr’:
+
+    count
+
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+Loading required package: generics
+
+Attaching package: ‘generics’
+
+The following object is masked from ‘package:caret’:
+
+    train
+
+The following object is masked from ‘package:dplyr’:
+
+    explain
+
+The following objects are masked from ‘package:base’:
+
+    as.difftime, as.factor, as.ordered, intersect, is.element, setdiff,
+    setequal, union
+
+
+Attaching package: ‘BiocGenerics’
+
+The following object is masked from ‘package:limma’:
+
+    plotMA
+
+The following object is masked from ‘package:dplyr’:
+
+    combine
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, saveRDS, table, tapply, unique,
+    unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:Matrix’:
+
+    expand, unname
+
+The following objects are masked from ‘package:dplyr’:
+
+    first, rename
+
+The following objects are masked from ‘package:data.table’:
+
+    first, second
+
+The following object is masked from ‘package:utils’:
+
+    findMatches
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+
+Attaching package: ‘IRanges’
+
+The following objects are masked from ‘package:dplyr’:
+
+    collapse, desc, slice
+
+The following object is masked from ‘package:data.table’:
+
+    shift
+
+The following object is masked from ‘package:sp’:
+
+    %over%
+
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+
+Attaching package: ‘SummarizedExperiment’
+
+The following object is masked from ‘package:Seurat’:
+
+    Assays
+
+The following object is masked from ‘package:SeuratObject’:
+
+    Assays
+
+
+Attaching package: ‘SingleCellExperiment’
+
+The following object is masked from ‘package:edgeR’:
+
+    cpm
+
+Warning message:
+`PackageCheck()` was deprecated in SeuratObject 5.0.0.
+ℹ Please use `rlang::check_installed()` instead.
+ℹ The deprecated feature was likely used in the Seurat package.
+  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
+Performing log-normalization
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
 Warning messages:
-1: 1 point was rejected as lying outside the specified window 
-2: 3 points were rejected as lying outside the specified window 
-3: 3 points were rejected as lying outside the specified window 
-4: 1 point was rejected as lying outside the specified window 
-5: 2 points were rejected as lying outside the specified window 
+1: The `slot` argument of `SetAssayData()` is deprecated as of SeuratObject 5.0.0.
+ℹ Please use the `layer` argument instead.
+ℹ The deprecated feature was likely used in the Seurat package.
+  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
+2: The `slot` argument of `GetAssayData()` is deprecated as of SeuratObject 5.0.0.
+ℹ Please use the `layer` argument instead.
+ℹ The deprecated feature was likely used in the Seurat package.
+  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
+Calculating gene variances
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+Calculating feature variances of standardized and clipped values
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+Computing neighbors...
+Spatial mode is kNN_median
+Parameters: k_geom=15
+Done
+Computing neighbors...
+Spatial mode is kNN_median
+Parameters: k_geom=15
+Done
+Done
+Centering
+Done
+Warning message:
+In asMethod(object) :
+  sparse->dense coercion: allocating vector of size 2.4 GiB
+Using seed=1000
+Warning message:
+In asMethod(object) :
+  sparse->dense coercion: allocating vector of size 2.4 GiB
+Using seed=1000
+Using seed=1000
+Using seed=1000
+clust_M1_lam0.2_k50_res0.8 --> clust_M1_lam0.2_k50_res0.5
+Warning messages:
+1: 4 points were rejected as lying outside the specified window 
+2: 6 points were rejected as lying outside the specified window 
+3: 1 point was rejected as lying outside the specified window 
+4: 4 points were rejected as lying outside the specified window 
+5: 1 point was rejected as lying outside the specified window 
 6: 1 point was rejected as lying outside the specified window 
 Correlation Method = spearman
 Running 5000 permutation with 5 cores in parallel
 Warning messages:
-1: 1 point was rejected as lying outside the specified window 
-2: 3 points were rejected as lying outside the specified window 
-3: 3 points were rejected as lying outside the specified window 
-4: 1 point was rejected as lying outside the specified window 
-5: 2 points were rejected as lying outside the specified window 
+1: 4 points were rejected as lying outside the specified window 
+2: 6 points were rejected as lying outside the specified window 
+3: 1 point was rejected as lying outside the specified window 
+4: 4 points were rejected as lying outside the specified window 
+5: 1 point was rejected as lying outside the specified window 
 6: 1 point was rejected as lying outside the specified window 
-Warning: Data is of class matrix. Coercing to dgCMatrix.
-Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
-To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
-This message will be shown once per session
-19:10:53 UMAP embedding parameters a = 0.9922 b = 1.112
-19:10:53 Read 574818 rows and found 20 numeric columns
-19:10:53 Using Annoy for neighbor search, n_neighbors = 30
-19:10:53 Building Annoy index with metric = cosine, n_trees = 50
-0%   10   20   30   40   50   60   70   80   90   100%
-[----|----|----|----|----|----|----|----|----|----|
-**************************************************|
-19:12:04 Writing NN index file to temp file ./tmp.gskHs0klnn/Rtmpb7X0Hc/file38e6635eb160a9
-19:12:05 Searching Annoy index using 1 thread, search_k = 3000
-19:17:09 Annoy recall = 100%
-19:17:15 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
-19:17:57 Initializing from normalized Laplacian + noise (using RSpectra)
-19:18:52 Commencing optimization for 200 epochs, with 26471294 positive edges
-19:18:52 Using rng type: pcg
-Using method 'umap'
-0%   10   20   30   40   50   60   70   80   90   100%
-[----|----|----|----|----|----|----|----|----|----|
-**************************************************|
-19:24:21 Optimization finished
-Calculating cluster c0
+Warning message:
+In asMethod(object) :
+  sparse->dense coercion: allocating vector of size 2.4 GiB
 Calculating cluster c1
 Calculating cluster c2
 Calculating cluster c3
@@ -87,38 +267,24 @@ Calculating cluster c7
 Calculating cluster c8
 Calculating cluster c9
 Calculating cluster c10
-Calculating cluster c11
-Calculating cluster c12
-Calculating cluster c13
-Calculating cluster c14
-Calculating cluster c15
-Warning messages:
-1: The `slot` argument of `GetAssayData()` is deprecated as of SeuratObject 5.0.0.
-ℹ Please use the `layer` argument instead.
-ℹ The deprecated feature was likely used in the Seurat package.
-  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
-2: `PackageCheck()` was deprecated in SeuratObject 5.0.0.
-ℹ Please use `rlang::check_installed()` instead.
-ℹ The deprecated feature was likely used in the Seurat package.
-  Please report the issue at <https://github.com/satijalab/seurat/issues>. 
 	Command being timed: "Rscript mg_merscope_human_breast_cancer.R"
-	User time (seconds): 3488.41
-	System time (seconds): 799.11
-	Percent of CPU this job got: 50%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:21:37
+	User time (seconds): 16115.57
+	System time (seconds): 918.10
+	Percent of CPU this job got: 81%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:48:14
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 91855660
+	Maximum resident set size (kbytes): 106227464
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 9822306
-	Minor (reclaiming a frame) page faults: 320335902
-	Voluntary context switches: 46652129
-	Involuntary context switches: 10032
+	Major (requiring I/O) page faults: 9524092
+	Minor (reclaiming a frame) page faults: 451816563
+	Voluntary context switches: 47436501
+	Involuntary context switches: 44637
 	Swaps: 0
-	File system inputs: 78844368
-	File system outputs: 3567176
+	File system inputs: 79603072
+	File system outputs: 11045960
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0

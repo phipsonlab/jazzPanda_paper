@@ -6,7 +6,22 @@ This repository provides the complete set of **R scripts** used to generate **al
 - **Raw datasets**: [Download from Zenodo](https://zenodo.org/record/XXXXXX)  
 - **Analysis workflow**: [Workflow documentation](https://github.com/phipsonlab/jazzPanda_workflow)  
 
-Processed outputs are organized in the `data/` directory, and large intermediate results are saved as `.Rds` files.
+## Data Availability
+Raw experimental data can be accessed via the links below. Processed outputs used in the manuscript are included in the repository under the `data/` directory, with intermediate results stored as `.Rds` files. For very large processed datasets that exceed the repository size limits, we provide access via **Zenodo**.
+
+### Raw data
+-1) 10x Xenium Mouse brain data [🔗](https://www.10xgenomics.com/resources/datasets/fresh-frozen-mouse-brain-replicates-1-standard}) 
+
+-2) 10x Xenium Human HER2+ breast cancer data [🔗](https://www.10xgenomics.com/products/xenium-in-situ/preview-dataset-human-breast) 
+
+-3) 10x Xenium Human lung cancer data [🔗](https://www.10xgenomics.com/resources/datasets/xenium-human-lung-preview-data-1-standard)
+
+-4) Nanostring CosMX Human liver healthy and cancer data [🔗](https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-liver-rna-ffpe-dataset/)
+
+-5) Vizgen MERSCOPE Human breast cancer data [🔗](https://info.vizgen.com/ffpe-showcase?submissionGuid=c9a25730-3fe5-444b-bef8-1a74d51ddefb)
+
+### Processed data
+Processed outputs are organized in the `data/` directory of this repository, with intermediate results saved as `.Rds` files. Very large processed datasets that exceed repository size limits are deposited on [Zenodo](#) for convenient download.
 
 ```sh
 .
