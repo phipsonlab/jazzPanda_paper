@@ -288,7 +288,7 @@ merged_seu <- RunUMAP(merged_seu, dims = 1:20, verbose = FALSE)
 
 
 usage_fm= peakRAM({
-FM_res <- FindAllMarkers(merged_seu, only.pos = TRUE,logfc.threshold = 0)
+FM_res <- FindAllMarkers(merged_seu, only.pos = TRUE,logfc.threshold = 0.25)
 })
 ###############################################################################
 results_df <- data.frame(

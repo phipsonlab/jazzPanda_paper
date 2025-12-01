@@ -131,30 +131,6 @@ dff = rbind(dff, c("falsecode", 0, 0, 0, "falsecode"),
             c("negprobe", 0, 0, 0, "negprobe"))
 ```
 
-```{r}
-dff$log_ncells = as.numeric(dff$log_ncells)
-dff$ncells = as.numeric(dff$ncells)
-dff$nsig = as.numeric(dff$nsig)
-dff = dff[order(dff$ncells, decreasing = TRUE),]
-p1<- ggplot(dff, aes(x = log_ncells, y = nsig, color = anno_name)) +
-  geom_point(size = 5) +
-  theme_classic() +
-    labs(title = " ", x = " log(Cluster size)",
-         y = "Number of significant genes", color="cell type") +
-  theme(axis.line = element_blank(),
-         legend.title=  element_text(size=12),
-        legend.text=  element_text(size=12),
-         panel.border = element_rect(color = "black", fill = NA, linewidth = 0.6),
-        axis.text.y = element_text(size=12, vjust=0.5),
-        
-         axis.text.x = element_text(size = 12, hjust = 0.5),
-        axis.title.y= element_text(size=12))
-
-pdf(file.path(comp_PA, "simulation_ncells_ngenes_scatter.pdf"), 
-    width=7, height=4)
-p1
-dev.off()
-```
 
 
 ## pvalue versus correlation

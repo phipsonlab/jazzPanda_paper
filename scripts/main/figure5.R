@@ -37,7 +37,7 @@ limma_dt<-decideTests(chln_fit)
 plot_lst=list()
 for (cl in c("Hep.4", "Stellate.cells", "Cholangiocytes")){
     obs_cutoff = quantile(chln_obs_corr[, cl], 0.75)
-    findM_sig =hln_seu_markers[hln_seu_markers$cluster==cl,"gene"]
+    findM_sig =hln_seu_markers[hln_seu_markers$cluster==cl & hln_seu_markers$p_val_adj<0.05,"gene"]
     limma_sig=row.names(limma_dt[limma_dt[,cl]==1,])
     perm_cl=intersect(row.names(chln_perm_res[chln_perm_res[,cl]<0.05,]),
                       row.names(chln_obs_corr[chln_obs_corr[, cl]>obs_cutoff,]))
@@ -55,35 +55,40 @@ for (cl in c("Hep.4", "Stellate.cells", "Cholangiocytes")){
     
     cl = sub(cl, pattern = ".cells", replacement="")
     p = plot(upset(df_mt,
-               intersect=c("limma","Wilcoxon Rank Sum Test", 
+               intersect=c("Wilcoxon Rank Sum Test", "limma",
                            "jazzPanda-correlation","jazzPanda-glm"),
                wrap=TRUE, keep_empty_groups= FALSE, name="",
-               themes=theme_grey(),
-               stripes=upset_stripes(geom=geom_segment(size=5),colors=c('grey95', 'grey95', 'grey95')),
+               #themes=theme_grey(),
+               stripes='white',
+               #stripes=upset_stripes(geom=geom_segment(size=8),colors=c('grey95', 'grey95', 'grey95',"grey95")),
                sort_intersections_by ="cardinality", sort_sets= FALSE,min_degree=1,
-               set_sizes = FALSE,
-               
+               set_sizes =( 
+                   upset_set_size()
+                   + theme(axis.title= element_blank(),
+                           axis.ticks.y = element_blank(),
+                           axis.text.y = element_blank())),
                sort_intersections= "descending", warn_when_converting=FALSE,
                warn_when_dropping_groups=TRUE,encode_sets=TRUE,
-               matrix=(intersection_matrix()+theme(axis.text.x=element_blank(),panel.background = element_rect(fill="NA"),
-                                                   axis.ticks = element_blank(),
-                                                   axis.title = element_blank())),
-               base_annotations=list('Intersection size'=(intersection_size(bar_number_threshold=1,color='grey9',fill='grey80',
-                                                                            text = list(size = 3, vjust = -0.1))+ 
-                                                              theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
-                                                                    panel.background = element_rect(fill="NA"),
-                                                                    panel.grid = element_line(color="grey90"),
-                                                                    axis.ticks.x = element_blank()))),
-               width_ratio=0.5, height_ratio=1/4)+
+               # matrix=(intersection_matrix()+theme(axis.text.x=element_blank(),panel.background = element_rect(fill="NA"),
+               #                                     axis.ticks = element_blank(),
+               #                                     axis.title = element_blank())),
+               # base_annotations=list('Intersection size'=(intersection_size(bar_number_threshold=1,#color='grey9',fill='grey80',
+               #                                                              text = list(size = 3, vjust = -0.1))
+               #                                                # +theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
+               #                                                #       panel.background = element_rect(fill="NA"),
+               #                                                #       panel.grid = element_line(color="grey90"),
+               #                                                #       axis.ticks.x = element_blank())
+               #                                          )),
+               width_ratio=0.3, height_ratio=1/4)+
              ggtitle(paste(cl,"cells"))+
-                 theme(plot.title = element_text( size=15))
+                 theme(plot.title = element_text( size=20))
 
     )
     plot_lst[[cl]] = p
     dev.off()
 }
 combined_plot <- wrap_plots(plot_lst, ncol = 3)
-pdf(file.path(fig5, "cosmx_hhliver_upset.pdf"),height=4, width=12)
+pdf(file.path(fig5, "cosmx_hhliver_upset.pdf"),height=6, width=18)
 print(combined_plot)
 dev.off()
 ################################################################################
@@ -95,7 +100,8 @@ plot_lst=list()
 for (cl in c("Hep.4", "Stellate.cells", "Cholangiocytes")){
     obs_cutoff = quantile(chln_obs_corr[, cl], 0.75)
     fm_cl=FindMarkers(hln_seu, ident.1 = cl, only.pos = TRUE,
-                      logfc.threshold = 0.25)
+                      logfc.threshold = 0.1)
+    fm_cl = fm_cl[fm_cl$p_val_adj<0.05, ]
     fm_cl = fm_cl[order(fm_cl$avg_log2FC, decreasing = TRUE),]
     to_plot =row.names(fm_cl)
     FM_pt = data.frame("name"=to_plot,"rk"= 1:length(to_plot),
@@ -182,7 +188,7 @@ for (cl in c("c1", "c5", "c8")){
     anno_name = sub(anno_name,pattern = "_Cells", replacement="")
     limma_sig=row.names(limma_dt[limma_dt[,cl]==1,])
     
-    findM_sig =xhb_fm[xhb_fm$cluster==cl,"gene"]
+    findM_sig =xhb_fm[xhb_fm$cluster==cl & xhb_fm$p_val_adj<0.05,"gene"]
     lasso_sig = xhb_jazzPanda_res[xhb_jazzPanda_res$top_cluster==cl,"gene"]
     
     data_lst = list("limma"=limma_sig,
@@ -197,33 +203,64 @@ for (cl in c("c1", "c5", "c8")){
     df_mt[limma_sig,"limma"] = TRUE
     df_mt[lasso_sig,"jazzPanda-glm"] = TRUE
     df_mt$gene_name =row.names(df_mt)
-    p <-plot(upset(df_mt,
-               intersect=c("limma","Wilcoxon Rank Sum Test", "jazzPanda-glm"),
-               wrap=TRUE, keep_empty_groups= FALSE, name="",
-               themes=theme_grey(),
-               stripes=upset_stripes(geom=geom_segment(size=5),colors=c('grey95', 'grey95', 'grey95')),
-               sort_intersections_by ="cardinality", sort_sets= FALSE,min_degree=1,
-               set_sizes = FALSE,
-               sort_intersections= "descending", warn_when_converting=FALSE,
-               warn_when_dropping_groups=TRUE,encode_sets=TRUE,
-               matrix=(intersection_matrix()+theme(axis.text.x=element_blank(),panel.background = element_rect(fill="NA"),
-                                                   axis.ticks = element_blank(),
-                                                   axis.title = element_blank())),
-               base_annotations=list('Intersection size'=(intersection_size(bar_number_threshold=1,color='grey9',fill='grey80',
-                                                                            text = list(size = 3, vjust = -0.1))+ 
-                                                              theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
-                                                                    panel.background = element_rect(fill="NA"),
-                                                                    panel.grid = element_line(color="grey90"),
-                                                                    axis.ticks.x = element_blank()))),
-               width_ratio=0.5, height_ratio=1/4)+
-             ggtitle(paste(anno_name,"cells"))+
-                 theme(plot.title = element_text(size=15))
-                 
+    # p <-plot(upset(df_mt,
+    #            intersect=c("limma","Wilcoxon Rank Sum Test", "jazzPanda-glm"),
+    #            wrap=TRUE, keep_empty_groups= FALSE, name="",
+    #            themes=theme_grey(),
+    #            stripes=upset_stripes(geom=geom_segment(size=5),colors=c('grey95', 'grey95', 'grey95')),
+    #            sort_intersections_by ="cardinality", sort_sets= FALSE,min_degree=1,
+    #            set_sizes = FALSE,
+    #            sort_intersections= "descending", warn_when_converting=FALSE,
+    #            warn_when_dropping_groups=TRUE,encode_sets=TRUE,
+    #            matrix=(intersection_matrix()+theme(axis.text.x=element_blank(),panel.background = element_rect(fill="NA"),
+    #                                                axis.ticks = element_blank(),
+    #                                                axis.title = element_blank())),
+    #            base_annotations=list('Intersection size'=(intersection_size(bar_number_threshold=1,color='grey9',fill='grey80',
+    #                                                                         text = list(size = 3, vjust = -0.1))+ 
+    #                                                           theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
+    #                                                                 panel.background = element_rect(fill="NA"),
+    #                                                                 panel.grid = element_line(color="grey90"),
+    #                                                                 axis.ticks.x = element_blank()))),
+    #            width_ratio=0.5, height_ratio=1/4)+
+    #          ggtitle(paste(anno_name,"cells"))+
+    #              theme(plot.title = element_text(size=15))
+    #              
+    # )
+    p = plot(upset(df_mt,
+                   intersect=c("Wilcoxon Rank Sum Test", "limma",
+                               "jazzPanda-glm"),
+                   wrap=TRUE, keep_empty_groups= FALSE, name="",
+                   #themes=theme_grey(),
+                   stripes='white',
+                   #stripes=upset_stripes(geom=geom_segment(size=8),colors=c('grey95', 'grey95', 'grey95',"grey95")),
+                   sort_intersections_by ="cardinality", sort_sets= FALSE,min_degree=1,
+                   set_sizes =( 
+                       upset_set_size()
+                           # geom_text(aes(label=..count..), size = 4, hjust=1.1, stat='count')
+                       + theme(axis.title= element_blank(),
+                               axis.ticks.y = element_blank(),
+                               axis.text.y = element_blank())),
+                   sort_intersections= "descending", warn_when_converting=FALSE,
+                   warn_when_dropping_groups=TRUE,encode_sets=TRUE,
+                   # matrix=(intersection_matrix()+theme(axis.text.x=element_blank(),panel.background = element_rect(fill="NA"),
+                   #                                     axis.ticks = element_blank(),
+                   #                                     axis.title = element_blank())),
+                   # base_annotations=list('Intersection size'=(intersection_size(bar_number_threshold=1,#color='grey9',fill='grey80',
+                   #                                                              text = list(size = 3, vjust = -0.1))
+                   #                                                # +theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
+                   #                                                #       panel.background = element_rect(fill="NA"),
+                   #                                                #       panel.grid = element_line(color="grey90"),
+                   #                                                #       axis.ticks.x = element_blank())
+                   #                                          )),
+                   width_ratio=0.3, height_ratio=1/4)+
+                 ggtitle(paste(anno_name,"cells"))+
+                 theme(plot.title = element_text( size=20))
+             
     )
    plot_lst[[cl]] = p
 }
 combined_plot <- wrap_plots(plot_lst, ncol = 3)
-pdf(file.path(fig5, "xenium_hbreast_upset.pdf"), height=4, width=12)
+pdf(file.path(fig5, "xenium_hbreast_upset.pdf"), height=6, width=18)
 print(combined_plot)
 dev.off()
 ################################################################################
@@ -234,11 +271,17 @@ cor_M[cor_M > 0.7]=1
 
 cluster_names= colnames(limma_dt)
 plot_lst=list()
+colnames(xhb_seu) <- sub("^_", "", colnames(xhb_seu))
+colnames(xhb_seu) <- sub("_2$", "-sp2", colnames(xhb_seu))
+rownames(xhb_clusters) <-xhb_clusters$cells
+Idents(xhb_seu) <- xhb_clusters$cluster[match(colnames(xhb_seu),
+                                          rownames(xhb_clusters))]
+
 for (cl in c("c1", "c5","c8")){
     anno_name = unique(xhb_clusters[xhb_clusters$cluster==cl,"anno"])
     anno_name = sub(anno_name,pattern = "_Cells", replacement="")
     fm_cl=FindMarkers(xhb_seu, ident.1 = cl, only.pos = TRUE,
-                      logfc.threshold = 0.25)
+                      logfc.threshold = 0.1)
     fm_cl = fm_cl[order(fm_cl$avg_log2FC, decreasing = TRUE),]
     to_plot =row.names(fm_cl)
     FM_pt = data.frame("name"=to_plot,"rk"= 1:length(to_plot),

@@ -41,7 +41,7 @@ library(xtable)
 source(here("scripts/utils.R"))
 ```
 
-# load the data
+# Load the data
 ```{r load-raw}
 rep1=get_xenium_data(path="/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Xenium_mouse_brain/Xenium_V1_FF_Mouse_Brain_MultiSection_1_outs/", 
                      mtx_name = "cell_feature_matrix/",
@@ -222,31 +222,6 @@ ggplot(umap_bkm, aes(x = V1, y = V2, color = anno_name)) +
           axis.text = element_blank(),
           axis.title = element_blank())
 dev.off()
-
-# 
-# jpeg(paste0("xy_persample.jpg"), width=1000*5, height=700*3, res=200)
-# 
-# ggplot(cluster_info, aes(x = x, y = y, color = cluster)) +
-#     ggrastr::geom_point_rast(size = 0.01, alpha = 0.8) +
-#     defined_theme +
-#     facet_grid(sample~cluster)+
-#     scale_color_manual(values = my_colors)+
-#     guides(color = guide_legend(override.aes = list(size = 3), 
-#                                 ncol = 1, title = "")) +
-#     labs(title = " ", x = "UMAP1", y = "UMAP2", fill=" ") +
-#     theme(strip.background = element_blank(),
-#           strip.text = element_text(size = 20, face = "plain"),
-#           legend.position = "right",
-#           legend.text = element_text(size = 12),
-#           panel.border = element_rect(colour = "black", 
-#                                       fill = NA, linewidth = 0.3),
-#           axis.line = element_blank(),
-#           legend.justification = "center",
-#           axis.ticks = element_blank(),
-#           legend.box.just = "center", 
-#           axis.text = element_blank(),
-#           axis.title = element_blank())
-# dev.off()
 ```
 
 # Spatial pattern of negative controls
@@ -321,7 +296,7 @@ latex_table <- xtable(output_data, caption="Detected marker genes for each clust
 print.xtable(latex_table, include.rownames = FALSE, hline.after = c(-1, 0, nrow(output_data)), comment = FALSE)
 ```
 
-## top3 marker genes by jazzPanda-glm
+## Top3 marker genes by jazzPanda-glm
 ```{r  top3-gene-vis-xy, fig.width=10, fig.height=6}
 x_range <- c(0, 11000)
 y_range <- c(0, 7500)
@@ -489,8 +464,11 @@ dev.off()
 
 ```
 
-# Compare marker genes by different methods
-## FindMarker and limma result
+
+## Wilcoxon Rank Sum Test
+
+The `FindAllMarkers` function applies a Wilcoxon Rank Sum test to detect genes with cluster-specific expression shifts. Only positive markers (upregulated genes) were retained using a log fold-change threshold of 0.25.
+
 ```{r fm-mg,eval=FALSE}
 table(FM_result$cluster)
 
@@ -516,11 +494,18 @@ latex_table <- xtable(output_data, caption="Detected marker genes for each clust
 print.xtable(latex_table, include.rownames = FALSE, hline.after = c(-1, 0, nrow(output_data)), comment = FALSE)
 ```
 
+
+# Compare marker genes by different methods
 ```{r limma-mg}
 limma_dt <- decideTests(fit.cont)
 summary(limma_dt)
 ```
+
+# Comparison of marker gene detection methods
 ## Cumulative rank plot
+
+We compared the performance of different marker detection methods — jazzPanda (linear modelling and correlation), limma, and Seurat’s Wilcoxon Rank Sum test — by plotting the cumulative fraction of genes with strong spatial correlation (Pearson’s ρ > 0.6) as a function of their rank within each method.
+
 ```{r}
 plot_lst=list()
 cor_M = cor(sv_lst$gene_mt,
@@ -532,7 +517,8 @@ Idents(seu)=cluster_info$cluster[match(colnames(seu), cluster_info$cell_id)]
 for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
     fm_cl=FindMarkers(seu, ident.1 = cl, only.pos = TRUE,
-            logfc.threshold = 0.25)
+            logfc.threshold = 0.1)
+    fm_cl = fm_cl[fm_cl$p_val_adj<0.05, ]
     fm_cl = fm_cl[order(fm_cl$avg_log2FC, decreasing = TRUE),]
     to_plot =row.names(fm_cl)
     FM_pt = data.frame("name"=to_plot,"rk"= 1:length(to_plot),
@@ -592,12 +578,18 @@ combined_plot
 dev.off()
 
 ```
-## upset plot
+
+## Upset plot
+
+We further visualized the overlap between marker genes detected by the four methods using UpSet plots for each cluster. 
+
+Across all clusters, jazzPanda-glm and jazzPanda-correlation consistently show the largest unique and shared marker sets, while classical tests (Wilcoxon and limma) detect far fewer genes. The highest intersections occur between the two jazzPanda models, indicating strong internal concordance and robust detection of spatially coherent markers.
+
 ```{r upset-mg-comparison, fig.width=12, fig.height=18}
 plot_lst=list()
 for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
-    findM_sig <- FM_result[FM_result$cluster==cl,"gene"]
+    findM_sig <- FM_result[FM_result$cluster==cl & FM_result$p_val_adj<0.05,"gene"]
     limma_sig <- row.names(limma_dt[limma_dt[,cl]==1,])
     lasso_cl <- jazzPanda_res[jazzPanda_res$top_cluster==cl, "gene"]
     df_mt <- as.data.frame(matrix(FALSE,nrow=nrow(jazzPanda_res),ncol=3))
@@ -610,35 +602,34 @@ for (cl in cluster_names){
     
     df_mt$gene_name <- row.names(df_mt)
     
-    p<-upset(df_mt,
-              intersect=c("limma","Wilcoxon Rank Sum Test","jazzPanda-glm"),
-              wrap=TRUE, keep_empty_groups= TRUE, name="",
-              themes=theme_grey(),
-              stripes=upset_stripes(geom=geom_segment(size=5),colors=c( 'grey95', 'grey95','grey95')),
-              sort_intersections_by ="cardinality", sort_sets= FALSE,min_degree=1,
-              set_sizes=FALSE,
+    p = plot(upset(df_mt,
+               intersect=c("Wilcoxon Rank Sum Test", "limma",
+                           "jazzPanda-glm"),
+               wrap=TRUE, keep_empty_groups= FALSE, name="",
+               #themes=theme_grey(),
+               stripes='white',
+               sort_intersections_by ="cardinality", sort_sets= FALSE,min_degree=1,
+               set_sizes =( 
+                   upset_set_size()
+                   + theme(axis.title= element_blank(),
+                           axis.ticks.y = element_blank(),
+                           axis.text.y = element_blank())),
                sort_intersections= "descending", warn_when_converting=FALSE,
                warn_when_dropping_groups=TRUE,encode_sets=TRUE,
-              matrix=(intersection_matrix()+
-                  theme(axis.text.x=element_blank(),panel.background = element_rect(fill="NA"),
-                                          axis.ticks = element_blank(),
-                                          axis.title = element_blank())),
-               base_annotations=list('Intersection size'=(intersection_size(bar_number_threshold=1,color='grey9',fill='grey80')+
-                  scale_y_continuous(expand = expansion(mult = c(0, 0.15)))+
-                theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
-                      panel.background = element_rect(fill="NA"),
-                      panel.grid = element_line(color="grey90"),
-                      axis.ticks.x = element_blank()))),
-              width_ratio=0.5, height_ratio=1/4)+
-           ggtitle(ct_nm)
+
+               width_ratio=0.3, height_ratio=1/4)+
+              ggtitle(ct_nm)+
+                 theme(plot.title = element_text( size=15))
+
+    )
          
-        plot_lst[[cl]] <- p 
+    plot_lst[[cl]] <- p 
 }
 
 
 combined_plot <- wrap_plots(plot_lst, ncol = 3)
 pdf(file.path(comp_PA, paste0(data_nm, "_mg_compare_upset.pdf")),
-     height =4* (ceiling(length(cluster_names)/3)), width = 12)
+     height =5* (ceiling(length(cluster_names)/3)), width = 19)
 combined_plot 
 dev.off()
 ```

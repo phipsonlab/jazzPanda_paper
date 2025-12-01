@@ -12,8 +12,7 @@ fig3 <- here::here("figures", "main", "figure3_cosmx_hliver")
 fig4 <- here::here("figures", "main", "figure4_xenium_hbreast")
 fig5 <- here::here("figures", "main", "figure5_compare_methods")
 fig6 <- here::here("figures", "main", "figure6")
-
-
+fig7<- here::here("figures", "main", "figure7")
 
 # cluster colors
 my_colors <- c(

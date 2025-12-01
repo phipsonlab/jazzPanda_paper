@@ -1551,6 +1551,7 @@ jazzPanda_res_lst = readRDS(here(data_path,paste0(data_nm, &quot;_jazzPanda_res_
 fit.cont = readRDS(here(data_path,paste0(data_nm, &quot;_fit_cont_obj.Rds&quot;)))
 
 FM_result= readRDS(here(data_path,paste0(data_nm, &quot;_seu_markers.Rds&quot;)))
+FM_result = FM_result[FM_result$avg_log2FC&gt;0.25, ]
 sv_lst = readRDS(here(data_path,paste0(data_nm, &quot;_sq40_vector_lst.Rds&quot;)))
 seu = readRDS(here(data_path,paste0(data_nm, &quot;_seu.Rds&quot;)))
 seu &lt;- subset(seu, cells = cluster_info$cells)
@@ -1694,7 +1695,7 @@ print.xtable(latex_table, include.rownames = FALSE,
                     #geom_hex(bins = 100)+
                     geom_point(size=0.01)+
                     facet_wrap(~label, nrow=2,strip.position = &quot;left&quot;)+
-                    scale_x_reverse() +
+                    scale_y_reverse() +
                     scale_color_manual(values = c(&quot;black&quot;,&quot;black&quot;))+
                     #scale_fill_gradient(low=&quot;white&quot;, high=&quot;maroon4&quot;) + 
                     #guides(fill = guide_colorbar(barwidth = unit(15, &quot;cm&quot;),height= unit(30, &quot;cm&quot;)))+

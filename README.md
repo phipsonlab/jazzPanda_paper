@@ -1,10 +1,23 @@
-# jazzPanda_paper
+# jazzPanda: Paper Repository
 This repository provides the complete set of **R scripts** used to generate **all main and supplementary figures** for the *jazzPanda* paper.  
 
 - **jazzPanda R package**: [Repository](https://bioconductor.org/packages/jazzPanda)  
 - **Preprint**: [bioRxiv link](https://doi.org/XXXXXX)  
 - **Raw datasets**: [Download from Zenodo](https://zenodo.org/record/XXXXXX)  
 - **Analysis workflow**: [Workflow documentation](https://github.com/phipsonlab/jazzPanda_workflow)  
+
+```sh
+.
+├── scripts/
+│   ├── main/                 
+│   └── supp/                 
+├── figures/                  # outputs (PDF/JPG) — created by scripts
+│   ├── main/
+│   └── supp/
+├── data/
+├── .gitignore
+└── README.md                 # you are here
+```
 
 ## Data Availability
 Raw experimental data can be accessed via the links below. Processed outputs used in the manuscript are included in the repository under the `data/` directory, with intermediate results stored as `.Rds` files. For very large processed datasets that exceed the repository size limits, we provide access via **Zenodo**.
@@ -23,18 +36,6 @@ Raw experimental data can be accessed via the links below. Processed outputs use
 ### Processed data
 Processed outputs are organized in the `data/` directory of this repository, with intermediate results saved as `.Rds` files. Very large processed datasets that exceed repository size limits are deposited on [Zenodo](#) for convenient download.
 
-```sh
-.
-├── scripts/
-│   ├── main/                 
-│   └── supp/                 
-├── figures/                  # outputs (PDF/JPG) — created by scripts
-│   ├── main/
-│   └── supp/
-├── data/
-├── .gitignore
-└── README.md                 # you are here
-```
 
 ## Figure map 
 

@@ -269,7 +269,7 @@ seu_markers <- FindAllMarkers(hln_seu, only.pos = TRUE,logfc.threshold = 0.25)
 #Create a data frame to store the results
 results_df <- data.frame(
     technology = "cosmx",
-    dataset = "CosMx huamn liver cancer",
+    dataset = "CosMx human liver cancer",
     genes_n = nrow(counts_cancer_sample),
     transcript_n =   nrow(hl_cancer),
     cells_n = ncol(counts_cancer_sample),

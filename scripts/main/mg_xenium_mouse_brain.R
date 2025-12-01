@@ -145,7 +145,7 @@ Idents(seu) <- clusters$cluster[match(colnames(seu), rownames(clusters))]
 
 usage_fm= peakRAM({
 find_markers_result <- FindAllMarkers(seu, only.pos = TRUE,
-                                      logfc.threshold = 0.25)
+                                      logfc.threshold = 0.1)
 })
 
 

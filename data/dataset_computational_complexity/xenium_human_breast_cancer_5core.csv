@@ -1,2 +1,2 @@
 "technology","dataset","genes_n","transcript_n","cells_n","clusters_n","grid_length","fm_Elapsed_Time_sec","fm_Peak_RAM_Used_MiB","limma_Elapsed_Time_sec","limma_Peak_RAM_Used_MiB","sv_Elapsed_Time_sec","sv_Peak_RAM_Used_MiB","glm_Elapsed_Time_sec","glm_Peak_RAM_Used_MiB"
-"xenium","Xenium human breast cancer",313,45065440,279353,9,40,30.326,6068.6,6.18000000000001,3400.6,216.909,2751,30.189,4023.5
+"xenium","Xenium human breast cancer",313,45065440,279353,9,40,20.5650000000001,3799.2,6.18000000000001,3400.6,216.909,2751,30.189,4023.5

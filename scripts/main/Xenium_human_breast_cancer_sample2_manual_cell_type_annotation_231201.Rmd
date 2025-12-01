@@ -1,0 +1,384 @@
+
+<!-- Author: Jinming Cheng -->
+<!-- Date: 01 Dec 2023 -->
+
+<!-- Data: Xenium data of HER2+ breast cancer of Sample2 from 10x -->
+<!-- package version: Seurat ‘4.3.0.1’ and R 4.3.0 are used -->
+
+# Sample2
+
+
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- %                                                 % -->
+
+<!-- Set up -->
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE) # use FALSE for test
+```
+
+```{r global options, include = FALSE}
+options(width = 80, digits = 3) # output length
+
+knitr::opts_chunk$set(cache = FALSE,echo = TRUE,prompt = FALSE, 
+                      comment = NA,message = FALSE,warning = FALSE)
+
+knitr::opts_chunk$set(dev = "png",dpi = 300,out.width='70%',
+                      fig.align = "center",fig.height = 6*0.7, 
+                      fig.width = 8*0.7)
+
+# allow duplicated chunk names (for knitting multiple Rmd files)
+options(knitr.duplicate.label = "allow")
+```
+
+
+<!-- My theme and colors for ggplot -->
+```{r,include=FALSE}
+my_theme_ggplot <- theme(axis.text=element_text(size=12),
+                         axis.title=element_text(size=15, face="bold"),
+                         plot.title=element_text(size=15, face="bold", 
+                                                 hjust=0.5),
+                         plot.margin=margin(0.5, 0.5, 0.5, 0.5, "cm"),
+                         legend.title=element_text(size=12*0.8, face="bold"),
+                         legend.text=element_text(size=12*0.8),
+                         legend.key=element_rect(colour="transparent",
+                                                 fill="white"), 
+                         
+                         legend.key.size=unit(1*0.8, "cm"),
+                         legend.key.width=unit(0.2*3, "cm"),
+                         legend.key.height=unit(0.2*3, "cm"),
+                         legend.spacing.y=unit(0.2*3, "cm"),
+                         legend.spacing.x=unit(0.2*3, "cm"),
+                         
+                         panel.background=element_rect(fill="white",
+                                                       color="grey",
+                                                       size=1,
+                                                       linetype="blank"),
+                         axis.line=element_line(color='black'),
+                         panel.border=element_blank(),
+                         panel.grid.major=element_blank(),
+                         panel.grid.minor=element_blank(),
+                         
+)
+
+
+my_colors_20 = c("cornflowerblue", "darkorchid1","firebrick1","gold",
+                  "greenyellow", "mediumspringgreen","mediumturquoise",
+                 "orange1","pink","deeppink3","violet","magenta",
+                 "goldenrod4","cyan","gray90",
+                  "gray60","gray40","royalblue2","mediumblue","black")
+```
+
+
+<!-- My modified load xenium data function -->
+```{r,include=FALSE}
+MyLoadXenium <- function(data.dir, fov = 'fov', assay = 'Xenium') {
+  data <- ReadXenium(
+    data.dir = data.dir,
+    type = c("centroids", "segmentations"),
+  )
+
+  segmentations.data <- list(
+    "centroids" = CreateCentroids(data$centroids),
+    "segmentation" = CreateSegmentation(data$segmentations)
+  )
+  coords <- CreateFOV(
+    coords = segmentations.data,
+    type = c("segmentation", "centroids"),
+    molecules = data$microns,
+    assay = assay
+  )
+
+  xenium.obj <- CreateSeuratObject(counts = data$matrix[["Gene Expression"]], assay = assay)
+  xenium.obj[["UnassignedCodeword"]] <- CreateAssayObject(counts = data$matrix[["Unassigned Codeword"]])
+  xenium.obj[["ControlCodeword"]] <- CreateAssayObject(counts = data$matrix[["Negative Control Codeword"]])
+  xenium.obj[["ControlProbe"]] <- CreateAssayObject(counts = data$matrix[["Negative Control Probe"]])
+
+  xenium.obj[[fov]] <- coords
+  return(xenium.obj)
+}
+```
+<!-- %                                                 % -->
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+
+
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- %                                                 % -->
+## 10x Xenium
+
+### Read in data
+
+Load packages
+```{r loadPackage}
+library(Seurat)
+library(ggplot2)
+library(edgeR)
+```
+
+sample name
+```{r sampleName}
+sample_name = "Sample2"
+```
+
+
+Xenium data path
+```{r ReadInData}
+raw_data_dir = "../data/"
+path <- paste0(raw_data_dir,"/","Sample2/outs")
+```
+
+
+Load Xenium data
+```{r ReadInData, eval=eval_read_in_raw_data}
+xenium.obj.raw <- MyLoadXenium(path)
+```
+
+
+Number of genes and cells before filtering
+```{r}
+dim(xenium.obj.raw)
+```
+
+
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- %                                                 % -->
+
+### Quality control
+
+Violin plots of QC metrics
+```{r VlnPlotQC,fig.height=6,fig.width=4}
+p <- list()
+my_genes = c("nFeature_Xenium", "nCount_Xenium")
+for (i in 1:length(my_genes) ) {
+  p[[i]] <- VlnPlot(xenium.obj.raw,
+                    pt.size=0,
+                    cols = my_colors_20,
+                    features=my_genes[i]) + 
+    my_theme_ggplot + NoLegend() + labs(x=NULL)
+}
+
+patchwork::wrap_plots(p, nrow=1, byrow=FALSE)
+```
+
+
+Set point size
+```{r}
+point_size = 1.5
+```
+
+Scatter plot of library size by number of genes
+```{r featureScatterQC,fig.width=4,fig.height=3}
+p = FeatureScatter(xenium.obj.raw,
+                   feature1 = "nFeature_Xenium",
+                   feature2 = "nCount_Xenium",
+                   pt.size = point_size,
+                   cols = my_colors_20) +
+  labs(x = "Number of genes",y = "Library size",title = NULL) + 
+  my_theme_ggplot + NoLegend()
+
+patchwork::wrap_plots(p, ncol=1)
+```
+
+
+
+
+cut-offs for n genes and library size
+```{r}
+n_gene_cutoffs = 10
+n_libsize_cutoffs = 15
+```
+
+Xenium object for analysis
+```{r}
+xenium.obj = xenium.obj.raw
+```
+
+Add sample name information
+```{r}
+xenium.obj@meta.data$sample_name = sample_name
+```
+
+Remove cells with low quality
+```{r RemoveZeroCounts}
+xenium.obj <- subset(xenium.obj, 
+                     subset = (nFeature_Xenium >= n_gene_cutoffs) &
+                       (nCount_Xenium >= n_libsize_cutoffs) )
+```
+
+Number of genes and cells after filtering
+```{r}
+dim(xenium.obj)
+```
+
+<!-- %                                                 % -->
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+
+
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- %                                                 % -->
+
+### Analysis of Xenium data
+
+Set parameters
+```{r}
+n_dims = 30
+n_resolution = 0.5
+```
+
+Seurat pipeline for data analysis
+```{r SeuratPipeline, results='hide'}
+xenium.obj <- NormalizeData(xenium.obj, assay = "Xenium")
+xenium.obj <- ScaleData(xenium.obj, assay = "Xenium")
+xenium.obj <- RunPCA(xenium.obj, npcs = n_dims, features = rownames(xenium.obj))
+xenium.obj <- RunUMAP(xenium.obj, dims = 1:n_dims)
+xenium.obj <- FindNeighbors(xenium.obj, reduction = "pca", dims = 1:n_dims)
+xenium.obj <- FindClusters(xenium.obj, resolution = n_resolution)
+```
+
+
+DimPlot by clusters
+```{r DimPlotClusters,fig.width=6,fig.height=4.5}
+DimPlot(xenium.obj,pt.size=point_size,
+        reduction="umap",group.by="seurat_clusters",
+        shuffle=TRUE,cols=my_colors_20) +
+    my_theme_ggplot + ggplot2::labs(title="")
+```
+
+
+Feature plots of marker genes
+```{r FeaturePlotKnownMarkers,fig.width=3*6*0.9, fig.height=3*6*0.9}
+p <- list()
+
+my_genes_list = list("Epithelial" = c("EPCAM"), #  "ITGA6"
+                     "Cycling" = c("MKI67","TOP2A"),
+                     "Basal" = c("KRT14", "KRT5"),
+                     "LP" = c("ELF5", "KIT"),
+                     "ML" = c("ESR1", "FOXA1","WNT5A","SCGB2A1","PGR","ERBB2"),
+                     # "Tumor" = c("SCGB2A1"),      # tumor ML (ER)
+                     "Tumor" = c("ABCC11"),      # tumor ML (HER2 tumor)
+                     "DCIS" = c("CEACAM6"),      # tumor ML (HER2 DCIS)
+                     # "Normal" = c("PGR","ERBB2"), # normal ML, no need to include these two genes
+                     "Fibroblast" = c("LUM", "PDGFRA"),
+                     "Endothelial" = c("PECAM1", "VWF"), # ,"CD36", "CD34" not in 10x gene panel
+                     # "Pericyte" = c("RGS5", "MCAM"),   # "RGS5", "MCAM" not in 10x gene panel
+                     "Adipocyte" = c("ADIPOQ", "ADH1B"),
+                     "T" = c("CD3G", "CD4","CD8A"),
+                     "NK" = c("NKG7"),
+                     "B" = c("MS4A1", "CD79A"),
+                     "Plasma" = c("SLAMF7","TNFRSF17"), # TNFRSF17 for mature B and plasma cells
+                     "Macrophage" = c("C1QA","CD68"),
+                     "Dendritic"  = c("ITGAX","FCER1A"),
+                     "Mast" = c("TPSAB1","CTSG"), #"TPSB2",
+                     "Lymph.vessel" = c("PROX1")
+)
+
+my_genes = do.call(c, my_genes_list)
+
+
+my_genes = intersect(my_genes,rownames(xenium.obj))
+
+for (i in 1:length(my_genes) ) {
+  p[[i]] <- FeaturePlot(xenium.obj,
+                        pt.size=point_size,
+                        order = TRUE,
+                        features=my_genes[i]) + 
+    NoLegend() + my_theme_ggplot
+}
+
+
+n_col = 6
+n_row = ceiling(length(my_genes)/n_col)
+
+patchwork::wrap_plots(p, ncol=n_col, byrow=TRUE)
+```
+
+
+Image DimPlot of clusters
+```{r ImageDimPlotClusters, fig.width=9, fig.height=4.5}
+p <- ImageDimPlot(xenium.obj,
+                  cols = my_colors_20
+                  ) + theme_bw() + my_theme_ggplot
+p <- p + coord_flip()
+p
+```
+
+
+### Cell type annotation
+
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+<!-- %                                                 % -->
+
+#### Manual using known marker genes
+
+Manual assign cell types
+```{r}
+xenium.obj$predicted_cell_type_Manual = xenium.obj$seurat_clusters
+levels(xenium.obj$predicted_cell_type_Manual) =  c("T",
+                                                   "Fibroblast",
+                                                   "Macrophage",
+                                                   "Endothelial",
+                                                   "Tumor_ML",
+                                                   "Myoepithelial",
+                                                   "Tumor_ML",
+                                                   "B",
+                                                   "LP",
+                                                   "ML",
+                                                   "Dendritic",
+                                                   "Plasma",
+                                                   "Mast",
+                                                   "NK",
+                                                   "Adipocyte",
+                                                   "Macrophage",
+                                                   "Dendritic",
+                                                   "T")
+nlevels(xenium.obj$predicted_cell_type_Manual)
+```
+
+
+Order cell type by cell number
+```{r}
+ordered_numer = sort(table(xenium.obj$predicted_cell_type_Manual),decreasing = TRUE)
+xenium.obj$predicted_cell_type_Manual = factor(xenium.obj$predicted_cell_type_Manual, 
+                                               levels = names(ordered_numer) )
+table(xenium.obj$predicted_cell_type_Manual)
+```
+
+
+DimPlot by predicted cell types
+```{r DimPlotPredictedCellType,fig.width=4.2*1.5, fig.height=3*1.5}
+DimPlot(xenium.obj,
+        pt.size=point_size,
+        reduction="umap",
+        group.by="predicted_cell_type_Manual",
+        shuffle=TRUE,
+        cols=my_colors_20) +
+    my_theme_ggplot +
+    ggplot2::labs(title="Manual")
+```
+
+
+Image DimPlot by cell type
+```{r ImageDimPlotClusters, fig.width=9, fig.height=4.5}
+ImageDimPlot(xenium.obj,
+                  group.by = "predicted_cell_type_Manual",
+                  cols = my_colors_20
+                  ) + 
+  theme_bw() + my_theme_ggplot + coord_flip() + 
+  labs(fill="Manual")
+```
+<!-- %                                                 % -->
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+
+
+<!-- save xenium.obj into rds -->
+<!-- ```{r,include=FALSE} -->
+<!-- saveRDS(xenium.obj, file = "xenium_obj_cell_type_Sample2.rds") -->
+<!-- ``` -->
+
+
+<!-- save rdata -->
+<!-- ```{r,include=FALSE} -->
+<!-- save.image(file = "Sample2.rdata") -->
+<!-- ``` -->
+
+\pagebreak
+

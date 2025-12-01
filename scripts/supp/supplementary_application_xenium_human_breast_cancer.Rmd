@@ -79,9 +79,9 @@ ct_names =c("Tumor", "Stromal","Macrophages","Myoepithelial", "T_Cells",
             "B_Cells","Endothelial", "Dendritic", "Mast_Cells")
 cluster_info$anno_name = factor(cluster_info$anno_name,
                           levels=ct_names)
-
+rownames(cluster_info) <-cluster_info$cells
 cluster_info = cluster_info[order(cluster_info$anno_name), ]
-cluster_info$cells = paste0("_", cluster_info$cells)
+#cluster_info$cells = paste0("_", cluster_info$cells)
 anno_df = unique(cluster_info[c("cluster", "anno_name")])
 anno_df$anno_name = factor(anno_df$anno_name, levels = ct_names)
 jazzPanda_res_lst = readRDS(here(data_path,paste0(data_nm, "_jazzPanda_res_lst.Rds")))
@@ -89,11 +89,18 @@ jazzPanda_res_lst = readRDS(here(data_path,paste0(data_nm, "_jazzPanda_res_lst.R
 fit.cont = readRDS(here(data_path,paste0(data_nm, "_fit_cont_obj.Rds")))
 
 FM_result= readRDS(here(data_path,paste0(data_nm, "_seu_markers.Rds")))
+
 sv_lst = readRDS(here(data_path,paste0(data_nm, "_sq40_vector_lst.Rds")))
 seu = readRDS(here(data_path,paste0(data_nm, "_seu.Rds")))
-seu <- subset(seu, cells = cluster_info$cells)
+#seu <- subset(seu, cells = cluster_info$cells)
+colnames(seu) <- sub("^_", "", colnames(seu))
+colnames(seu) <- sub("_2$", "-sp2", colnames(seu))
+
+Idents(seu) <- cluster_info$cluster[match(colnames(seu),
+                                          cluster_info$cells)]
+
 nbins = 1600
-Idents(seu)=cluster_info$anno_name[match(colnames(seu), cluster_info$cells)]
+
 seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cells)]
 
 ```
@@ -152,7 +159,7 @@ for (cat in unique(nc_sp2$category)) {
 
 # jazzPanda-glm
 ```{r jazzPanda-glm}
-jazzPanda_res = get_top_mg(jazzPanda_res_lst, coef_cutoff=0.1)  
+jazzPanda_res = get_top_mg(jazzPanda_res_lst, coef_cutoff=0.2)  
 jazzPanda_summary = as.data.frame(table(jazzPanda_res$top_cluster))
 colnames(jazzPanda_summary) = c("cluster","jazzPanda_glm")
 ```
@@ -236,7 +243,7 @@ for (cl in cluster_names){
                     #geom_hex(bins = 100)+
                     geom_point(size=0.01)+
                     facet_wrap(~label, nrow=2,strip.position = "left")+
-                    scale_x_reverse() +
+                    scale_y_reverse() +
                     scale_color_manual(values = c("black","black"))+
                     #scale_fill_gradient(low="white", high="maroon4") + 
                     #guides(fill = guide_colorbar(barwidth = unit(15, "cm"),height= unit(30, "cm")))+
@@ -397,7 +404,8 @@ for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
     
     fm_cl=FindMarkers(seu, ident.1 = cl, only.pos = TRUE,
-            logfc.threshold = 0.25)
+            logfc.threshold = 0.1)
+    fm_cl = fm_cl[fm_cl$p_val_adj<0.05, ]
     fm_cl = fm_cl[order(fm_cl$avg_log2FC, decreasing = TRUE),]
     to_plot =row.names(fm_cl)
     if (length(to_plot)>0){
@@ -482,7 +490,7 @@ dev.off()
 plot_lst=list()
 for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
-    findM_sig <- FM_result[FM_result$cluster==cl,"gene"]
+    findM_sig <- FM_result[FM_result$cluster==cl & FM_result$p_val_adj<0.05,"gene"]
     limma_sig <- row.names(limma_dt[limma_dt[,cl]==1,])
     lasso_cl <- jazzPanda_res[jazzPanda_res$top_cluster==cl, "gene"]
     
@@ -496,36 +504,33 @@ for (cl in cluster_names){
     
     df_mt$gene_name <- row.names(df_mt)
     
-     p<-upset(df_mt,
-              intersect=c("limma","Wilcoxon Rank Sum Test", "jazzPanda-glm"),
-              wrap=TRUE, keep_empty_groups= TRUE, name="",
-              themes=theme_grey(),
-              stripes=upset_stripes(geom=geom_segment(size=5),
-                                    colors=c('grey95', 'grey95',
-                                             'grey95')),
-              sort_intersections_by ="cardinality", sort_sets= FALSE,min_degree=1,
-              set_sizes=FALSE,
+    p = plot(upset(df_mt,
+               intersect=c("Wilcoxon Rank Sum Test", "limma",
+                           "jazzPanda-glm"),
+               wrap=TRUE, keep_empty_groups= FALSE, name="",
+               #themes=theme_grey(),
+               stripes='white',
+               sort_intersections_by ="cardinality", sort_sets= FALSE,min_degree=1,
+               set_sizes =( 
+                   upset_set_size()
+                   + theme(axis.title= element_blank(),
+                           axis.ticks.y = element_blank(),
+                           axis.text.y = element_blank())),
                sort_intersections= "descending", warn_when_converting=FALSE,
                warn_when_dropping_groups=TRUE,encode_sets=TRUE,
-              matrix=(intersection_matrix()+
-                          theme(axis.text.x=element_blank(),
-                              panel.background = element_rect(fill="NA"),
-                              axis.ticks = element_blank(),
-                              axis.title = element_blank())),
-              base_annotations=list('Intersection size'=(intersection_size(bar_number_threshold=1,color='grey9',fill='grey80')+
-                scale_y_continuous(expand = expansion(mult = c(0, 0.15)))+
-                theme(axis.text.x = element_blank(),axis.title.x = element_blank(),
-                      panel.background = element_rect(fill="NA"),
-                      panel.grid = element_line(color="grey90"),
-                      axis.ticks.x = element_blank()))),
-              width_ratio=0.5, height_ratio=1/4)+
-           ggtitle(ct_nm)
-        plot_lst[[cl]] <- p 
+
+               width_ratio=0.3, height_ratio=1/4)+
+              ggtitle(ct_nm)+
+                 theme(plot.title = element_text( size=15))
+
+    )
+          
+    plot_lst[[cl]] <- p 
 }
 
 combined_plot <- wrap_plots(plot_lst, ncol = 4)
 pdf(file.path(comp_PA,paste0(data_nm, "_mg_compare_upset.pdf")),
-     height =4* (ceiling(length(cluster_names)/4)), width = 16)
+     height =5* (ceiling(length(cluster_names)/4)), width = 22)
 combined_plot 
 dev.off()
 ```
