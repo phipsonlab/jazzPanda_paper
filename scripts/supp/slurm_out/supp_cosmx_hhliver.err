@@ -1,12 +1,30 @@
-/var/spool/slurmd/job23972908/slurm_script: line 32: msg: command not found
-/var/spool/slurmd/job23972908/slurm_script: line 33: msg: command not found
-/var/spool/slurmd/job23972908/slurm_script: line 34: msg: command not found
-/var/spool/slurmd/job23972908/slurm_script: line 35: msg: command not found
-/var/spool/slurmd/job23972908/slurm_script: line 36: msg: command not found
-/var/spool/slurmd/job23972908/slurm_script: line 37: msg: command not found
-/var/spool/slurmd/job23972908/slurm_script: line 38: msg: command not found
-/var/spool/slurmd/job23972908/slurm_script: line 39: msg: command not found
 
 
 processing file: supplementary_application_cosmx_healthy_human_liver.Rmd
-slurmstepd: error: *** JOB 23972908 ON med-n15 CANCELLED AT 2025-09-30T11:46:41 ***
+output file: supplementary_application_cosmx_healthy_human_liver.knit.md
+
+
+Output created: supplementary_application_cosmx_healthy_human_liver.html
+	Command being timed: "Rscript -e rmarkdown::render('supplementary_application_cosmx_healthy_human_liver.Rmd', output_format = 'html_document')"
+	User time (seconds): 1683.08
+	System time (seconds): 267.07
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 32:43.53
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 111416076
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1081
+	Minor (reclaiming a frame) page faults: 165844701
+	Voluntary context switches: 10043
+	Involuntary context switches: 3403
+	Swaps: 0
+	File system inputs: 301416
+	File system outputs: 28672
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

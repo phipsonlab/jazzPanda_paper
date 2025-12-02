@@ -1,84 +1,10 @@
 ------------------------------------------------------------------------
-Job Started on Tue 30 Sep 2025 11:43:06 AEST
-------------------------------------------------------------------------
-------------------------------------------------------------------------
-CPU Information:
-Architecture:                       x86_64
-CPU op-mode(s):                     32-bit, 64-bit
-Address sizes:                      46 bits physical, 48 bits virtual
-Byte Order:                         Little Endian
-CPU(s):                             56
-On-line CPU(s) list:                0-55
-Vendor ID:                          GenuineIntel
-Model name:                         Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
-CPU family:                         6
-Model:                              79
-Thread(s) per core:                 2
-Core(s) per socket:                 14
-Socket(s):                          2
-Stepping:                           1
-CPU(s) scaling MHz:                 91%
-CPU max MHz:                        3500.0000
-CPU min MHz:                        1200.0000
-BogoMIPS:                           5188.47
-Flags:                              fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 invpcid_single pti intel_ppin ssbd ibrs ibpb stibp tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm cqm rdt_a rdseed adx smap intel_pt xsaveopt cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts hwp vnmi md_clear flush_l1d
-Virtualization:                     VT-x
-L1d cache:                          896 KiB (28 instances)
-L1i cache:                          896 KiB (28 instances)
-L2 cache:                           7 MiB (28 instances)
-L3 cache:                           70 MiB (2 instances)
-NUMA node(s):                       2
-NUMA node0 CPU(s):                  0-13,28-41
-NUMA node1 CPU(s):                  14-27,42-55
-Vulnerability Gather data sampling: Not affected
-Vulnerability Itlb multihit:        KVM: Mitigation: VMX disabled
-Vulnerability L1tf:                 Mitigation; PTE Inversion; VMX conditional cache flushes, SMT vulnerable
-Vulnerability Mds:                  Mitigation; Clear CPU buffers; SMT vulnerable
-Vulnerability Meltdown:             Mitigation; PTI
-Vulnerability Mmio stale data:      Mitigation; Clear CPU buffers; SMT vulnerable
-Vulnerability Retbleed:             Not affected
-Vulnerability Spec rstack overflow: Not affected
-Vulnerability Spec store bypass:    Mitigation; Speculative Store Bypass disabled via prctl
-Vulnerability Spectre v1:           Mitigation; usercopy/swapgs barriers and __user pointer sanitization
-Vulnerability Spectre v2:           Mitigation; Retpolines, IBPB conditional, IBRS_FW, STIBP conditional, RSB filling, PBRSB-eIBRS Not affected
-Vulnerability Srbds:                Not affected
-Vulnerability Tsx async abort:      Mitigation; Clear CPU buffers; SMT vulnerable
-------------------------------------------------------------------------
-Memory Information:
-               total        used        free      shared  buff/cache   available
-Mem:          515362        9950       77148         208      431961      505412
-Swap:              0           0           0
-------------------------------------------------------------------------
-Disk Space:
-Filesystem                         Size  Used Avail Use% Mounted on
-devtmpfs                           4.0M     0  4.0M   0% /dev
-tmpfs                              252G  2.9M  252G   1% /dev/shm
-tmpfs                              101G  203M  101G   1% /run
-/dev/mapper/rhel-root               10G  412M  9.6G   5% /
-/dev/mapper/rhel-usr                35G   14G   22G  40% /usr
-/dev/mapper/rhel-tmp                20G  282M   20G   2% /tmp
-/dev/sda2                         1014M  368M  647M  37% /boot
-/dev/mapper/rhel-var                10G  1.1G  9.0G  11% /var
-/dev/sda1                          200M  7.1M  193M   4% /boot/efi
-vast.hpc.wehi.edu.au:/cryoem       300T  254T   47T  85% /vast/cryoem
-vast.hpc.wehi.edu.au:/imaging      200T  134T   67T  67% /vast/imaging
-vast.hpc.wehi.edu.au:/projects     575T  449T  127T  79% /vast/projects
-vast.hpc.wehi.edu.au:/ai_projects  600T   32T  569T   6% /vast/ai_projects
-vast.hpc.wehi.edu.au:/scratch      550T  318T  233T  58% /vast/scratch
-General                            504T  295T  210T  59% /stornext/General
-Genomics                            64T   34T   31T  52% /stornext/Genomics
-Home                                96T   40T   57T  42% /stornext/Home
-ImageData                          252T  190T   63T  76% /stornext/ImageData
-Img                                252T  240T   13T  95% /stornext/Img
-Projects                           504T  322T  183T  64% /stornext/Projects
-SBPM                                48T   25T   24T  52% /stornext/SBPM
-Sysbio                              96T   59T   38T  61% /stornext/Sysbio
-System                              24T  8.9T   16T  37% /stornext/System
-Archive                             84T   45T   40T  54% /stornext/Archive
-Bioinf                             504T  479T   26T  96% /stornext/Bioinf
-------------------------------------------------------------------------
-System and Kernel:
-Linux med-n18.hpc.wehi.edu.au 5.14.0-362.24.1.el9_3.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Feb 15 07:18:13 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+Job Started on Tue 02 Dec 2025 16:00:56 AEDT
+System: Linux med-n34.hpc.wehi.edu.au 5.14.0-362.24.1.el9_3.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Feb 15 07:18:13 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+CPU: Model name:                         Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
+Total Memory: 503Gi
+Node: med-n34
+Job ID: 24530262
 ------------------------------------------------------------------------
 Loading R/4.5.1
   Loading requirement: libpng/1.6.43 libjpeg-turbo/3.0.2 libtiff/4.6.0
@@ -93,3 +19,34 @@ Loading gdal/3.9.0
 6/35 [load-raw]             
 7/35                        
 8/35 [unnamed-chunk-1]      
+9/35                        
+10/35 [negprobes]            
+11/35                        
+12/35 [unnamed-chunk-2]      
+13/35                        
+14/35 [top3-gene-vis-xy-corr]
+15/35                        
+16/35 [unnamed-chunk-3]      
+17/35                        
+18/35 [jazzPanda-glm]        
+19/35                        
+20/35 [output_markergenes]   
+21/35                        
+22/35 [top3-gene-vis-xy-glm] 
+23/35                        
+24/35 [unnamed-chunk-4]      
+25/35                        
+26/35 [fm-mg]                
+27/35                        
+28/35 [limma-mg]             
+29/35                        
+30/35 [unnamed-chunk-5]      
+31/35                        
+32/35 [upset-mg-comparison]  
+33/35                        
+34/35 [unnamed-chunk-6]      
+35/35                        
+/stornext/System/data/software/rhel/9/base/tools/pandoc/3.2/bin/pandoc +RTS -K512m -RTS supplementary_application_xenium_human_lung_cancer.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output supplementary_application_xenium_human_lung_cancer.html --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /vast/projects/xenium_5k/jazzPanda_paper/tmp.ACe1uj24HI/RtmpPj1obO/rmarkdown-str1a768d7b3170d6.html 
+------------------------------------------------------------------------
+Job Completed on Tue 02 Dec 2025 16:09:49 AEDT
+------------------------------------------------------------------------

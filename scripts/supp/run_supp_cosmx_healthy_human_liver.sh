@@ -6,33 +6,15 @@
 #SBATCH --time=12:00:00
 #SBATCH --mem=300G
 #SBATCH --cpus-per-task=12
-
 ################################################################################
 echo "------------------------------------------------------------------------"
 echo "Job Started on $(date)"
+echo "System: $(uname -a)"
+echo "CPU: $(lscpu | grep 'Model name')"
+echo "Total Memory: $(free -h | awk '/Mem:/ {print $2}')"
+echo "Node: $SLURM_NODELIST"
+echo "Job ID: $SLURM_JOB_ID"
 echo "------------------------------------------------------------------------"
-
-echo "------------------------------------------------------------------------"
-echo "CPU Information:"
-lscpu
-echo "------------------------------------------------------------------------"
-
-echo "Memory Information:"
-free -m
-echo "------------------------------------------------------------------------"
-
-echo "System and Kernel:"
-uname -a
-echo "------------------------------------------------------------------------"
-################################################################################
-msg "======== begin ========"           #
-msg 'Working directory ' `pwd`          # current job working directory
-msg 'Job run on nodes ' $SLURM_NODELIST # current job assigned nodes
-msg 'Job ntasks assign ' $SLURM_TASKS_PER_NODE #
-msg 'NCPU per task' $SLURM_CPUS_PER_TASK # Number of CPUs per task
-msg 'Total allocated cores ' $SLURM_CPUS_ON_NODE     # calculated total allocated NCPU
-msg 'Job ID ' ${SLURM_JOB_ID}          # Job ID
-msg 'Job name ' $SLURM_JOB_NAME        # Job name
 
 ################################################################################
 module load R/4.5.1

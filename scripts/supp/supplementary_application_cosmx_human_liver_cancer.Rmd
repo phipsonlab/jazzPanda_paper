@@ -695,9 +695,9 @@ for (cl in cluster_names){
     findM_sig <- FM_result[FM_result$cluster==cl & FM_result$p_val_adj<0.05,"gene"]
     limma_sig <- row.names(limma_dt[limma_dt[,cl]==1,])
     lasso_cl <- jazzPanda_res[jazzPanda_res$top_cluster==cl, "gene"]
-    perm_cl <- intersect(row.names(perm_res[perm_res[,cl]<0.05,]),
-                      row.names(obs_corr[obs_corr[, cl]>0.7,]))
-    
+    obs_cutoff = quantile(obs_corr[, cl], 0.75)
+    perm_cl<-intersect(row.names(perm_res[perm_res[,cl]<0.05,]),
+                     row.names(obs_corr[obs_corr[, cl]>obs_cutoff,]))
     df_mt <- as.data.frame(matrix(FALSE,nrow=nrow(jazzPanda_res),ncol=4))
     row.names(df_mt) <- jazzPanda_res$gene
     colnames(df_mt) <- c("jazzPanda-glm",

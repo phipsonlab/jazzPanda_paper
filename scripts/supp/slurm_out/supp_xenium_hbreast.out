@@ -1,56 +1,10 @@
 ------------------------------------------------------------------------
-Job Started on Thu 06 Nov 2025 14:57:54 AEDT
-------------------------------------------------------------------------
-------------------------------------------------------------------------
-CPU Information:
-Architecture:                       x86_64
-CPU op-mode(s):                     32-bit, 64-bit
-Address sizes:                      46 bits physical, 48 bits virtual
-Byte Order:                         Little Endian
-CPU(s):                             56
-On-line CPU(s) list:                0-55
-Vendor ID:                          GenuineIntel
-Model name:                         Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
-CPU family:                         6
-Model:                              79
-Thread(s) per core:                 2
-Core(s) per socket:                 14
-Socket(s):                          2
-Stepping:                           1
-CPU(s) scaling MHz:                 91%
-CPU max MHz:                        3500.0000
-CPU min MHz:                        1200.0000
-BogoMIPS:                           5187.59
-Flags:                              fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cdp_l3 invpcid_single pti intel_ppin ssbd ibrs ibpb stibp tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm cqm rdt_a rdseed adx smap intel_pt xsaveopt cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts vnmi md_clear flush_l1d
-Virtualization:                     VT-x
-L1d cache:                          896 KiB (28 instances)
-L1i cache:                          896 KiB (28 instances)
-L2 cache:                           7 MiB (28 instances)
-L3 cache:                           70 MiB (2 instances)
-NUMA node(s):                       2
-NUMA node0 CPU(s):                  0-13,28-41
-NUMA node1 CPU(s):                  14-27,42-55
-Vulnerability Gather data sampling: Not affected
-Vulnerability Itlb multihit:        KVM: Mitigation: VMX disabled
-Vulnerability L1tf:                 Mitigation; PTE Inversion; VMX conditional cache flushes, SMT vulnerable
-Vulnerability Mds:                  Mitigation; Clear CPU buffers; SMT vulnerable
-Vulnerability Meltdown:             Mitigation; PTI
-Vulnerability Mmio stale data:      Mitigation; Clear CPU buffers; SMT vulnerable
-Vulnerability Retbleed:             Not affected
-Vulnerability Spec rstack overflow: Not affected
-Vulnerability Spec store bypass:    Mitigation; Speculative Store Bypass disabled via prctl
-Vulnerability Spectre v1:           Mitigation; usercopy/swapgs barriers and __user pointer sanitization
-Vulnerability Spectre v2:           Mitigation; Retpolines, IBPB conditional, IBRS_FW, STIBP conditional, RSB filling, PBRSB-eIBRS Not affected
-Vulnerability Srbds:                Not affected
-Vulnerability Tsx async abort:      Mitigation; Clear CPU buffers; SMT vulnerable
-------------------------------------------------------------------------
-Memory Information:
-               total        used        free      shared  buff/cache   available
-Mem:          515364       14060       92431         100      412463      501304
-Swap:              0           0           0
-------------------------------------------------------------------------
-System and Kernel:
-Linux med-n36.hpc.wehi.edu.au 5.14.0-362.24.1.el9_3.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Feb 15 07:18:13 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+Job Started on Tue 02 Dec 2025 16:00:48 AEDT
+System: Linux med-n33.hpc.wehi.edu.au 5.14.0-362.24.1.el9_3.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Feb 15 07:18:13 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
+CPU: Model name:                         Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
+Total Memory: 503Gi
+Node: med-n33
+Job ID: 24530261
 ------------------------------------------------------------------------
 Loading R/4.5.1
   Loading requirement: libpng/1.6.43 libjpeg-turbo/3.0.2 libtiff/4.6.0
@@ -86,7 +40,7 @@ Loading gdal/3.9.0
 27/29                      
 28/29 [unnamed-chunk-4]    
 29/29                      
-/stornext/System/data/software/rhel/9/base/tools/pandoc/3.2/bin/pandoc +RTS -K512m -RTS supplementary_application_xenium_human_breast_cancer.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output supplementary_application_xenium_human_breast_cancer.html --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /vast/projects/xenium_5k/jazzPanda_paper/tmp.jWrsDuRnml/RtmpS6zOuN/rmarkdown-str16448123f081a.html 
+/stornext/System/data/software/rhel/9/base/tools/pandoc/3.2/bin/pandoc +RTS -K512m -RTS supplementary_application_xenium_human_breast_cancer.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output supplementary_application_xenium_human_breast_cancer.html --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /vast/projects/xenium_5k/jazzPanda_paper/tmp.ncpLb7I5gz/RtmpeJeLKX/rmarkdown-str15f7116e4bcae1.html 
 ------------------------------------------------------------------------
-Job Completed on Thu 06 Nov 2025 15:02:00 AEDT
+Job Completed on Tue 02 Dec 2025 16:05:13 AEDT
 ------------------------------------------------------------------------
