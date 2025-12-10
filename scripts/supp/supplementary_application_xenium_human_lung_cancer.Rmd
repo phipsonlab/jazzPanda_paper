@@ -559,8 +559,6 @@ plot_lst=list()
 cor_M = cor(sv_lst$gene_mt,
             sv_lst$cluster_mt[, cluster_names],
             method = "spearman")
-cor_M[cor_M <= 0.7] = 0
-cor_M[cor_M >  0.7]=1
 Idents(seu)=cluster_info$cluster[match(colnames(seu), 
                                        cluster_info$cell_id)]
 for (cl in cluster_names){
@@ -570,11 +568,11 @@ for (cl in cluster_names){
             logfc.threshold = 0.1)
     fm_cl = fm_cl[fm_cl$p_val_adj<0.05, ]
     fm_cl = fm_cl[order(fm_cl$avg_log2FC, decreasing = TRUE),]
-    to_plot =row.names(fm_cl)
-    if (length(to_plot)>0){
-        FM_pt = data.frame("name"=to_plot,"rk"= 1:length(to_plot),
-                       "y"= cumsum(cor_M[to_plot, cl]),
-                       "type"="FindMarkers")
+    to_plot_fm =row.names(fm_cl)
+    if (length(to_plot_fm)>0){
+        FM_pt =data.frame("name"=to_plot_fm,"rk"= 1:length(to_plot_fm),
+                       "y"= get_cmr_ma(to_plot_fm,cor_M = cor_M, cl = cl),
+                       "type"="Wilcoxon Rank Sum Test")
     }else{
         FM_pt <- data.frame(name = character(0), rk = integer(0), 
                                y= numeric(0), type = character(0))
@@ -584,9 +582,9 @@ for (cl in cluster_names){
     limma_cl = limma_cl[limma_cl$logFC>0, ]
     to_plot_lm = row.names(limma_cl)
     if (length(to_plot_lm)>0){
-        limma_pt <- data.frame("name"=to_plot_lm,"rk"= 1:length(to_plot_lm),
-               "y"= cumsum(cor_M[to_plot_lm, cl]),
-               "type"="limma")
+         limma_pt = data.frame("name"=to_plot_lm,"rk"= 1:length(to_plot_lm),
+                                  "y"= get_cmr_ma(to_plot_lm,cor_M = cor_M, cl = cl),
+                                  "type"="limma")
     }else{
         limma_pt <- data.frame(name = character(0), rk = integer(0), 
                                y= numeric(0), type = character(0))
@@ -597,14 +595,16 @@ for (cl in cluster_names){
                  row.names(obs_corr[obs_corr[, cl]>obs_cutoff,]))
     if (length(perm_cl) > 0) {
         rounded_val=signif(as.numeric(obs_corr[perm_cl,cl]), digits = 3)
-        perm_sorted = as.data.frame(cbind(gene=perm_cl, value=rounded_val))
+        roudned_pval=signif(as.numeric(perm_res[perm_cl,cl]), digits = 3)
+        perm_sorted = as.data.frame(cbind(gene=perm_cl, value=rounded_val, pval=roudned_pval))
         perm_sorted$value = as.numeric(perm_sorted$value)
-        perm_sorted=perm_sorted[order(perm_sorted$value, decreasing = TRUE),]
-        
-        corr_pt = data.frame("name"=perm_sorted$gene,
-                             "rk"= 1:length(perm_sorted$gene),
-                       "y"= cumsum(cor_M[perm_sorted$gene, cl]),
-                       "type"="jazzPanda-correlation")
+        perm_sorted$pval = as.numeric(perm_sorted$pval)
+        perm_sorted=perm_sorted[order(-perm_sorted$pval,
+                                  perm_sorted$value, 
+                                  decreasing = TRUE),]
+        corr_pt = data.frame("name"=perm_sorted$gene,"rk"= 1:length(perm_sorted$gene),
+                     "y"= get_cmr_ma(perm_sorted$gene,cor_M = cor_M, cl = cl),
+                     "type"="jazzPanda-correlation")
     } else {
       corr_pt <-data.frame(name = character(0), rk = integer(0), 
                                y= numeric(0), type = character(0))
@@ -613,12 +613,9 @@ for (cl in cluster_names){
     lasso_sig = jazzPanda_res[jazzPanda_res$top_cluster==cl,]
     if (nrow(lasso_sig) > 0) {
         lasso_sig <- lasso_sig[order(lasso_sig$glm_coef, decreasing = TRUE), ]
-        lasso_pt <- data.frame(
-        name = lasso_sig$gene,
-        rk   = seq_len(nrow(lasso_sig)),
-        y    = cumsum(cor_M[lasso_sig$gene, cl]),
-        type = "jazzPanda-glm"
-        )
+        lasso_pt = data.frame("name"=lasso_sig$gene,"rk"= 1:nrow(lasso_sig),
+                          "y"= get_cmr_ma(lasso_sig$gene,cor_M = cor_M, cl = cl),
+                          "type"="jazzPanda-glm")
     } else {
       lasso_pt <- data.frame(name = character(0), rk = integer(0), 
                                y= numeric(0), type = character(0))
@@ -626,23 +623,20 @@ for (cl in cluster_names){
 
     data_lst = rbind(limma_pt, FM_pt,corr_pt,lasso_pt)
 
-    data_lst$type <- factor(
-    data_lst$type,
-    levels = c("limma", "FindMarkers", 
-               "jazzPanda-correlation","jazzPanda-glm"),
-    labels = c("limma", "Wilcoxon Rank Sum Test",
-               "jazzPanda-correlation" ,"jazzPanda-glm")
-    )
+    data_lst$type <- factor(data_lst$type,
+                            levels = c("jazzPanda-correlation" ,
+                                       "jazzPanda-glm",
+                                       "limma", "Wilcoxon Rank Sum Test"))
     data_lst$rk = as.numeric(data_lst$rk)
     p <-ggplot(data_lst, aes(x = rk, y = y, color = type)) +
         geom_step(size = 0.8) +  # type = "s"
-        scale_color_manual(values = c("limma" = "black",
-                                    "Wilcoxon Rank Sum Test" = "blue",
-                                    "jazzPanda-correlation" = "orange",
-                                    "jazzPanda-glm" = "red"
-                                    )) +
+        scale_color_manual(values = c("jazzPanda-correlation" = "orange",
+                                    "jazzPanda-glm" = "red",
+                                    "limma" = "black",
+                                    "Wilcoxon Rank Sum Test" = "blue")) +
+        scale_x_continuous(limits = c(0, 50))+
         labs(title = ct_nm, x = "Rank of marker genes",
-             y = "Cumulative count of genes with correlation >0.7",
+             y = "Cumulative average correlation",
              color = NULL) +
         theme_classic(base_size = 12) +
         theme(plot.title = element_text(hjust = 0.5),

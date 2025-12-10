@@ -44,6 +44,16 @@ auto_hex_bin <- function(n, target_points_per_bin = 5, min_bins=10) {
     bins <- round(sqrt(k))
     return(max(min_bins, bins)) 
 }
+
+# Function to calculate the cumulative average correlation 
+get_cmr_ma<- function(genes, cor_M, cl){
+    curr_corrs = cor_M[genes, cl]
+    mv_avgs = cumsum(curr_corrs)/(1:length(genes))
+    #return(lowess(y=curr_corrs, x=1:length(genes), f=0.3)$y)
+    #loess(mv_avgs)
+    #return(cumsum(curr_corrs>mv_avgs))
+    return(mv_avgs)
+}
 #############################################################################
 # A help function to load Xenium data
 get_xenium_data<-function(path,mtx_name, trans_name="transcript_info.csv.gz",

@@ -508,11 +508,19 @@ We compared the performance of different marker detection methods — jazzPanda 
 
 ```{r}
 plot_lst=list()
-cor_M = cor(sv_lst$gene_mt,
-            sv_lst$cluster_mt[, cluster_names],
-            method = "pearson")
-cor_M[cor_M <= 0.6] = 0
-cor_M[cor_M > 0.6]=1
+
+cor1 <- cor(sv_lst$gene_mt[1:2500, ],
+            sv_lst$cluster_mt[1:2500, cluster_names], method = "spearman")
+
+cor2 <- cor(sv_lst$gene_mt[2500:5000, ],
+            sv_lst$cluster_mt[2500:5000, cluster_names], method = "spearman")
+
+cor3 <- cor(sv_lst$gene_mt[5000:7500, ],
+            sv_lst$cluster_mt[5000:7500, cluster_names], method = "spearman")
+
+cor_M <-(cor1 + cor2 + cor3) / 3
+
+
 Idents(seu)=cluster_info$cluster[match(colnames(seu), cluster_info$cell_id)]
 for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
@@ -520,10 +528,8 @@ for (cl in cluster_names){
             logfc.threshold = 0.1)
     fm_cl = fm_cl[fm_cl$p_val_adj<0.05, ]
     fm_cl = fm_cl[order(fm_cl$avg_log2FC, decreasing = TRUE),]
-    to_plot =row.names(fm_cl)
-    FM_pt = data.frame("name"=to_plot,"rk"= 1:length(to_plot),
-                   "y"= cumsum(cor_M[to_plot, cl]),
-                   "type"="FindMarkers")
+    to_plot_fm =row.names(fm_cl)
+
     
     limma_cl<-topTable(fit.cont,coef=cl,p.value = 0.05, n=Inf, sort.by = "p")
     limma_cl = limma_cl[limma_cl$logFC>0, ]
@@ -533,28 +539,35 @@ for (cl in cluster_names){
     lasso_sig = jazzPanda_res[jazzPanda_res$top_cluster==cl,]
     lasso_sig = lasso_sig[order(lasso_sig$glm_coef, decreasing = TRUE),]
     
-    limma_pt = data.frame("name"=to_plot_lm,"rk"= 1:length(to_plot_lm),
-                   "y"= cumsum(cor_M[to_plot_lm, cl]),
-                   "type"="limma")
+    FM_pt = data.frame("name"=to_plot_fm,"rk"= 1:length(to_plot_fm),
+                       "y"= get_cmr_ma(to_plot_fm,cor_M = cor_M, cl = cl),
+                       "type"="Wilcoxon Rank Sum Test")
+    
     
     lasso_pt = data.frame("name"=lasso_sig$gene,"rk"= 1:nrow(lasso_sig),
-                   "y"= cumsum(cor_M[lasso_sig$gene, cl]),
-                   "type"="jazzPanda-glm")
+                          "y"= get_cmr_ma(lasso_sig$gene,cor_M = cor_M, cl = cl),
+                          "type"="jazzPanda-glm")
+    
+    limma_pt = data.frame("name"=to_plot_lm,"rk"= 1:length(to_plot_lm),
+                          "y"= get_cmr_ma(to_plot_lm,cor_M = cor_M, cl = cl),
+                          "type"="limma")
   
     data_lst = rbind(limma_pt, lasso_pt,FM_pt)
-    data_lst$type <- factor(data_lst$type,
-            levels = c("limma", "FindMarkers", "jazzPanda-glm"),
-            labels = c("limma", "Wilcoxon Rank Sum Test", "jazzPanda-glm")
+
+    data_lst$type <- factor(
+        data_lst$type,
+        levels = c("jazzPanda-glm", "limma", "Wilcoxon Rank Sum Test")
     )
     data_lst$rk = as.numeric(data_lst$rk)
     p <-ggplot(data_lst, aes(x = rk, y = y, color = type)) +
         geom_step(size = 0.8) +  # type = "s"
-        scale_color_manual(values = c("limma" = "black",
-                                    "Wilcoxon Rank Sum Test" = "blue",
-                                    "jazzPanda-glm" = "red")) +
+        scale_color_manual(values = c("jazzPanda-glm" = "red",
+                                      "limma" = "black",
+                                      "Wilcoxon Rank Sum Test" = "blue")) +
         labs(title = ct_nm, x = "Rank of marker genes",
-             y = "Cumulative count of genes with correlation >0.6",
+             y = "Cumulative average correlation",
              color = NULL) +
+        scale_x_continuous(limits = c(0, 50))+
         theme_classic(base_size = 12) +
         theme(plot.title = element_text(hjust = 0.5),
             axis.line = element_blank(),  
