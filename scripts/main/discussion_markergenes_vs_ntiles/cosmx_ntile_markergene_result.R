@@ -167,7 +167,7 @@ negprobe_names = unique(negprobes_coords$feature_name)
 
 args <- commandArgs(trailingOnly = TRUE)
 task_id <- as.integer(args[1])
-repeat_times <- as.integer(args[2])
+cluster_g1 <- as.integer(args[2])
 tile_lens <- as.numeric(strsplit(args[3], ",")[[1]])
 
 # total number of tiles

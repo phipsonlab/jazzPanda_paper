@@ -262,7 +262,7 @@ hln_seu <- RunPCA(hln_seu, features = row.names(hln_seu),
 hln_seu <- RunUMAP(object = hln_seu, dims = 1:15)
 
 usage_fm= peakRAM({
-seu_markers <- FindAllMarkers(hln_seu, only.pos = TRUE,logfc.threshold = 0.25)
+seu_markers <- FindAllMarkers(hln_seu, only.pos = TRUE,logfc.threshold = 0.1)
 
 })
 

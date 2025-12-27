@@ -104,7 +104,7 @@ cor_cluster_mt <- cor(cluster_mt,cluster_mt, method = "pearson")
 col <- grDevices::colorRampPalette(c("#4477AA", "#77AADD", 
                                      "#FFFFFF","#EE9988", "#BB4444"))
 
-pdf(file.path(fig7, "figure7_clustercluster_corr.pdf"), width=10, height=10)
+pdf(file.path(fig6, "figure6_clustercluster_corr.pdf"), width=10, height=10)
 corrplot::corrplot(cor_cluster_mt, method="color", col=col(200), diag=TRUE,
                    addCoef.col = "black",
                    type="upper",cl.cex=1,
@@ -128,7 +128,7 @@ dev.off()
 # cor_gene_mt <- cor(sv_lst$gene_mt[, selected_mg$gene], sv_lst$gene_mt[, selected_mg$gene],
 #                    method = "pearson")
 # xtable(cor_gene_mt)
-# pdf(file.path(fig7, "figure7_genegene_corr_glm.pdf"), width=16, height=16)
+# pdf(file.path(fig6, "figure6_genegene_corr_glm.pdf"), width=16, height=16)
 # corrplot::corrplot(cor_gene_mt, method="color", col=col(200), diag=TRUE,
 #                    addCoef.col = NULL,type="upper",
 #                    tl.col="black", tl.srt=45, mar=c(0,0,5,0),sig.level = 0.05,
@@ -166,7 +166,7 @@ cor_gene_mt <- cor(sv_lst$gene_mt[, unique(selected_mg)],
                    sv_lst$gene_mt[, unique(selected_mg)],
                    method = "pearson")
 xtable(cor_gene_mt)
-pdf(file.path(fig7, "figure7_genegene_corr_perm.pdf"), width=16, height=16)
+pdf(file.path(fig6, "figure6_genegene_corr_perm.pdf"), width=16, height=16)
 corrplot::corrplot(cor_gene_mt, method="color", col=col(200), diag=TRUE,
                    addCoef.col = NULL,type="upper",
                    tl.col="black", tl.srt=45, mar=c(0,0,5,0),sig.level = 0.05,

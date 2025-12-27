@@ -11,8 +11,8 @@ fig2 <- here::here("figures", "main", "figure2_simulation")
 fig3 <- here::here("figures", "main", "figure3_cosmx_hliver")
 fig4 <- here::here("figures", "main", "figure4_xenium_hbreast")
 fig5 <- here::here("figures", "main", "figure5_compare_methods")
-fig6 <- here::here("figures", "main", "figure6")
-fig7<- here::here("figures", "main", "figure7")
+fig6 <- here::here("figures", "main", "figure6_sv_extension")
+fig7 <- here::here("figures", "main", "figure7_technical_performance")
 
 # cluster colors
 my_colors <- c(
@@ -49,9 +49,6 @@ auto_hex_bin <- function(n, target_points_per_bin = 5, min_bins=10) {
 get_cmr_ma<- function(genes, cor_M, cl){
     curr_corrs = cor_M[genes, cl]
     mv_avgs = cumsum(curr_corrs)/(1:length(genes))
-    #return(lowess(y=curr_corrs, x=1:length(genes), f=0.3)$y)
-    #loess(mv_avgs)
-    #return(cumsum(curr_corrs>mv_avgs))
     return(mv_avgs)
 }
 #############################################################################

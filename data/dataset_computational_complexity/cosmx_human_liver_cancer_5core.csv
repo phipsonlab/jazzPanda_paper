@@ -1,2 +1,2 @@
 "technology","dataset","genes_n","transcript_n","cells_n","clusters_n","grid_length","fm_Elapsed_Time_sec","fm_Peak_RAM_Used_MiB","limma_Elapsed_Time_sec","limma_Peak_RAM_Used_MiB","perm_Elapsed_Time_sec","perm_Peak_RAM_Used_MiB","sv_Elapsed_Time_sec","sv_Peak_RAM_Used_MiB","glm_Elapsed_Time_sec","glm_Peak_RAM_Used_MiB"
-"cosmx","CosMx human liver cancer",1000,477604648,460169,13,40,234.412,10201.8,45.165,17663.1,2190.151,25512.6,1986.537,29151.1,81.3429999999998,743.4
+"cosmx","CosMx human liver cancer",1000,477604648,460169,13,40,198.921,20850.7,48.0680000000002,17663.1,1782.643,25512.6,1572.6,29151.1,59.1139999999996,743.4

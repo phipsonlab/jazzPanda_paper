@@ -1,11 +1,11 @@
-/var/spool/slurmd/job23813641/slurm_script: line 32: msg: command not found
-/var/spool/slurmd/job23813641/slurm_script: line 33: msg: command not found
-/var/spool/slurmd/job23813641/slurm_script: line 34: msg: command not found
-/var/spool/slurmd/job23813641/slurm_script: line 35: msg: command not found
-/var/spool/slurmd/job23813641/slurm_script: line 36: msg: command not found
-/var/spool/slurmd/job23813641/slurm_script: line 37: msg: command not found
-/var/spool/slurmd/job23813641/slurm_script: line 38: msg: command not found
-/var/spool/slurmd/job23813641/slurm_script: line 39: msg: command not found
+/var/spool/slurmd/job24807699/slurm_script: line 28: msg: command not found
+/var/spool/slurmd/job24807699/slurm_script: line 29: msg: command not found
+/var/spool/slurmd/job24807699/slurm_script: line 30: msg: command not found
+/var/spool/slurmd/job24807699/slurm_script: line 31: msg: command not found
+/var/spool/slurmd/job24807699/slurm_script: line 32: msg: command not found
+/var/spool/slurmd/job24807699/slurm_script: line 33: msg: command not found
+/var/spool/slurmd/job24807699/slurm_script: line 34: msg: command not found
+/var/spool/slurmd/job24807699/slurm_script: line 35: msg: command not found
 Loading required package: SeuratObject
 Loading required package: sp
 
@@ -49,25 +49,25 @@ In asMethod(object) :
 Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
 To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
 This message will be shown once per session
-18:47:48 UMAP embedding parameters a = 0.9922 b = 1.112
-18:47:48 Read 460164 rows and found 15 numeric columns
-18:47:48 Using Annoy for neighbor search, n_neighbors = 30
-18:47:48 Building Annoy index with metric = cosine, n_trees = 50
+18:00:24 UMAP embedding parameters a = 0.9922 b = 1.112
+18:00:24 Read 460164 rows and found 15 numeric columns
+18:00:24 Using Annoy for neighbor search, n_neighbors = 30
+18:00:24 Building Annoy index with metric = cosine, n_trees = 50
 0%   10   20   30   40   50   60   70   80   90   100%
 [----|----|----|----|----|----|----|----|----|----|
 **************************************************|
-18:48:43 Writing NN index file to temp file ./tmp.eQlTHkwhdQ/RtmpHI3Jii/filedc41525364169
-18:48:43 Searching Annoy index using 1 thread, search_k = 3000
-18:52:47 Annoy recall = 100%
-18:52:49 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
-18:53:18 Initializing from normalized Laplacian + noise (using RSpectra)
-18:53:46 Commencing optimization for 200 epochs, with 20555546 positive edges
-18:53:46 Using rng type: pcg
+18:01:09 Writing NN index file to temp file ./tmp.AVpnF6rNF3/Rtmp3ovLJ3/file85ccc3e306dc2
+18:01:10 Searching Annoy index using 1 thread, search_k = 3000
+18:05:27 Annoy recall = 100%
+18:05:29 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+18:05:44 Initializing from normalized Laplacian + noise (using RSpectra)
+18:06:03 Commencing optimization for 200 epochs, with 20555546 positive edges
+18:06:03 Using rng type: pcg
 Using method 'umap'
 0%   10   20   30   40   50   60   70   80   90   100%
 [----|----|----|----|----|----|----|----|----|----|
 **************************************************|
-18:58:05 Optimization finished
+18:10:01 Optimization finished
 Calculating cluster tumor_1
 Calculating cluster tumor_2
 Calculating cluster Macrophages
@@ -91,23 +91,23 @@ Warning messages:
 ℹ The deprecated feature was likely used in the Seurat package.
   Please report the issue at <https://github.com/satijalab/seurat/issues>. 
 	Command being timed: "Rscript mg_cosmx_human_liver_cancer.R"
-	User time (seconds): 2917.85
-	System time (seconds): 430.77
-	Percent of CPU this job got: 47%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:56:40
+	User time (seconds): 2445.15
+	System time (seconds): 289.71
+	Percent of CPU this job got: 48%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:34:52
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 159885748
+	Maximum resident set size (kbytes): 159879280
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 5908
-	Minor (reclaiming a frame) page faults: 133419228
-	Voluntary context switches: 371707
-	Involuntary context switches: 88836
+	Major (requiring I/O) page faults: 6080
+	Minor (reclaiming a frame) page faults: 253558281
+	Voluntary context switches: 355593
+	Involuntary context switches: 4037
 	Swaps: 0
-	File system inputs: 199864
-	File system outputs: 3745968
+	File system inputs: 218784
+	File system outputs: 3746024
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0

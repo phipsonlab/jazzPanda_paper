@@ -41,13 +41,12 @@ Processed outputs are organized in the `data/` directory of this repository, wit
 
 | Figure    | Script                      | Output                       |
 |-----------|-----------------------------|------------------------------|
-| Figure 2  | `scripts/main/figure2.R`       | `figures/main/figure2_cosmx_hliver/`      |
-| Figure 3  | `scripts/main/figure3.R`       | `figures/main/figure3_xenium_hbreast/`      |
-| Figure 4  | `scripts/main/figure4.R`       | `figures/main/figure4_simulation/`      |
-| Figure 5  | `scripts/main/figure5.R`       | `figures/main/figure5_compare_methods/`      |
-| Figure 6  | `scripts/main/figure6.R`       | `figures/main/figure6/`      |
-
-
+| Figure 2  | `scripts/main/figure2_simulation.R`| `figures/main/figure2_cosmx_hliver/`      |
+| Figure 3  | `scripts/main/figure3_onesample.R` | `figures/main/figure3_xenium_hbreast/`      |
+| Figure 4  | `scripts/main/figure4_multisamples.R` | `figures/main/figure4_simulation/`      |
+| Figure 5  | `scripts/main/figure5_compare_methods.R`| `figures/main/figure5_compare_methods/`      |
+| Figure 6  | `scripts/main/figure6_sv_extension.R`| `figures/main/figure6_sv_extension/`      |
+| Figure 7  | `scripts/main/figure7_technical_performance.R`| `figures/main/figure7_technical_performance/`      |
 ## Script Overview
 
 ### Marker gene: 

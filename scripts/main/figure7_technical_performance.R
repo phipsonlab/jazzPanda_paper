@@ -85,7 +85,7 @@ dff$dataset_info = factor(dff$dataset_info,
                                          " cells <br>",dff_data_summary$transcript_n,
                                          " transcripts","*",  sep=""))
 dff = dff[order(dff$dataset_info), ]
-pdf(file.path(fig6, "time_usage_per_dataset.pdf"), width=16, height=5)
+pdf(file.path(fig7, "time_usage_per_dataset.pdf"), width=16, height=5)
 ggplot(dff, aes(x = dataset_info, y = time_min, fill =label )) +
     geom_bar(stat = "identity", position = position_dodge())+
     theme_classic() +
@@ -103,7 +103,7 @@ ggplot(dff, aes(x = dataset_info, y = time_min, fill =label )) +
 dev.off()
 
 
-pdf(file.path(fig6, "memory_usage_per_dataset.pdf"), width=16, height=5)
+pdf(file.path(fig7, "memory_usage_per_dataset.pdf"), width=16, height=5)
 ggplot(dff, aes(x = dataset_info, y = peak_memory_mb/1024, fill = label)) +
     geom_bar(stat = "identity", position = position_dodge())+
     theme_classic() +
@@ -173,7 +173,7 @@ for (cl in c("c1", "c5","c8")){
     plt_lst[[cl]] <-p
 }  
 combined_plot <- wrap_plots(plt_lst, ncol = 3)
-pdf(file.path(fig6, "xenium_mg_ntiles.pdf"), height=8, width=22)
+pdf(file.path(fig7, "xenium_mg_ntiles.pdf"), height=8, width=22)
 print(combined_plot)
 dev.off()
 

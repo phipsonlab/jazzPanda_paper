@@ -49,34 +49,6 @@ Memory Information:
 Mem:          515363       40107       24381         180      454417      475256
 Swap:              0           0           0
 ------------------------------------------------------------------------
-Disk Space:
-Filesystem                         Size  Used Avail Use% Mounted on
-devtmpfs                           4.0M     0  4.0M   0% /dev
-tmpfs                              252G   60K  252G   1% /dev/shm
-tmpfs                              101G  178M  101G   1% /run
-/dev/mapper/rhel-root               10G  436M  9.6G   5% /
-/dev/mapper/rhel-usr                35G   14G   22G  39% /usr
-/dev/mapper/rhel-tmp                20G  4.4G   16G  22% /tmp
-/dev/sda2                         1014M  368M  647M  37% /boot
-/dev/mapper/rhel-var                10G  1.3G  8.8G  13% /var
-/dev/sda1                          200M  7.1M  193M   4% /boot/efi
-vast.hpc.wehi.edu.au:/imaging      200T  152T   49T  76% /vast/imaging
-vast.hpc.wehi.edu.au:/projects     575T  433T  143T  76% /vast/projects
-vast.hpc.wehi.edu.au:/ai_projects  600T   25T  576T   5% /vast/ai_projects
-vast.hpc.wehi.edu.au:/scratch      550T  427T  124T  78% /vast/scratch
-vast.hpc.wehi.edu.au:/cryoem       300T  274T   27T  92% /vast/cryoem
-General                            504T  291T  214T  58% /stornext/General
-Genomics                            64T   34T   31T  52% /stornext/Genomics
-Home                                96T   41T   56T  42% /stornext/Home
-ImageData                          252T  190T   63T  76% /stornext/ImageData
-Img                                252T  240T   13T  95% /stornext/Img
-Projects                           504T  328T  177T  65% /stornext/Projects
-SBPM                                48T   29T   20T  60% /stornext/SBPM
-Sysbio                              96T   57T   40T  59% /stornext/Sysbio
-System                              24T  8.9T   16T  37% /stornext/System
-Archive                             84T   45T   40T  53% /stornext/Archive
-Bioinf                             504T  478T   27T  95% /stornext/Bioinf
-------------------------------------------------------------------------
 System and Kernel:
 Linux med-n16.hpc.wehi.edu.au 5.14.0-362.24.1.el9_3.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Feb 15 07:18:13 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
 ------------------------------------------------------------------------
