@@ -339,11 +339,11 @@ for (cl in cluster_names){
         genes_plt<- ggplot(data = all_trans,
                     aes(x = x, y = y))+ 
                     #geom_point(size=0.0001)+
-                    geom_hex(bins = auto_hex_bin(mean(table(all_trans$sample, 
+                    geom_hex(bins = auto_hex_bin(max(table(all_trans$sample, 
                                                             all_trans$feature_name))))+
                     facet_grid(sample~text_label)+
                     scale_x_reverse() +
-                    scale_fill_gradient(low="white", high="maroon4") + 
+                    scale_fill_viridis_c(option = "turbo")+
                     #scale_color_manual(values = c("maroon4","maroon4","maroon4"))+
                     guides(fill = guide_colorbar(barheight = unit(0.2, "npc"), 
                                                  barwidth  = unit(0.03, "npc")))+

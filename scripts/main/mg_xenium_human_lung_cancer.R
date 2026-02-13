@@ -122,7 +122,7 @@ rep1_lasso_lst= lasso_markers(gene_mt=rep1_sq70_vectors$gene_mt,
 Idents(hlc_seu) = rep_clusters[match(colnames(hlc_seu), 
                                      row.names(rep_clusters)),"cluster"]
 usage_fm= peakRAM({
-seu_markers <- FindAllMarkers(hlc_seu, only.pos = TRUE,logfc.threshold = 0.25)
+seu_markers <- FindAllMarkers(hlc_seu, only.pos = TRUE,logfc.threshold = 0.1)
 table(seu_markers$cluster)
 
 })

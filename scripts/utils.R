@@ -6,7 +6,7 @@ mg_PA <- here::here("figures", "supp", "application", "marker_genes")
 comp_PA <- here::here("figures", "supp")
 mg_ntiles_comp <- here::here("scripts", "main","discussion_markergenes_vs_ntiles")
 
-
+MERSCOPE_RAW_DATA <- "/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Merscope_human_breast_sample/"
 fig2 <- here::here("figures", "main", "figure2_simulation")
 fig3 <- here::here("figures", "main", "figure3_cosmx_hliver")
 fig4 <- here::here("figures", "main", "figure4_xenium_hbreast")
@@ -39,10 +39,20 @@ defined_theme <- theme(strip.text = element_text(size = rel(2)),
 
 #############################################################################
 # Function to automatically determine hex bin size based on data density
-auto_hex_bin <- function(n, target_points_per_bin = 5, min_bins=10) {
+auto_hex_bin <- function(n, target_points_per_bin = 0.5, min_bins = 15, max_bins = 200) {
+    if (n < 50) {
+        return(min_bins)
+    }
     k <- n / target_points_per_bin
     bins <- round(sqrt(k))
-    return(max(min_bins, bins)) 
+    
+    # For highly expressed genes, allow more bins to resolve spatial structure
+    # Scale up target more aggressively past a threshold
+    if (n > 5000) {
+        bins <- round(sqrt(n / 3))
+    }
+    
+    return(min(max_bins, max(min_bins, bins)))
 }
 
 # Function to calculate the cumulative average correlation 

@@ -265,9 +265,9 @@ for (cl in cluster_names){
 
         genes_plt<- ggplot(data = vis_r1,
                     aes(x = x, y = y))+ 
-                    geom_hex(bins = auto_hex_bin(min(table(vis_r1$feature_name))))+
+                    geom_hex(bins = auto_hex_bin(max(table(vis_r1$feature_name))))+
                     facet_wrap(~text_label, nrow=1)+
-                    scale_fill_gradient(low="white", high="maroon4") + 
+                    scale_fill_viridis_c(option = "turbo")+
                     guides(fill = guide_colorbar(barheight = unit(0.3, "npc"), 
                                                  barwidth  = unit(0.02, "npc")))+
                     defined_theme+ 
@@ -434,9 +434,9 @@ for (cl in cluster_names){
         genes_plt<- ggplot(data = vis_r1,
                     aes(x = x, y = y))+ 
                     #geom_point(size=0.0001)+
-                    geom_hex(bins = auto_hex_bin(min(table(vis_r1$feature_name))))+
+                    geom_hex(bins = auto_hex_bin(max(table(vis_r1$feature_name))))+
                     facet_wrap(~text_label, nrow=1)+
-                    scale_fill_gradient(low="white", high="maroon4") + 
+                    scale_fill_viridis_c(option = "turbo")+ 
                     guides(fill = guide_colorbar(barheight = unit(0.3, "npc"), 
                                                  barwidth  = unit(0.02, "npc")))+
                     defined_theme+ 

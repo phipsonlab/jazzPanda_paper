@@ -71,7 +71,7 @@ for (cl in c("Hep.4", "Stellate.cells", "Cholangiocytes")){
                warn_when_dropping_groups=TRUE,encode_sets=TRUE,
                width_ratio=0.3, height_ratio=1/4)+
              ggtitle(paste(cl,"cells"))+
-                 theme(plot.title = element_text( size=20))
+                 theme(plot.title = element_text( size=16, hjust=0.5))
 
     )
     plot_lst[[cl]] = p
@@ -236,7 +236,7 @@ for (cl in c("c1", "c5", "c8")){
                    warn_when_dropping_groups=TRUE,encode_sets=TRUE,
                    width_ratio=0.3, height_ratio=1/4)+
                  ggtitle(paste(anno_name,"cells"))+
-                 theme(plot.title = element_text( size=20))
+                 theme(plot.title = element_text( size=16, hjust=0.5))
              
     )
    plot_lst[[cl]] = p

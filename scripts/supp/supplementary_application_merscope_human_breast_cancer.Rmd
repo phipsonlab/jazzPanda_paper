@@ -43,9 +43,9 @@ source(here("scripts/utils.R"))
 
 # load the data
 ```{r load-raw}
-raw_data_PA ="/stornext/Bioinf/data/lab_phipson/givanna/merscope_data/HumanBreastCancerPatient1/"
 
-transcript_df<-fread(paste0(raw_data_PA,"detected_transcripts.csv"))
+
+transcript_df<-fread(paste0(MERSCOPE_RAW_DATA,"merscope_hbc_detected_transcripts.csv"))
 
 transcript_df$x <- transcript_df$global_x
 transcript_df$y <- transcript_df$global_y
@@ -249,10 +249,9 @@ for (cl in cluster_names){
         genes_plt<- ggplot(data = vis_r1,
                     aes(x = x, y = y))+ 
                     #geom_point(size=0.0001)+
-                     geom_hex(bins = auto_hex_bin(min(table(vis_r1$feature_name)),
-                                                 target_points_per_bin = 15))+
+                     geom_hex(bins = auto_hex_bin(max(table(vis_r1$feature_name))))+
                     facet_wrap(~text_label, nrow=1)+
-                    scale_fill_gradient(low="white", high="maroon4") + 
+                    scale_fill_viridis_c(option = "turbo")+
                     guides(fill = guide_colorbar(barheight = unit(0.3, "npc"), 
                                                  barwidth  = unit(0.02, "npc")))+
                     defined_theme+ theme(legend.position = "right", 
@@ -422,10 +421,9 @@ for (cl in cluster_names){
         genes_plt<- ggplot(data = vis_r1,
                     aes(x = x, y = y))+ 
                     #geom_point(size=0.0001)+
-                    geom_hex(bins = auto_hex_bin(min(table(vis_r1$feature_name)),
-                                                 target_points_per_bin = 10))+
+                    geom_hex(bins = auto_hex_bin(max(table(vis_r1$feature_name))))+
                     facet_wrap(~text_label, nrow=1)+
-                    scale_fill_gradient(low="white", high="maroon4") + 
+                    scale_fill_viridis_c(option = "turbo")+
                     guides(fill = guide_colorbar(barheight = unit(0.3, "npc"), 
                                                  barwidth  = unit(0.02, "npc")))+
                     defined_theme+ 

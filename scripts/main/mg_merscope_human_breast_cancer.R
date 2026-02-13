@@ -13,6 +13,8 @@ library(SpatialExperimentIO)
 library(SpatialExperiment)
 library(Seurat)
 library(Banksy)
+source(here("scripts/utils.R"))
+
 se =  readMerscopeSXE(dirName = "/stornext/Bioinf/data/lab_phipson/givanna/merscope_data/HumanBreastCancerPatient1/",
                       countMatPattern = "cell_by_gene.csv", metaDataPattern = "cell_metadata.csv")
 x_avg <- (se@colData$min_x + se@colData$max_x) / 2
@@ -75,8 +77,7 @@ clusters_info <- data.frame(
 clusters_info$cluster = factor(clusters_info$cluster,
                                levels = paste0("c",sort(unique(colData(se)$clust_M1_lam0.2_k50_res0.5))))
 cat("Loading transcripts\n")
-transcript_df<-fread("/stornext/Bioinf/data/lab_phipson/givanna/merscope_data/HumanBreastCancerPatient1/detected_transcripts.csv")
-
+transcript_df<-fread(paste0(MERSCOPE_RAW_DATA,"merscope_hbc_detected_transcripts.csv"))
 transcript_df$x <- transcript_df$global_x
 transcript_df$y <- transcript_df$global_y
 transcript_df$gene = make.names(transcript_df$gene)
@@ -198,7 +199,7 @@ hbm_seu <- ScaleData(hbm_seu, verbose = FALSE)
 # hbm_seu <- RunUMAP(object = hbm_seu, dims = 1:20)
 
 usage_fm= peakRAM({
-seu_markers <- FindAllMarkers(hbm_seu, only.pos = TRUE,logfc.threshold = 0.25)
+seu_markers <- FindAllMarkers(hbm_seu, only.pos = TRUE,logfc.threshold = 0.1)
 })
 
 ###############################################################################
