@@ -217,12 +217,13 @@ for (cl in cluster_names){
         genes_plt<- ggplot(data = vis_df,
                     aes(x = x, y = y))+ 
                     scale_y_reverse()+
-                    geom_hex(bins = auto_hex_bin(max(table(vis_df$sample, 
+                    geom_hex(bins = auto_hex_bin(min(table(vis_df$sample, 
                                                             vis_df$feature_name))))+
                     facet_grid(sample~text_label)+
-                    scale_fill_viridis_c(option = "turbo")+
+                    scale_fill_gradient(low="grey90", high="maroon4") + 
+                    # scale_fill_viridis_c(option = "turbo")+
                     guides(fill = guide_colorbar(barheight = unit(0.2, "npc"), 
-                                                 barwidth  = unit(0.03, "npc")))+
+                                                 barwidth  = unit(0.02, "npc")))+
                     defined_theme+ theme(legend.position = "right", 
                               strip.background = element_rect(fill =NA,colour = NA),
                               strip.text = element_text(size = rel(1.2)), 
