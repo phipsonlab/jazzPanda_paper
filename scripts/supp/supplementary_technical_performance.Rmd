@@ -348,7 +348,7 @@ for (cl in setdiff(clusters_df$cluster, c("c9", "c11", "c12","c13"))){
                         seq(10,100, by=10),sep="")
     for (bin_l in seq(10, 100, by = 10)) {
         df_name <- paste0("gr", bin_l, "_df")  
-        gr_df   <- get(df_name)                
+        gr_df =get(df_name)                
         gr_rows <- rownames(gr_df[gr_df[, cl] == TRUE, , drop = FALSE])
         col_nm <- paste0(bin_l, "x", bin_l)
         df_mt[gr_rows, col_nm] <- TRUE
@@ -385,7 +385,9 @@ dev.off()
 ## cosmx human liver cancer - linear modelling approach
 ```{r}
 
-clusters_df <- data.frame(
+
+
+clusters_df=data.frame(
   cluster =paste("c", 1:13, sep=""),
   anno =c("tumor_1","tumor_2","Macrophages","T",
          "Periportal.LSECs","Stellate","B",
@@ -394,6 +396,55 @@ clusters_df <- data.frame(
          "NK.like","Erthyroid"),
   stringsAsFactors = FALSE
 )
+
+
+jac_summary = data.frame() 
+plt_lst = list()
+
+for (cl in clusters_df$cluster){
+    anno_name = clusters_df[clusters_df$cluster==cl,"anno"]
+    df_mt = as.data.frame(matrix(FALSE,nrow=nrow(cosmx_merged_df),ncol=10))
+    row.names(df_mt) = cosmx_merged_df$gene
+    colnames(df_mt) = paste(paste(seq(10,100, by=10), "x", sep=""),
+                            seq(10,100, by=10),sep="")
+    # fill each column
+    for (bin_l in seq(10, 100, by = 10)) {
+        cl_col   = paste0("top_cluster_gr", bin_l)
+        gr_genes = cosmx_merged_df$gene[which(cosmx_merged_df[[cl_col]] == cl)]  # which() = NA-safe
+        col_nm   = paste0(bin_l, "x", bin_l)
+        df_mt[gr_genes, col_nm] = TRUE
+    }
+
+    df_mt = as.matrix(df_mt)
+    rs= rowSums(df_mt)
+    core_n = sum(rs == ncol(df_mt))      # marker in ALL 10 bins
+    union_n = sum(rs >= 1)            # marker in >=1 bin
+    
+    pj = combn(ncol(df_mt), 2, function(ij) {
+        a = df_mt[, ij[1]]; b = df_mt[, ij[2]]; u = sum(a | b)
+        if (u > 0) sum(a & b) / u else NA_real_
+    })
+    
+    rec_bins = colnames(df_mt)[seq(10,100,by=10) >= 40]   # 20x20 ... 100x100
+    rec_res  = df_mt[, rec_bins, drop=FALSE]
+    pj_big = combn(ncol(rec_res), 2, function(ij){
+        a=rec_res[,ij[1]]; b=rec_res[,ij[2]]; u=sum(a|b); if(u>0) sum(a&b)/u else NA_real_
+    })
+
+
+    jac_summary = rbind(jac_summary, data.frame(
+        cluster=cl,
+        anno=anno_name,
+        shared=core_n,
+        union= union_n,
+        agreement = round(mean((rs[rs >= 1] - 1) / (ncol(df_mt) - 1)), 3),
+        multiset_jaccard = if (union_n > 0) round(core_n / union_n, 3) else NA_real_,
+        mean_pairwise = round(mean(pj, na.rm = TRUE), 3),
+        mean_pairwise_big = round(mean(pj_big, na.rm=TRUE), 3)
+    ))
+
+}
+jac_summary
 plt_lst = list()
 for (cl in setdiff(clusters_df$cluster, c("c11","c9","c12"))){
     df_mt =as.data.frame(matrix(FALSE,nrow=nrow(cosmx_merged_df),ncol=10))
@@ -402,10 +453,10 @@ for (cl in setdiff(clusters_df$cluster, c("c11","c9","c12"))){
                         seq(10,100, by=10),sep="")
     # fill each column
     for (bin_l in seq(10, 100, by = 10)) {
-        cl_col <- paste0("top_cluster_gr", bin_l)
-        gr_genes <- cosmx_merged_df[cosmx_merged_df[, cl_col] == cl, "gene"]
-        col_nm <- paste0(bin_l, "x", bin_l)
-        df_mt[gr_genes, col_nm] <- TRUE
+        cl_col=paste0("top_cluster_gr", bin_l)
+        gr_genes=cosmx_merged_df[cosmx_merged_df[, cl_col] == cl, "gene"]
+        col_nm=paste0(bin_l, "x", bin_l)
+        df_mt[gr_genes, col_nm]=TRUE
     }
     anno_name = clusters_df[clusters_df$cluster==cl,"anno"]
    p<- upset(df_mt,intersect=colnames(df_mt),
@@ -426,10 +477,10 @@ for (cl in setdiff(clusters_df$cluster, c("c11","c9","c12"))){
              ggtitle(paste(anno_name,"cells"))+
              theme(plot.title = element_text(size = 18, face = "bold"))
          
-  plt_lst[[cl]] <- p
+  plt_lst[[cl]]=p
 }  
 
-combined_plot <- wrap_plots(plt_lst, ncol = 2)
+combined_plot=wrap_plots(plt_lst, ncol = 2)
 pdf(file.path(comp_PA, "cosmx_mg_ntiles_glm.pdf"),height=30, width=15)
 combined_plot 
 dev.off()
@@ -439,7 +490,67 @@ dev.off()
 ## Xenium huamn breast cancer samples - Linerar modelling approach
 ```{r}
 
-clusters_df <- data.frame(
+
+clusters_df = data.frame(
+  cluster = c("c1", "c3", "c2", "c4", "c5", "c7", "c9", "c6", "c8"),
+  anno = c("Tumor", "Macrophages", "Stromal", "Myoepithelial", "T",
+           "Endothelial", "Mast", "B", "Dendritic"),
+  stringsAsFactors = FALSE
+)
+
+jac_summary = data.frame()      # <-- collector, one row per cluster
+plt_lst = list()
+
+for (cl in clusters_df$cluster){
+    anno_name = clusters_df[clusters_df$cluster==cl,"anno"]
+    df_mt = as.data.frame(matrix(FALSE,nrow=nrow(xenium_merged_df),ncol=10))
+    row.names(df_mt) = xenium_merged_df$gene
+    colnames(df_mt) = paste(paste(seq(10,100, by=10), "x", sep=""),
+                            seq(10,100, by=10),sep="")
+    # fill each column
+    for (bin_l in seq(10, 100, by = 10)) {
+        cl_col   = paste0("top_cluster_gr", bin_l)
+        gr_genes = xenium_merged_df$gene[which(xenium_merged_df[[cl_col]] == cl)]  # which() = NA-safe
+        col_nm   = paste0(bin_l, "x", bin_l)
+        df_mt[gr_genes, col_nm] = TRUE
+    }
+
+    df_mt = as.matrix(df_mt)
+    rs= rowSums(df_mt)
+    core_n = sum(rs == ncol(df_mt))      # marker in ALL 10 bins
+    union_n = sum(rs >= 1)            # marker in >=1 bin
+    
+    pj = combn(ncol(df_mt), 2, function(ij) {
+        a = df_mt[, ij[1]]; b = df_mt[, ij[2]]; u = sum(a | b)
+        if (u > 0) sum(a & b) / u else NA_real_
+    })
+    
+    rec_bins = colnames(df_mt)[seq(10,100,by=10) >= 20]   # 20x20 ... 100x100
+    rec_res  = df_mt[, rec_bins, drop=FALSE]
+    pj_big = combn(ncol(rec_res), 2, function(ij){
+        a=rec_res[,ij[1]]; b=rec_res[,ij[2]]; u=sum(a|b); if(u>0) sum(a&b)/u else NA_real_
+    })
+
+
+    jac_summary = rbind(jac_summary, data.frame(
+        cluster=cl,
+        anno=anno_name,
+        shared=core_n,
+        union= union_n,
+        multiset_jaccard = if (union_n > 0) round(core_n / union_n, 3) else NA_real_,
+        mean_pairwise = round(mean(pj, na.rm = TRUE), 3),
+        mean_pairwise_big = round(mean(pj_big, na.rm=TRUE), 3)
+    ))
+
+}
+jac_summary
+
+print(jac_summary)
+```
+
+```{r}
+
+clusters_df=data.frame(
   cluster = c("c1", "c3", "c2", "c4", "c5", "c7", "c9", "c6", "c8"),
   anno = c("Tumor", "Macrophages", "Stromal", "Myoepithelial", "T", 
            "Endothelial", "Mast", "B", "Dendritic"),
@@ -454,10 +565,10 @@ for (cl in clusters_df$cluster){
                         seq(10,100, by=10),sep="")
     # fill each column
     for (bin_l in seq(10, 100, by = 10)) {
-        cl_col <- paste0("top_cluster_gr", bin_l)
-        gr_genes <- xenium_merged_df[xenium_merged_df[, cl_col] == cl, "gene"]
-        col_nm <- paste0(bin_l, "x", bin_l)
-        df_mt[gr_genes, col_nm] <- TRUE
+        cl_col=paste0("top_cluster_gr", bin_l)
+        gr_genes=xenium_merged_df[xenium_merged_df[, cl_col] == cl, "gene"]
+        col_nm=paste0(bin_l, "x", bin_l)
+        df_mt[gr_genes, col_nm]=TRUE
     }
     
     p<- upset(df_mt,intersect=colnames(df_mt),
