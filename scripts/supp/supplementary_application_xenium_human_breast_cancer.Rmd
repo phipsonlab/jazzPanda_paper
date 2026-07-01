@@ -140,7 +140,7 @@ bins_map <- list("negative control probe" = 2,
                  "negative control codeword" = 0.5)   
 
 plot_nc(nc_sp1, "sample1","negative control probe" , 
-        data_nm, fig2,reverse_y = TRUE,fig_ratio=5/7, 
+        data_nm, figure_result,reverse_y = TRUE,fig_ratio=5/7, 
           bins_map = bins_map, width = 700, height = 700)
 
 plot_nc(nc_sp1, "sample1", "negative control codeword", 

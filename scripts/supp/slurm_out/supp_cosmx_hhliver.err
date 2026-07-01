@@ -6,23 +6,23 @@ output file: supplementary_application_cosmx_healthy_human_liver.knit.md
 
 Output created: supplementary_application_cosmx_healthy_human_liver.html
 	Command being timed: "Rscript -e rmarkdown::render('supplementary_application_cosmx_healthy_human_liver.Rmd', output_format = 'html_document')"
-	User time (seconds): 1683.08
-	System time (seconds): 267.07
+	User time (seconds): 1495.54
+	System time (seconds): 236.67
 	Percent of CPU this job got: 99%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 32:43.53
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 29:02.33
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 111416076
+	Maximum resident set size (kbytes): 114419808
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 1081
-	Minor (reclaiming a frame) page faults: 165844701
-	Voluntary context switches: 10043
-	Involuntary context switches: 3403
+	Major (requiring I/O) page faults: 1474
+	Minor (reclaiming a frame) page faults: 155489728
+	Voluntary context switches: 5535
+	Involuntary context switches: 1773
 	Swaps: 0
-	File system inputs: 301416
-	File system outputs: 28672
+	File system inputs: 15642856
+	File system outputs: 29496
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0

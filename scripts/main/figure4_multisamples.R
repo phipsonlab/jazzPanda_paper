@@ -68,13 +68,13 @@ xhb_color<- c("#FC8D62","#66C2A5" ,"#8DA0CB","#E78AC3",
 # Figure 4(a) 
 
 plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, 
-             out_dir = fig4,
+             out_dir = figure_result,
              my_colors = xhb_color, ct_nm = "anno_name",
              reverse_y = TRUE)
 
 # Figure 4(b) 
 plot_cluster_props(cluster_info=cluster_info,file_prefix = data_nm, 
-                   out_dir = fig4,
+                   out_dir = figure_result,
                    my_colors = xhb_color, ct_nm = "anno_name" )
 
 ################################################################################
@@ -100,7 +100,7 @@ p_cl<- ggplot(data = cluster_info[cluster_info$anno_name==ct_nm, ],
           panel.spacing = unit(0, "lines"))
 
 
-jpeg(file.path(fig4, "figure4c_xenium_hbreast_tcell_xy.jpg"),
+jpeg(file.path(figure_result, "figure4c_xenium_hbreast_tcell_xy.jpg"),
      width = 1000, height = 1800, res=200)
 p_cl 
 dev.off()
@@ -150,7 +150,7 @@ p2<- ggplot(data = vis_r2,
 
 lyt = (p1 / p2) 
 layout_design <- lyt + patchwork::plot_layout(heights = c(1,1),widths = c(1, 1)) 
-jpeg(file.path(fig4, "figure4d_xenium_hbreast_top1_xy_glm.jpg"),
+jpeg(file.path(figure_result, "figure4d_xenium_hbreast_top1_xy_glm.jpg"),
      width = 1000, height = 1800, res=200)
 layout_design
 dev.off()
@@ -184,7 +184,7 @@ p<-ggplot(long_df, aes(x = cluster, y = vector_count, color =gene )) +
           panel.border  =element_rect(colour = "black", fill=NA, linewidth=0.5)
     )
 
-pdf(file.path(fig4,"figure4e_xenium_hbreast_vvplot.pdf"),
+pdf(file.path(figure_result,"figure4e_xenium_hbreast_vvplot.pdf"),
     height = 9, width = 5)
 p
 dev.off()

@@ -1,5 +1,6 @@
 # define figure and data path
 library(here)
+
 data_path <- here::here("data", "dataset_computational_complexity")
 overview_PA <- here::here("figures", "supp", "application")
 mg_PA <- here::here("figures", "supp", "application", "marker_genes")
@@ -7,13 +8,12 @@ comp_PA <- here::here("figures", "supp")
 mg_ntiles_comp <- here::here("scripts", "main","discussion_markergenes_vs_ntiles")
 
 MERSCOPE_RAW_DATA <- "/vast/projects/xenium_5k/data/jazzPanda_paper_dataset/Merscope_human_breast_sample/"
-fig2 <- here::here("figures", "main", "figure2_simulation")
-fig3 <- here::here("figures", "main", "figure3_cosmx_hliver")
-fig4 <- here::here("figures", "main", "figure4_xenium_hbreast")
-fig5 <- here::here("figures", "main", "figure5_compare_methods")
-fig6 <- here::here("figures", "main", "figure6_sv_extension")
-fig7 <- here::here("figures", "main", "figure7_technical_performance")
-
+figure_simulation <- here::here("figures", "main", "figure_simulation")
+figure_result <- here::here("figures", "main", "figure_result")
+figure_compare_methods <- here::here("figures", "main", "figure_compare_methods")
+figure_sv_extension <- here::here("figures", "main", "figure_sv_extension")
+figure_technical_performance <- here::here("figures", "main", "figure_technical_performance")
+figure_intro <- here::here("figures", "main/figure_intro")
 # cluster colors
 my_colors <- c(
     "#800000", "#f032e6","#ffe119", "#e6beff",
@@ -21,7 +21,7 @@ my_colors <- c(
     "#aa6e28", "#fabebe", "#d2f53c", "#911eb4",
     "#fffac8", "#f58231", "#46f0f0","#808080"
 )
-
+library(ggplot2)
 #############################################################################
 # theme setting for figures
 defined_theme <- theme(strip.text = element_text(size = rel(2)),

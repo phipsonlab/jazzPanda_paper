@@ -222,7 +222,7 @@ bins_map <- list("NegPrb" = 3,
                  "FalseCode" = 5)   
 
 plot_nc(nc_coords, "sample1","NegPrb" , fig_ratio = 1/1,
-        data_nm, fig2, bins_map = bins_map, width = 1100, height = 1100)
+        data_nm, figure_result, bins_map = bins_map, width = 1100, height = 1100)
 
 plot_nc(nc_coords, "sample1", "FalseCode", fig_ratio = 1/1,
         data_nm, overview_PA, bins_map = bins_map, width = 1100, height = 1100)
