@@ -1,13 +1,11 @@
-# rerun FindMarkers with default logFC=0.1 for every dataset
+# rerun FindMarkers with default logFC=0 for every dataset
 library(here)
 library(Seurat)
 library(peakRAM)
 source(here("scripts/utils.R"))
 
-data_nm_lst=c("xenium_hbreast","xenium_mbrain","xenium_hlc",
-                  "merscope_hbreast", "cosmx_hhliver", "cosmx_hlc")
-data_full_nm= c("xenium_human_breast_cancer", "xenium_mouse_brain",
-                "xenium_human_lung_cancer", "merscope_human_breast_cancer",
+data_nm_lst=c("xenium_hbreast","merscope_hbreast", "cosmx_hhliver", "cosmx_hlc")
+data_full_nm= c("xenium_human_breast_cancer", "merscope_human_breast_cancer",
                 "cosmx_human_healthy_liver", "cosmx_human_liver_cancer")
 for (data_nm in data_nm_lst){
     idx = which(data_nm_lst==data_nm)
@@ -31,7 +29,7 @@ for (data_nm in data_nm_lst){
     set.seed(989)
     usage_fm= peakRAM({
         find_markers_result <- FindAllMarkers(seu, only.pos = TRUE,
-                                              logfc.threshold = 0.1)
+                                              logfc.threshold = 0)
     })
 
     complexity_df$fm_Elapsed_Time_sec = usage_fm$Elapsed_Time_sec

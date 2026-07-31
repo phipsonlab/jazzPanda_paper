@@ -159,7 +159,7 @@ falsecode_coords <- hl_cancer[grepl("^FalseCode", hl_cancer$feature_name), ]
 
 # template starts here
 
-grid_length= 40
+grid_length= 20
 sim_length = 100
 
 ################ negative control background
@@ -204,7 +204,7 @@ script_dir <- if (any(grepl("^--file=", args))) {
 }
 
 ## Output folder name
-output_dir_nm <- "cosmx_hlc_simulation_result"
+output_dir_nm <- "cosmx_hlc_simulation_10k_spearman_sq20_result"
 
 ## Path to /scripts/main/cosmx_hlc_simulation_result
 out_dir <- file.path(script_dir, output_dir_nm)
@@ -338,11 +338,11 @@ for (gs in 1:length(global_seed_sub)){
   set.seed(global_seed)
   perm_p = compute_permp(x=list("cancer"=simulated_tr),
                          cluster_info=clusters_info,
-                         perm.size=1000,
+                         perm.size=10000,
                          bin_type="square",
                          bin_param=c(grid_length,grid_length),
                          test_genes=sim_gene_names,
-                         correlation_method = "pearson",
+                         correlation_method = "spearman",
                          correction_method="BH")
 
   saveRDS(perm_p, 

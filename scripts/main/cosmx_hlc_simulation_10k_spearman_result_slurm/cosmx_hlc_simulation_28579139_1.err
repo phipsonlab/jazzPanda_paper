@@ -1,0 +1,160 @@
+/var/spool/slurmd/job28579140/slurm_script: line 29: msg: command not found
+/var/spool/slurmd/job28579140/slurm_script: line 30: msg: command not found
+/var/spool/slurmd/job28579140/slurm_script: line 31: msg: command not found
+/var/spool/slurmd/job28579140/slurm_script: line 32: msg: command not found
+/var/spool/slurmd/job28579140/slurm_script: line 33: msg: command not found
+/var/spool/slurmd/job28579140/slurm_script: line 34: msg: command not found
+/var/spool/slurmd/job28579140/slurm_script: line 35: msg: command not found
+/var/spool/slurmd/job28579140/slurm_script: line 36: msg: command not found
+Warning message:
+package ‘ggplot2’ was built under R version 4.5.3 
+Warning message:
+package ‘ggpubr’ was built under R version 4.5.2 
+Warning message:
+package ‘ggrepel’ was built under R version 4.5.2 
+Warning message:
+package ‘patchwork’ was built under R version 4.5.2 
+Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Warning messages:
+1: package ‘Seurat’ was built under R version 4.5.2 
+2: package ‘SeuratObject’ was built under R version 4.5.2 
+3: package ‘sp’ was built under R version 4.5.2 
+Warning message:
+package ‘reshape2’ was built under R version 4.5.2 
+Registered S3 method overwritten by 'pROC':
+  method   from            
+  plot.roc spatstat.explore
+Warning message:
+package ‘jazzPanda’ was built under R version 4.5.2 
+
+Attaching package: ‘tidyr’
+
+The following object is masked from ‘package:reshape2’:
+
+    smiths
+
+Warning message:
+package ‘tidyr’ was built under R version 4.5.2 
+
+Attaching package: ‘dplyr’
+
+The following object is masked from ‘package:matrixStats’:
+
+    count
+
+The following object is masked from ‘package:gridExtra’:
+
+    combine
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Warning message:
+package ‘dplyr’ was built under R version 4.5.2 
+corrplot 0.95 loaded
+Loading required package: spatstat.data
+Loading required package: spatstat.univar
+spatstat.univar 3.1-7
+Loading required package: spatstat.geom
+spatstat.geom 3.7-3
+
+Attaching package: ‘spatstat.geom’
+
+The following object is masked from ‘package:patchwork’:
+
+    area
+
+The following objects are masked from ‘package:ggpubr’:
+
+    border, rotate
+
+Loading required package: spatstat.random
+spatstat.random 3.4-5
+Loading required package: spatstat.explore
+Loading required package: nlme
+
+Attaching package: ‘nlme’
+
+The following object is masked from ‘package:dplyr’:
+
+    collapse
+
+spatstat.explore 3.8-0
+Loading required package: spatstat.model
+Loading required package: rpart
+spatstat.model 3.6-1
+Loading required package: spatstat.linnet
+spatstat.linnet 3.4-1
+
+spatstat 3.5-1 
+For an introduction to spatstat, type ‘beginner’ 
+
+Warning messages:
+1: package ‘spatstat’ was built under R version 4.5.2 
+2: package ‘spatstat.data’ was built under R version 4.5.2 
+3: package ‘spatstat.univar’ was built under R version 4.5.2 
+4: package ‘spatstat.geom’ was built under R version 4.5.2 
+5: package ‘spatstat.random’ was built under R version 4.5.2 
+6: package ‘spatstat.explore’ was built under R version 4.5.2 
+7: package ‘spatstat.model’ was built under R version 4.5.2 
+8: package ‘spatstat.linnet’ was built under R version 4.5.2 
+
+Attaching package: ‘data.table’
+
+The following object is masked from ‘package:spatstat.geom’:
+
+    shift
+
+The following objects are masked from ‘package:dplyr’:
+
+    between, first, last
+
+The following objects are masked from ‘package:reshape2’:
+
+    dcast, melt
+
+Warning message:
+package ‘data.table’ was built under R version 4.5.2 
+
+Attaching package: ‘purrr’
+
+The following object is masked from ‘package:data.table’:
+
+    transpose
+
+Warning message:
+package ‘purrr’ was built under R version 4.5.2 
+Correlation Method = spearman
+Running 10000 permutation in sequential
+Correlation Method = spearman
+Running 10000 permutation in sequential
+Correlation Method = spearman
+Running 10000 permutation in sequential
+Correlation Method = spearman
+Running 10000 permutation in sequential
+Correlation Method = spearman
+Running 10000 permutation in sequential
+Correlation Method = spearman
+Running 10000 permutation in sequential
+Correlation Method = spearman
+Running 10000 permutation in sequential
+Correlation Method = spearman
+Running 10000 permutation in sequential
+Correlation Method = spearman
+Running 10000 permutation in sequential
+Correlation Method = spearman
+Running 10000 permutation in sequential
+There were 20 warnings (use warnings() to see them)

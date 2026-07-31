@@ -6,23 +6,23 @@ output file: supplementary_application_xenium_human_breast_cancer.knit.md
 
 Output created: supplementary_application_xenium_human_breast_cancer.html
 	Command being timed: "Rscript -e rmarkdown::render('supplementary_application_xenium_human_breast_cancer.Rmd', output_format = 'html_document')"
-	User time (seconds): 235.21
-	System time (seconds): 30.67
-	Percent of CPU this job got: 100%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:24.66
+	User time (seconds): 224.46
+	System time (seconds): 33.57
+	Percent of CPU this job got: 103%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:09.85
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 14192044
+	Maximum resident set size (kbytes): 13831808
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 41910
-	Minor (reclaiming a frame) page faults: 14915374
-	Voluntary context switches: 79628
-	Involuntary context switches: 1099
+	Major (requiring I/O) page faults: 40871
+	Minor (reclaiming a frame) page faults: 16284461
+	Voluntary context switches: 46129
+	Involuntary context switches: 1074
 	Swaps: 0
-	File system inputs: 377280
-	File system outputs: 8472864
+	File system inputs: 13748448
+	File system outputs: 8474456
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0

@@ -1,52 +1,44 @@
 ------------------------------------------------------------------------
-Job Started on Tue 02 Dec 2025 16:15:59 AEDT
-System: Linux med-n07.hpc.wehi.edu.au 5.14.0-362.24.1.el9_3.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Feb 15 07:18:13 EST 2024 x86_64 x86_64 x86_64 GNU/Linux
-CPU: Model name:                         Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
+Job Started on Wed 01 Jul 2026 12:43:59 AEST
+System: Linux med-n12.hpc.wehi.edu.au 5.14.0-570.123.1.el9_6.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Jun 19 03:08:16 EDT 2026 x86_64 x86_64 x86_64 GNU/Linux
+CPU: Model name:                              Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
 Total Memory: 503Gi
-Node: med-n07
-Job ID: 24530292
+Node: med-n12
+Job ID: 28565157
 ------------------------------------------------------------------------
 Loading R/4.5.1
   Loading requirement: libpng/1.6.43 libjpeg-turbo/3.0.2 libtiff/4.6.0
     ninja/1.11.1 bzip2/1.0.8 hdf5/1.12.3 pcre2/10.42 openjdk/21.0.2 cairo/1.19.0
 Loading gdal/3.9.0
   Loading requirement: proj/9.4.0 netcdf/4.9.2 mariadb-connector-c/3.3.10
-1/35                        
-2/35 [global-options]       
-3/35                        
-4/35 [load-lib]             
-5/35                        
-6/35 [load-raw]             
-7/35                        
-8/35 [unnamed-chunk-1]      
-9/35                        
-10/35 [negprobes]            
-11/35                        
-12/35 [unnamed-chunk-2]      
-13/35                        
-14/35 [top3-gene-vis-xy-corr]
-15/35                        
-16/35 [unnamed-chunk-3]      
-17/35                        
-18/35 [jazzPanda-glm]        
-19/35                        
-20/35 [output_markergenes]   
-21/35                        
-22/35 [top3-gene-vis-xy-glm] 
-23/35                        
-24/35 [unnamed-chunk-4]      
-25/35                        
-26/35 [fm-mg]                
-27/35                        
-28/35 [limma-mg]             
-29/35                        
-30/35 [unnamed-chunk-5]      
-31/35                        
-32/35 [upset-mg-comparison]  
-33/35                        
-34/35 [unnamed-chunk-6]      
-35/35                        
-/stornext/System/data/software/rhel/9/base/tools/pandoc/3.2/bin/pandoc +RTS -K512m -RTS supplementary_application_merscope_human_breast_cancer.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output supplementary_application_merscope_human_breast_cancer.html --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /vast/projects/xenium_5k/jazzPanda_paper/tmp.KnYFlUSKYV/RtmpzmJpy1/rmarkdown-str20014f5675690a.html 
+1/27                        
+2/27 [global-options]       
+3/27                        
+4/27 [load-lib]             
+5/27                        
+6/27 [load-raw]             
+7/27                        
+8/27 [unnamed-chunk-1]      
+9/27                        
+10/27 [negprobes]            
+11/27                        
+12/27 [unnamed-chunk-2]      
+13/27                        
+14/27 [top3-gene-vis-xy-corr]
+15/27                        
+16/27 [unnamed-chunk-3]      
+17/27                        
+18/27 [jazzPanda-glm]        
+19/27                        
+20/27 [output_markergenes]   
+21/27                        
+22/27 [top3-gene-vis-xy-glm] 
+23/27                        
+24/27 [unnamed-chunk-4]      
+25/27                        
+26/27 [unnamed-chunk-5]      
+27/27                        
+/stornext/System/data/software/rhel/9/base/tools/pandoc/3.2/bin/pandoc +RTS -K512m -RTS supplementary_application_merscope_human_breast_cancer.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output supplementary_application_merscope_human_breast_cancer.html --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /vast/projects/xenium_5k/jazzPanda_paper/tmp.vsXmzHAEMB/RtmpXvPSve/rmarkdown-str2a21e5354c1898.html 
 ------------------------------------------------------------------------
-Job Completed on Tue 02 Dec 2025 16:57:57 AEDT
+Job Completed on Wed 01 Jul 2026 13:04:58 AEST
 ------------------------------------------------------------------------

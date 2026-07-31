@@ -148,6 +148,69 @@ seu$sample = cluster_info$sample[match(colnames(seu), cluster_info$cell_id)]
 
 ```
 
+# Visualisation of selected clusters
+```{r}
+ fig_ratio = 10/12
+anno_df$color = my_colors[1:nrow(anno_df)]
+ct_colors <- setNames(anno_df$color, anno_df$anno_name)
+
+selected_cts <- c("Tumor_Luminal_ERBB2", "Tumor_IFNg_APC", "Tumor_Cycling_G2M",
+                  "Tcell_Activated", "TAM_C1QC")
+sel_colors <- ct_colors[selected_cts]
+
+plt_dff = cluster_info[cluster_info$anno_name%in% selected_cts, ]
+plt_dff$anno_name = factor(plt_dff$anno_name, levels = selected_cts)
+jpeg(file.path(comp_PA, paste0(data_nm,"_sv_extension_pos_figure.jpg")),
+               width = 3000, height = 2000, res=200)
+print(ggplot(data = plt_dff,
+             aes(x = x, y = y, color=anno_name))+
+          geom_point(size=0.001, alpha=0.7)+
+          facet_wrap(~anno_name, ncol=3)+
+          theme_classic()+
+          scale_color_manual(values = sel_colors) +
+          guides(color=guide_legend(title=" ", ncol = 1,
+                                    override.aes=list(alpha=1, size=8)))+ 
+          defined_theme+
+          theme(strip.background = element_rect(color="white"),
+                legend.position = "none",legend.key.width = unit(1, "cm"),
+                legend.title = element_text(size = 12),
+                aspect.ratio = fig_ratio,
+                legend.text = element_text(size = 8),
+                legend.key.height = unit(1, "cm"),
+                strip.text = element_text(size = 16)
+                )
+)
+dev.off()
+
+selected_cts <- c("TAM_SPP1","Endo_Blood")
+sel_colors <- ct_colors[selected_cts]
+
+plt_dff = cluster_info[cluster_info$anno_name%in% selected_cts, ]
+plt_dff$anno_name = factor(plt_dff$anno_name, levels = selected_cts)
+jpeg(file.path(comp_PA, paste0(data_nm,"_sv_extension_neg_figure.jpg")),
+               width = 2000, height = 1000, res=200)
+print(ggplot(data = plt_dff,
+             aes(x = x, y = y, color=anno_name))+
+          geom_point(size=0.001, alpha=0.7)+
+          facet_wrap(~anno_name, nrow=1)+
+          theme_classic()+
+          scale_color_manual(values = sel_colors) +
+          guides(color=guide_legend(title=" ", ncol = 1,
+                                    override.aes=list(alpha=1, size=8)))+ 
+          defined_theme+
+          theme(strip.background = element_rect(color="white"),
+                legend.position = "none",legend.key.width = unit(1, "cm"),
+                legend.title = element_text(size = 12),
+                aspect.ratio = fig_ratio,
+                legend.text = element_text(size = 8),
+                legend.key.height = unit(1, "cm"),
+                strip.text = element_text(size = 16)
+                )
+)
+dev.off()
+
+```
+
 ```{r}
 plot_data_sp(cluster_info=cluster_info,file_prefix = data_nm, 
              fig_ratio = 10/12,
@@ -204,523 +267,9 @@ nc_coords$category = "negative control probe"
 bins_map <- list("negative control probe" = 10)   
 
 plot_nc(nc_coords, "sample1","negative control probe" , 
-        data_nm, fig2,fig_ratio=10/12, 
+        data_nm, figure_result,fig_ratio=10/12, 
         bins_map = bins_map, width = 1100, height = 1100)
 
-```
-
-# jazzPanda-correlation
-```{r}
-perm_res = get_perm_adjp(perm_lst)
-obs_corr = get_cor(perm_lst)
-```
-
-## top3 marker genes by jazzPanda_correlation
-```{r  top3-gene-vis-xy-corr, fig.width=10, fig.height=6}
-cat("\n corr approach \n")
-for (cl in cluster_names){
-    ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
-    obs_cutoff = quantile(obs_corr[, cl], 0.75)
-    perm_cl<-intersect(row.names(perm_res[perm_res[,cl]<0.05,]),
-                     row.names(obs_corr[obs_corr[, cl]>obs_cutoff,]))
-    inters<-perm_cl
-    if (length(inters > 0)){
-        rounded_val<-signif(as.numeric(obs_corr[inters,cl]), digits = 3)
-        inters_df = as.data.frame(cbind(gene=inters, value=rounded_val))
-        inters_df$value = as.numeric(inters_df$value)
-        inters_df<-inters_df[order(inters_df$value, decreasing = TRUE),]
-        inters_df = inters_df[1:min(3, nrow(inters_df)),]
-        inters_df$text= paste(inters_df$gene,inters_df$value,sep=": ")
-        inters = inters_df$gene
-        iters_sp1= transcript_df$feature_name %in% inters
-        vis_r1 =transcript_df[iters_sp1,
-                        c("x","y","feature_name")]
-        vis_r1$value = inters_df[match(vis_r1$feature_name,inters_df$gene),
-                        "value"]
-        vis_r1=vis_r1[order(vis_r1$value,decreasing = TRUE),]
-        vis_r1$text_label= paste(vis_r1$feature_name,
-                            vis_r1$value,sep=": ")
-        vis_r1$text_label=factor(vis_r1$text_label, levels=inters_df$text)
-    
-        vis_r1 = vis_r1[order(vis_r1$text_label),]
-        cat("-------cluster=", cl, "\n")
-        print(table(vis_r1$feature_name))
-        
-        genes_plt<- ggplot(data = vis_r1,
-                    aes(x = x, y = y))+ 
-                    #geom_point(size=0.0001)+
-                     geom_hex(bins = auto_hex_bin(min(table(vis_r1$feature_name))))+
-                    facet_wrap(~text_label, nrow=1)+
-                    scale_fill_gradient(low="grey90", high="maroon4") + 
-                    # scale_fill_viridis_c(option = "turbo")+
-                    guides(fill = guide_colorbar(barheight = unit(0.2, "npc"), 
-                                                 barwidth  = unit(0.02, "npc")))+
-                    defined_theme+ theme(legend.position = "right", 
-                              strip.background = element_rect(fill =NA,colour = NA),
-                              strip.text = element_text(size = rel(1.3)), 
-                              strip.text.y.right = element_blank(),
-                              legend.key.width = unit(2, "cm"),
-                              aspect.ratio = 10/12,
-                              legend.title = element_text(size = 10),
-                              legend.text = element_text(size = 10),
-                               legend.key.height = unit(2, "cm"))
-        
-        cluster_data =  cluster_info[cluster_info$cluster==cl, ]
-        cl_pt<- ggplot(data =cluster_data,
-                    aes(x = x, y = y, color=sample))+ 
-                    #geom_hex(bins = 100)+
-                    geom_point(size=0.01)+
-                    facet_wrap(~anno_name, nrow=1,strip.position = "left")+
-                    scale_color_manual(values = c("black"))+
-                    defined_theme + theme(legend.position = "none", 
-                              strip.background = element_blank(), 
-                              aspect.ratio = 10/12,
-                              legend.key.width = unit(15, "cm"),
-                              strip.text = element_text(size = rel(1.3)))
-
-        if (length(inters) == 2) {
-            genes_plt <- (genes_plt | plot_spacer()) + 
-            plot_layout(widths = c(2, 1))
-        } else if (length(inters) == 1) {
-            genes_plt <- (genes_plt | plot_spacer() | plot_spacer()) + 
-            plot_layout(widths = c(1, 1, 1))
-        } 
-            
-        lyt <- wrap_plots(cl_pt, ncol = 1) | genes_plt
-        layout_design <- lyt + patchwork::plot_layout(widths = c(1, 3))
-            
-        cat("cluster:", cl,"\n")
-        jpeg(file.path(mg_PA,paste0(data_nm, "_corr_", cl,"_top3.jpg")), 
-             width=900*4, height=800, res=200)
-        print(layout_design)
-        dev.off()
-    }
-  }
-
-
-```
-
-## cluster vector versus marker gene vector 
-```{r}
-plot_lst=list()
-for (cl in cluster_names){
-    ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
-    obs_cutoff = quantile(obs_corr[, cl], 0.75)
-    perm_cl<-intersect(row.names(perm_res[perm_res[,cl]<0.05,]),
-                     row.names(obs_corr[obs_corr[, cl]>obs_cutoff,]))
-    inters<-perm_cl
-    if (length(inters) >0){
-        rounded_val<-signif(as.numeric(obs_corr[inters,cl]), digits = 3)
-        inters_df = as.data.frame(cbind(gene=inters, value=rounded_val))
-        inters_df$value = as.numeric(inters_df$value)
-        inters_df<-inters_df[order(inters_df$value, decreasing = TRUE),]
-
-        inters_df = inters_df[1:min(3, nrow(inters_df)),]
-        mk_genes = inters_df$gene
-        
-        
-        dff = as.data.frame(cbind(sv_lst$cluster_mt[,cl],
-                          sv_lst$gene_mt[,mk_genes]))
-        colnames(dff) = c("cluster", mk_genes)
-        dff$vector_id = c(1:nbins)
-        long_df <- dff %>% 
-        pivot_longer(cols = -c(cluster, vector_id), names_to = "gene", 
-           values_to = "vector_count")
-        long_df$gene = factor(long_df$gene, levels=mk_genes)
-        p<-ggplot(long_df, aes(x = cluster, y = vector_count, color=gene )) +
-        geom_point(size=0.01) +
-        facet_wrap(~gene, scales="free_y", nrow=1) +
-        labs(x = paste(ct_nm, " cluster vector ", sep=""), 
-        y = "Top3 marker gene vector") +
-        theme_minimal()+
-        scale_y_continuous(expand = c(0.01,0.01))+ 
-        scale_x_continuous(expand =  c(0.01,0.01))+ 
-        theme(panel.grid = element_blank(),
-          legend.position = "none",
-        strip.text = element_text(size = 12),
-        axis.line=element_blank(),
-        axis.text=element_text(size = 11),
-        axis.ticks=element_line(color="black"),
-        axis.title=element_text(size = 13),
-        panel.border  =element_rect(colour = "black", 
-                                fill=NA, linewidth=0.5)
-        )
-        if (length(mk_genes) == 2) {
-            p <- (p | plot_spacer()) + 
-            plot_layout(widths = c(2, 1))
-        } else if (length(mk_genes) == 1) {
-            p <- (p | plot_spacer() | plot_spacer()) + 
-            plot_layout(widths = c(1, 1, 1))
-        } 
-        
-        plot_lst[[cl]] = p
-    }
-}
-
-
-combined_plot <- wrap_plots(plot_lst, ncol = 2)
-jpeg(file.path(mg_PA, paste0(data_nm, "_corr_top3_vvplot.jpg")),
-    height = 500 * (ceiling(length(plot_lst)/2)), width = 3000, res=200)
-combined_plot 
-dev.off()
-
-```
-
-# jazzPanda-glm
-```{r jazzPanda-glm}
-jazzPanda_res = get_top_mg(jazzPanda_res_lst, coef_cutoff=0.1)  
-jazzPanda_summary = as.data.frame(table(jazzPanda_res$top_cluster))
-colnames(jazzPanda_summary) = c("cluster","jazzPanda_glm")
-```
-
-```{r, output_markergenes, eval=FALSE}
-# Combine into a new dataframe for LaTeX output
-output_data <- do.call(rbind, lapply(cluster_names, function(cl) {
-  subset <- jazzPanda_res[jazzPanda_res$top_cluster == cl, ]
-  sorted_subset <- subset[order(-subset$glm_coef), ]
-  gene_list <- paste(sorted_subset$gene, "(", 
-                     round(sorted_subset$glm_coef, 2), ")", 
-                     sep="", collapse=", ")
- 
-  return(data.frame(Cluster = cl, Genes = gene_list))
-}))
-
-latex_table <- xtable(output_data, caption="Detected marker genes for each cluster by jazzPanda, in decreasing value of glm coefficients")
-print.xtable(latex_table, include.rownames = FALSE,
-             hline.after = c(-1, 0, nrow(output_data)), comment = FALSE)
-```
-## top3 marker genes by jazzPanda_glm
-```{r  top3-gene-vis-xy-glm, fig.width=10, fig.height=6}
-cat("\n glm approach \n")
-for (cl in cluster_names){
-    ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
-    inters=jazzPanda_res[jazzPanda_res$top_cluster==cl,"gene"]
-    rounded_val=signif(as.numeric(jazzPanda_res[inters,"glm_coef"]),
-                          digits = 3)
-    inters_df = as.data.frame(cbind(gene=inters, value=rounded_val))
-    inters_df$value = as.numeric(inters_df$value)
-    inters_df=inters_df[order(inters_df$value, decreasing = TRUE),]
-    inters_df$text= paste(inters_df$gene,inters_df$value,sep=": ")
-    cat("-------cluster=", cl, "\n")
-        print(table(vis_r1$feature_name))
-        
-    if (length(inters > 0)){
-        inters_df = inters_df[1:min(3, nrow(inters_df)),]
-        inters = inters_df$gene
-        iters_sp1= transcript_df$feature_name %in% inters
-        vis_r1 =transcript_df[iters_sp1,
-                        c("x","y","feature_name")]
-        vis_r1$value = inters_df[match(vis_r1$feature_name,inters_df$gene),
-                        "value"]
-        vis_r1=vis_r1[order(vis_r1$value,decreasing = TRUE),]
-        vis_r1$text_label= paste(vis_r1$feature_name,
-                            vis_r1$value,sep=": ")
-        vis_r1$text_label=factor(vis_r1$text_label, levels=inters_df$text)
-    
-        vis_r1 = vis_r1[order(vis_r1$text_label),]
-
-        genes_plt<- ggplot(data = vis_r1,
-                    aes(x = x, y = y))+ 
-                    #geom_point(size=0.0001)+
-                    geom_hex(bins = auto_hex_bin(min(table(vis_r1$feature_name))))+
-                    facet_wrap(~text_label, nrow=1)+
-                    scale_fill_gradient(low="grey90", high="maroon4") + 
-                    # scale_fill_viridis_c(option = "turbo")+
-                    guides(fill = guide_colorbar(barheight = unit(0.2, "npc"), 
-                                                 barwidth  = unit(0.02, "npc")))+
-                    defined_theme+ 
-            theme(legend.position = "right", 
-                  aspect.ratio = 10/12,
-                  strip.background = element_rect(fill =NA,colour = NA),
-                  strip.text = element_text(size = rel(1.3)), 
-                  strip.text.y.right = element_blank(),
-                  legend.key.width = unit(2, "cm"),
-                  legend.title = element_text(size = 10),
-                  legend.text = element_text(size = 10),
-                   legend.key.height = unit(2, "cm"))
-
-        cluster_data =  cluster_info[cluster_info$cluster==cl, ]
-        cl_pt<- ggplot(data =cluster_data,
-                    aes(x = x, y = y, color=sample))+ 
-                    #geom_hex(bins = 100)+
-                    geom_point(size=0.01)+
-                    facet_wrap(~anno_name, nrow=1,strip.position = "left")+
-                    scale_color_manual(values = c("black"))+
-                    defined_theme + 
-            theme(legend.position = "none", 
-                              strip.background = element_blank(), 
-                              aspect.ratio = 10/12,
-                              legend.key.width = unit(15, "cm"),
-                              strip.text = element_text(size = rel(1.3)))
-        if (length(inters) == 2) {
-            genes_plt <- (genes_plt | plot_spacer()) + 
-            plot_layout(widths = c(2, 1))
-        } else if (length(inters) == 1) {
-            genes_plt <- (genes_plt | plot_spacer() | plot_spacer()) + 
-            plot_layout(widths = c(1, 1, 1))
-        } 
-        
-        lyt <- wrap_plots(cl_pt, ncol = 1) | genes_plt
-        layout_design <- lyt + patchwork::plot_layout(widths = c(1, 3))
-        
-        cat("cluster:", cl,"\n")
-        jpeg(file.path(mg_PA,paste0(data_nm, "_glm_", cl,"_top3.jpg")), 
-             width=900*4, height=800, res=200)
-        print(layout_design)
-        dev.off()
-    }
-  }
-
-
-```
-
-## cluster vector versus marker gene vector 
-```{r}
-plot_lst=list()
-for (cl in cluster_names){
-     ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
-    inters_df=jazzPanda_res[jazzPanda_res$top_cluster==cl,]
-    
-    if (nrow(inters_df) >0){
-        inters_df=inters_df[order(inters_df$glm_coef, decreasing = TRUE),]
-        
-        inters_df = inters_df[1:min(3, nrow(inters_df)),]
-        mk_genes = inters_df$gene
-        dff = as.data.frame(cbind(sv_lst$cluster_mt[,cl],
-                              sv_lst$gene_mt[,mk_genes]))
-        colnames(dff) = c("cluster", mk_genes)
-        dff$vector_id = c(1:nbins)
-        long_df <- dff %>% 
-        pivot_longer(cols = -c(cluster, vector_id), names_to = "gene", 
-               values_to = "vector_count")
-        long_df$gene = factor(long_df$gene, levels=mk_genes)
-        p<-ggplot(long_df, aes(x = cluster, y = vector_count, color=gene )) +
-        geom_point(size=0.01) +
-        facet_wrap(~gene, scales="free_y", nrow=1) +
-        labs(x = paste(ct_nm, " cluster vector ", sep=""), 
-         y = "Top3 marker gene vector") +
-        theme_minimal()+
-        scale_y_continuous(expand = c(0.01,0.01))+ 
-        scale_x_continuous(expand =  c(0.01,0.01))+ 
-        theme(panel.grid = element_blank(),legend.position = "none",
-        strip.text = element_text(size = 12),
-        axis.line=element_blank(),
-        axis.text=element_text(size = 11),
-        axis.ticks=element_line(color="black"),
-        axis.title=element_text(size = 13),
-        panel.border  =element_rect(colour = "black", 
-                                    fill=NA, linewidth=0.5)
-        )
-        if (length(mk_genes) == 2) {
-            p <- (p | plot_spacer()) + 
-            plot_layout(widths = c(2, 1))
-        } else if (length(mk_genes) == 1) {
-            p <- (p | plot_spacer() | plot_spacer()) + 
-            plot_layout(widths = c(1, 1, 1))
-        } 
-        
-        plot_lst[[cl]] = p
-        
-    }
-    
-}
-
-combined_plot <- wrap_plots(plot_lst, ncol = 2)
-jpeg(file.path(mg_PA, paste0(data_nm, "_glm_top3_vvplot.jpg")),
-    height = 500 * (ceiling(length(plot_lst)/2)), width = 3000, res=200)
-combined_plot 
-dev.off()
-
-```
-
-# Compare marker genes by different methods
-## FindMarker and limma result
-```{r fm-mg, eval=FALSE}
-table(FM_result$cluster)
-
-FM_result$cluster <- factor(FM_result$cluster,
-                            levels = cluster_names)
-
-top_mg <- FM_result %>%
-  group_by(cluster) %>%
-  arrange(desc(avg_log2FC), .by_group = TRUE) %>% 
-  slice_max(order_by = avg_log2FC, n = 20) %>%
-  select(cluster, gene, avg_log2FC)
-
-# Combine into a new dataframe for LaTeX output
-output_data <- do.call(rbind, lapply(cluster_names, function(cl) {
-  subset <- top_mg[top_mg$cluster == cl, ]
-  sorted_subset <- subset[order(-subset$avg_log2FC), ]
-  gene_list <- paste(sorted_subset$gene, "(", round(sorted_subset$avg_log2FC, 2), ")", sep="", collapse=", ")
- 
-  return(data.frame(Cluster = cl, Genes = gene_list))
-}))
-latex_table <- xtable(output_data, caption="Detected marker genes for each cluster by FindMarkers")
-print.xtable(latex_table, include.rownames = FALSE, hline.after = c(-1, 0, nrow(output_data)), comment = FALSE)
-```
-
-```{r limma-mg}
-limma_dt <- decideTests(fit.cont)
-summary(limma_dt)
-```
-
-## Cumulative rank plot
-```{r}
-plot_lst=list()
-cor_M = cor(sv_lst$gene_mt,
-            sv_lst$cluster_mt[, cluster_names],
-            method = "spearman")
-Idents(seu)=cluster_info$cluster[match(colnames(seu), cluster_info$cell_id)]
-for (cl in cluster_names){
-    ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
-    
-    fm_cl=FindMarkers(seu, ident.1 = cl, only.pos = TRUE,
-            logfc.threshold = 0.1)
-    fm_cl = fm_cl[fm_cl$p_val_adj<0.05, ]
-    fm_cl = fm_cl[order(fm_cl$avg_log2FC, decreasing = TRUE),]
-    to_plot_fm =row.names(fm_cl)
-    if (length(to_plot_fm)>0){
-        FM_pt =FM_pt = data.frame("name"=to_plot_fm,"rk"= 1:length(to_plot_fm),
-                       "y"= get_cmr_ma(to_plot_fm,cor_M = cor_M, cl = cl),
-                       "type"="Wilcoxon Rank Sum Test")
-    }else{
-        FM_pt <- data.frame(name = character(0), rk = integer(0), 
-                               y= numeric(0), type = character(0))
-    }
-
-    limma_cl<-topTable(fit.cont,coef=cl,p.value = 0.05, n=Inf, sort.by = "p")
-    limma_cl = limma_cl[limma_cl$logFC>0, ]
-    to_plot_lm = row.names(limma_cl)
-    if (length(to_plot_lm)>0){
-         limma_pt = data.frame("name"=to_plot_lm,"rk"= 1:length(to_plot_lm),
-                                  "y"= get_cmr_ma(to_plot_lm,cor_M = cor_M, cl = cl),
-                                  "type"="limma")
-    }else{
-        limma_pt <- data.frame(name = character(0), rk = integer(0), 
-                               y= numeric(0), type = character(0))
-    }
-    
-    obs_cutoff = quantile(obs_corr[, cl], 0.75)
-    perm_cl=intersect(row.names(perm_res[perm_res[,cl]<0.05,]),
-                 row.names(obs_corr[obs_corr[, cl]>obs_cutoff,]))
-    if (length(perm_cl) > 0) {
-        rounded_val=signif(as.numeric(obs_corr[perm_cl,cl]), digits = 3)
-        roudned_pval=signif(as.numeric(perm_res[perm_cl,cl]), digits = 3)
-        perm_sorted = as.data.frame(cbind(gene=perm_cl, value=rounded_val, pval=roudned_pval))
-        perm_sorted$value = as.numeric(perm_sorted$value)
-        perm_sorted$pval = as.numeric(perm_sorted$pval)
-        perm_sorted=perm_sorted[order(-perm_sorted$pval,
-                                  perm_sorted$value, 
-                                  decreasing = TRUE),]
-        corr_pt = data.frame("name"=perm_sorted$gene,"rk"= 1:length(perm_sorted$gene),
-                     "y"= get_cmr_ma(perm_sorted$gene,cor_M = cor_M, cl = cl),
-                     "type"="jazzPanda-correlation")
-    } else {
-      corr_pt <-data.frame(name = character(0), rk = integer(0), 
-                               y= numeric(0), type = character(0))
-    }
-    
-    lasso_sig = jazzPanda_res[jazzPanda_res$top_cluster==cl,]
-    if (nrow(lasso_sig) > 0) {
-        lasso_sig <- lasso_sig[order(lasso_sig$glm_coef, decreasing = TRUE), ]
-        lasso_pt = data.frame("name"=lasso_sig$gene,"rk"= 1:nrow(lasso_sig),
-                          "y"= get_cmr_ma(lasso_sig$gene,cor_M = cor_M, cl = cl),
-                          "type"="jazzPanda-glm")
-    } else {
-      lasso_pt <- data.frame(name = character(0), rk = integer(0), 
-                               y= numeric(0), type = character(0))
-    }
-
-    data_lst = rbind(limma_pt, FM_pt,corr_pt,lasso_pt)
-
-    data_lst$type <- factor(data_lst$type,
-                            levels = c("jazzPanda-correlation" ,
-                                       "jazzPanda-glm",
-                                       "limma", "Wilcoxon Rank Sum Test"))
-    data_lst$rk = as.numeric(data_lst$rk)
-    p <-ggplot(data_lst, aes(x = rk, y = y, color = type)) +
-        geom_step(size = 0.8) +  # type = "s"
-        scale_color_manual(values = c("jazzPanda-correlation" = "orange",
-                                    "jazzPanda-glm" = "red",
-                                    "limma" = "black",
-                                    "Wilcoxon Rank Sum Test" = "blue")) +
-        scale_x_continuous(limits = c(0, 50))+
-        labs(title = ct_nm, x = "Rank of marker genes",
-             y = "Cumulative average correlation",
-             color = NULL) +
-        theme_classic(base_size = 12) +
-        theme(plot.title = element_text(hjust = 0.5),
-            axis.line = element_blank(),  
-            panel.border = element_rect(color = "black", 
-                                        fill = NA, linewidth = 1),
-            legend.position = "inside",
-            legend.position.inside = c(0.98, 0.02),
-            legend.justification = c("right", "bottom"),
-            legend.background = element_rect(color = "black", 
-                                             fill = "white", linewidth = 0.5),
-            legend.box.background = element_rect(color = "black",
-                                                 linewidth = 0.5)
-        )
-    plot_lst[[cl]] <- p
-}
-
-combined_plot <- wrap_plots(plot_lst, ncol = 4)
-pdf(file.path(comp_PA, paste0(data_nm, "_mg_compare_rank.pdf")),
-     height =4* (ceiling(length(cluster_names)/4)), width = 16)
-combined_plot 
-dev.off()
-
-```
-## upset plot
-```{r upset-mg-comparison, fig.width=12, fig.height=18}
-plot_lst=list()
-for (cl in cluster_names){
-    ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
-    findM_sig <- FM_result[FM_result$cluster==cl & FM_result$p_val_adj<0.05,"gene"]
-    limma_sig <- row.names(limma_dt[limma_dt[,cl]==1,])
-    lasso_cl <- jazzPanda_res[jazzPanda_res$top_cluster==cl, "gene"]
-    obs_cutoff = quantile(obs_corr[, cl], 0.75)
-    perm_cl<-intersect(row.names(perm_res[perm_res[,cl]<0.05,]),
-                     row.names(obs_corr[obs_corr[, cl]>obs_cutoff,]))
-    
-    df_mt <- as.data.frame(matrix(FALSE,nrow=nrow(jazzPanda_res),ncol=4))
-    row.names(df_mt) <- jazzPanda_res$gene
-    colnames(df_mt) <- c("jazzPanda-glm",
-                      "jazzPanda-correlation",
-                      "Wilcoxon Rank Sum Test","limma")
-    df_mt[findM_sig,"Wilcoxon Rank Sum Test"] <- TRUE
-    df_mt[limma_sig,"limma"] <- TRUE
-    df_mt[lasso_cl,"jazzPanda-glm"] <- TRUE
-    df_mt[perm_cl,"jazzPanda-correlation"] <- TRUE
-    
-    df_mt$gene_name <- row.names(df_mt)
-     p = plot(upset(df_mt,
-               intersect=c("Wilcoxon Rank Sum Test", "limma",
-                           "jazzPanda-correlation","jazzPanda-glm"),
-               wrap=TRUE, keep_empty_groups= FALSE, name="",
-               stripes='white',
-               sort_intersections_by ="cardinality", sort_sets= FALSE,min_degree=1,
-               set_sizes =( 
-                   upset_set_size()
-                   + theme(axis.title= element_blank(),
-                           axis.ticks.y = element_blank(),
-                           axis.text.y = element_blank())),
-               sort_intersections= "descending", warn_when_converting=FALSE,
-               warn_when_dropping_groups=TRUE,encode_sets=TRUE,
-               width_ratio=0.3, height_ratio=1/4)+
-                 ggtitle(ct_nm)+
-                 theme(plot.title = element_text( size=15))
-
-    )
-
-    plot_lst[[cl]] <- p 
-}
-
-combined_plot <- wrap_plots(plot_lst, ncol = 4)
-pdf(file.path(comp_PA, paste0(data_nm, "_mg_compare_upset.pdf")),
-     height =5* (ceiling(length(cluster_names)/4)), width = 22)
-combined_plot 
-dev.off()
 ```
 
 ```{r}

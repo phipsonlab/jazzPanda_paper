@@ -38,8 +38,8 @@ source(here("scripts/utils.R"))
 ## cluster sizses versus number of significant genes 
 ```{r}
 
-wk_path = here("scripts/main/cosmx_hlc_simulation_result/")
-
+wk_path = here("scripts/main/cosmx_hlc_simulation_10k_spearman_result/")
+file_nm = "spearman"
 perm_res_files <- list.files(path =wk_path,
                           pattern = "^cosmx_hlc_simulation_s[0-9]+_perm_res_lst\\.Rds$",
                           full.names = TRUE)
@@ -75,12 +75,10 @@ obs_df <- do.call(rbind, obs_lst)
 adjp_df <- do.call(rbind, adjp_value_lst)
 p_value_df <- do.call(rbind, p_value_lst)
 
-colSums(p_value_df[, 1:13] <0.05)
-colSums(adjp_df[, 1:13] <0.05)
+colSums(p_value_df[, 1:13] <0.05)/10000
+colSums(adjp_df[, 1:13] <0.05)/10000
 
-zz = rowSums(adjp_df[, 1:13] <0.05)
-
-table(zz)
+table(colSums(adjp_df[, 1:13] <0.05))
 
 
 jazzPanda_perm = as.data.frame(matrix(0, nrow=ncol(obs_df), ncol=2))
@@ -97,6 +95,8 @@ for (cl in paste("c", 1:13, sep="")){
 
 cat("False positive rate =", (sum(jazzPanda_perm[,2])/10000*100),"%")
 ```
+
+
 
 # Number of significant genes versus cluster size
 ```{r}
@@ -205,7 +205,7 @@ label_positions <- data.frame(
 quad_counts <- quad_counts %>%
   left_join(label_positions, by = "quadrant")
 
-jpeg(file.path(comp_PA, "pval_vs_correlation_scatter.jpg"), 
+jpeg(file.path(comp_PA, paste0("adjpval_vs_correlation_scatter_10k_", file_nm,".jpg")), 
     width=2500, height=2000,res=200)
 ggplot(merged_df, aes(x = statistic, y = log_padj,color=label)) +
   geom_point(alpha = 0.6, size=0.01) +
@@ -213,7 +213,7 @@ ggplot(merged_df, aes(x = statistic, y = log_padj,color=label)) +
     scale_color_manual(values=c("steelblue","black"))+
     scale_y_continuous(breaks = c(0, 1,-log10(0.05), 2,3), 
                        labels = c("0","1","-log10(0.05)","2","3"))+
-    scale_x_continuous(limits = c(-0.25, 0.2),
+    scale_x_continuous(#limits = c(-0.25, 0.2),
                        breaks = c(-0.25,-0.1, 0, 0.05, 0.1, 0.2), 
                        labels = c(-0.25,-0.1,0, 0.05, 0.1, 0.2))+
   geom_hline(yintercept = -log10(0.05), color = "grey", linetype = "dashed") +
@@ -222,7 +222,117 @@ ggplot(merged_df, aes(x = statistic, y = log_padj,color=label)) +
                aes(x = x, y = y, label = n), inherit.aes = FALSE, size = 4,
                label.size = 0.3, label.r = unit(0.1, "lines"), fill = "white",   
                color = "black"    ) +
-  labs(x = "correlation", y = "-log10(adjusted p-value)"
+  labs(x = "Spearman correlation", y = "-log10(adjusted p-value)"
+       ) +
+        guides(colour = guide_legend(override.aes = list(size=4,alpha=1)))+
+  theme_minimal(base_size = 13) +
+  theme(panel.border = element_rect(color = "black", 
+                                    fill = NA, linewidth = 0.6),
+    legend.position = "top", legend.title = element_blank(),
+    legend.text = element_text(size = 15),
+    axis.title = element_text(size = 16),
+     strip.text = element_text(size =16),
+    axis.text = element_text(size = 12),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank(),
+    plot.title = element_text(face = "bold", size = 14)
+  )
+dev.off()
+
+
+
+```
+
+
+```{r}
+
+
+rawp_long <- p_value_df[, 1:13] %>%
+  rownames_to_column("gene") %>%
+  pivot_longer(-gene, names_to = "cluster", values_to = "raw_p")
+
+obs_long <- obs_df[, 1:13] %>%
+  rownames_to_column("gene") %>%
+  pivot_longer(-gene, names_to = "cluster", 
+               values_to = "statistic")
+
+merged_df <- left_join(rawp_long, obs_long, by = c("gene", "cluster"))
+
+merged_df <- merged_df %>%
+  mutate(log_praw = -log10(raw_p),
+         flag_low_effect = raw_p < 0.05 & statistic > 0.05)  
+merged_df$label = "Not significant"
+merged_df[merged_df$flag_low_effect==TRUE,"label"] ="Significant"
+merged_df$label = factor(merged_df$label, 
+                         levels=c("Significant", "Not significant"))
+merged_df$cluster=factor(merged_df$cluster, levels = c(
+  "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", 
+  "c10", "c11", "c12", "c13", "falsecode", "negprobe"
+))
+
+
+merged_df = merge(merged_df, dff[, c("cluster","anno_name")], by="cluster")
+
+
+x_thresh <- 0.05
+y_thresh <- -log10(0.05)
+
+merged_df <- merged_df %>%
+  mutate(
+    quadrant = case_when(
+      statistic <= x_thresh & log_praw >= y_thresh ~ "Q1",  # Top-left
+      statistic >  x_thresh & log_praw >= y_thresh ~ "Q2",  # Top-right
+      TRUE ~ "Other"
+    )
+  )
+merged_df$anno_name = factor(merged_df$anno_name, levels =cluster_names)
+merged_df = merged_df[order(merged_df$anno_name),]
+
+anno_levels <- unique(merged_df$anno_name)
+
+all_combos <- expand_grid(
+  anno_name = anno_levels,
+  quadrant = c("Q1", "Q2")
+)
+
+quad_counts <- merged_df %>%
+    
+  filter(quadrant %in% c("Q1", "Q2")) %>%
+
+  group_by(anno_name, quadrant) %>%
+         
+  summarise(n = n(), .groups = "drop") %>%
+ right_join(all_combos, by = c("anno_name", "quadrant")) %>%
+  mutate(n = replace_na(n, 0))
+
+label_positions <- data.frame(
+  quadrant = c("Q1", "Q2"),
+  x = c(-0.2, 0.1), 
+  y = c(2.5, 2.5)     # Choose visually suitable positions
+)
+
+
+# Merge counts with positions
+quad_counts <- quad_counts %>%
+  left_join(label_positions, by = "quadrant")
+jpeg(file.path(comp_PA, paste0("raw_pval_vs_correlation_scatter_10k_", file_nm,".jpg")),
+    width=2500, height=2000,res=200)
+ggplot(merged_df, aes(x = statistic, y = log_praw,color=label)) +
+  geom_point(alpha = 0.6, size=0.01) +
+    facet_wrap(~anno_name, ncol=4)+
+    scale_color_manual(values=c("steelblue","black"))+
+    scale_y_continuous(breaks = c(0, 1,-log10(0.05), 2,3), 
+                       labels = c("0","1","-log10(0.05)","2","3"))+
+    scale_x_continuous(#limits = c(-0.25, 0.2),
+                       breaks = c(-0.25,-0.1, 0, 0.05, 0.1, 0.2), 
+                       labels = c(-0.25,-0.1,0, 0.05, 0.1, 0.2))+
+  geom_hline(yintercept = -log10(0.05), color = "grey", linetype = "dashed") +
+  geom_vline(xintercept = 0.05, color = "grey", linetype = "dashed") +
+    geom_label(data = quad_counts,
+               aes(x = x, y = y, label = n), inherit.aes = FALSE, size = 4,
+               label.size = 0.3, label.r = unit(0.1, "lines"), fill = "white",   
+               color = "black"    ) +
+  labs(x = "Spearman correlation", y = "-log10(raw p-value)"
        ) +
         guides(colour = guide_legend(override.aes = list(size=4,alpha=1)))+
   theme_minimal(base_size = 13) +

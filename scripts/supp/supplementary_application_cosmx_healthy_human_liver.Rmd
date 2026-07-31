@@ -222,7 +222,7 @@ bins_map <- list("NegPrb" = 3,
                  "FalseCode" = 5)   
 
 plot_nc(nc_coords, "sample1","NegPrb" , fig_ratio = 1/1,
-        data_nm, fig2, bins_map = bins_map, width = 1100, height = 1100)
+        data_nm, figure_result, bins_map = bins_map, width = 1100, height = 1100)
 
 plot_nc(nc_coords, "sample1", "FalseCode", fig_ratio = 1/1,
         data_nm, overview_PA, bins_map = bins_map, width = 1100, height = 1100)
@@ -587,7 +587,7 @@ Idents(seu)=cluster_info$cluster[match(colnames(seu),
 for (cl in cluster_names){
     
     fm_cl=FindMarkers(seu, ident.1 = cl, only.pos = TRUE,
-            logfc.threshold = 0.1)
+            logfc.threshold = 0)
     fm_cl = fm_cl[fm_cl$p_val_adj<0.05, ]
     fm_cl = fm_cl[order(fm_cl$avg_log2FC, decreasing = TRUE),]
     to_plot_fm =row.names(fm_cl)

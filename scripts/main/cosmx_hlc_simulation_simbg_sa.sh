@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --partition=regular
 #SBATCH --job-name=cosmx_hlc_simulation
-#SBATCH --output=cosmx_hlc_simulation_result_slurm/cosmx_hlc_simulation_%A_%a.out
-#SBATCH --error=cosmx_hlc_simulation_result_slurm/cosmx_hlc_simulation_%A_%a.err
+#SBATCH --output=cosmx_hlc_simulation_10k_spearman_sq20_result_slurm/cosmx_hlc_simulation_%A_%a.out
+#SBATCH --error=cosmx_hlc_simulation_10k_spearman_sq20_result_slurm/cosmx_hlc_simulation_%A_%a.err
 #SBATCH --array=1-10
-#SBATCH --time=05:00:00
+#SBATCH --time=12:00:00
 #SBATCH --mem=200G
 #SBATCH --cpus-per-task=6
 

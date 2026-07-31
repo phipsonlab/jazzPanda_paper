@@ -182,7 +182,7 @@ perm_p = compute_permp(x= list("cancer" = hl_cancer),
                        bin_type="square",
                        bin_param=c(grid_length,grid_length),
                        test_genes= all_genes,
-                       correlation_method = "pearson", 
+                       correlation_method = "spearman", 
                        n_cores = 5,
                        correction_method="BH")
 })
@@ -262,7 +262,7 @@ hln_seu <- RunPCA(hln_seu, features = row.names(hln_seu),
 hln_seu <- RunUMAP(object = hln_seu, dims = 1:15)
 
 usage_fm= peakRAM({
-seu_markers <- FindAllMarkers(hln_seu, only.pos = TRUE,logfc.threshold = 0.1)
+seu_markers <- FindAllMarkers(hln_seu, only.pos = TRUE,logfc.threshold = 0)
 
 })
 
