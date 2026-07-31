@@ -1,54 +1,16 @@
 ------------------------------------------------------------------------
-Job Started on Wed 01 Jul 2026 12:43:53 AEST
-System: Linux med-n23.hpc.wehi.edu.au 5.14.0-570.123.1.el9_6.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Jun 19 03:08:16 EDT 2026 x86_64 x86_64 x86_64 GNU/Linux
-CPU: Model name:                              Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
+Job Started on Thu Jul 23 05:19:11 PM AEST 2026
+System: Linux il-n17.hpc.wehi.edu.au 5.14.0-570.123.1.el9_6.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Jun 19 03:08:16 EDT 2026 x86_64 x86_64 x86_64 GNU/Linux
+CPU: Model name:                              Intel(R) Xeon(R) Gold 6342 CPU @ 2.80GHz
 Total Memory: 503Gi
-Node: med-n23
-Job ID: 28565152
+Node: il-n17
+Job ID: 28897839
 ------------------------------------------------------------------------
-Loading R/4.5.1
-  Loading requirement: libpng/1.6.43 libjpeg-turbo/3.0.2 libtiff/4.6.0
-    ninja/1.11.1 bzip2/1.0.8 hdf5/1.12.3 pcre2/10.42 openjdk/21.0.2 cairo/1.19.0
-Loading gdal/3.9.0
-  Loading requirement: proj/9.4.0 netcdf/4.9.2 mariadb-connector-c/3.3.10
-1/37                        
-2/37 [global-options]       
-3/37                        
-4/37 [load-lib]             
-5/37                        
-6/37 [load transcripts]     
-7/37                        
-8/37 [load-raw]             
-9/37                        
-10/37 [unnamed-chunk-1]      
-11/37                        
-12/37 [negprobes]            
-13/37                        
-14/37 [unnamed-chunk-2]      
-15/37                        
-16/37 [top3-gene-vis-xy-corr]
-17/37                        
-18/37 [unnamed-chunk-3]      
-19/37                        
-20/37 [jazzPanda-glm]        
-21/37                        
-22/37 [output_markergenes]   
-23/37                        
-24/37 [top3-gene-vis-xy-glm] 
-25/37                        
-26/37 [unnamed-chunk-4]      
-27/37                        
-28/37 [fm-mg]                
-29/37                        
-30/37 [limma-mg]             
-31/37                        
-32/37 [unnamed-chunk-5]      
-33/37                        
-34/37 [upset-mg-comparison]  
-35/37                        
-36/37 [unnamed-chunk-6]      
-37/37                        
-/stornext/System/data/software/rhel/9/base/tools/pandoc/3.2/bin/pandoc +RTS -K512m -RTS supplementary_application_cosmx_healthy_human_liver.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output supplementary_application_cosmx_healthy_human_liver.html --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /vast/projects/xenium_5k/jazzPanda_paper/tmp.ZVuN42SW69/Rtmp1F5vfC/rmarkdown-str1c51cc798eefa7.html 
+Loading [1mR/4.5.1[22m
+  [94mLoading requirement[0m: libpng/1.6.43 libjpeg-turbo/3.0.2 libtiff/4.6.0
+    ninja/1.11.1 bzip2/1.0.8 pcre2/10.42 openjdk/21.0.2 cairo/1.19.0
+  |                                                      |                                              |   0%  |                                                      |.                                             |   3%                          |                                                      |..                                            |   5% [global-options]         |                                                      |....                                          |   8%                          |                                                      |.....                                         |  11% [load-lib]               |                                                      |......                                        |  14%                          |                                                      |.......                                       |  16% [load transcripts]       |                                                      |.........                                     |  19%                          |                                                      |..........                                    |  22% [load-raw]               |                                                      |...........                                   |  24%                          |                                                      |............                                  |  27% [unnamed-chunk-1]        |                                                      |..............                                |  30%                          |                                                      |...............                               |  32% [negprobes]              |                                                      |................                              |  35%                          |                                                      |.................                             |  38% [unnamed-chunk-2]        |                                                      |...................                           |  41%                          |                                                      |....................                          |  43% [top3-gene-vis-xy-corr]  |                                                      |.....................                         |  46%                          |                                                      |......................                        |  49% [unnamed-chunk-3]        |                                                      |........................                      |  51%                          |                                                      |.........................                     |  54% [jazzPanda-glm]          |                                                      |..........................                    |  57%                          |                                                      |...........................                   |  59% [output_markergenes]     |                                                      |.............................                 |  62%                          |                                                      |..............................                |  65% [top3-gene-vis-xy-glm]   |                                                      |...............................               |  68%                          |                                                      |................................              |  70% [unnamed-chunk-4]        |                                                      |..................................            |  73%                          |                                                      |...................................           |  76% [fm-mg]                  |                                                      |....................................          |  78%                          |                                                      |.....................................         |  81% [limma-mg]               |                                                      |.......................................       |  84%                          |                                                      |........................................      |  86% [unnamed-chunk-5]        |                                                      |.........................................     |  89%                          |                                                      |..........................................    |  92% [upset-mg-comparison]    |                                                      |............................................  |  95%                          |                                                      |............................................. |  97% [unnamed-chunk-6]        |                                                      |..............................................| 100%                                                                                                                                          
+/stornext/System/data/software/rhel/9/base/tools/pandoc/3.2/bin/pandoc +RTS -K512m -RTS supplementary_application_cosmx_healthy_human_liver.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output supplementary_application_cosmx_healthy_human_liver.html --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /stornext/Home/data/allstaff/j/jin.m/R/x86_64-pc-linux-gnu-library/4.5/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /vast/projects/xenium_5k/jazzPanda_paper/tmp.z36AtZmmZQ/RtmpsyUYJd/rmarkdown-str30a9849178ed3.html 
 ------------------------------------------------------------------------
-Job Completed on Wed 01 Jul 2026 13:12:55 AEST
+Job Completed on Thu Jul 23 05:42:50 PM AEST 2026
 ------------------------------------------------------------------------

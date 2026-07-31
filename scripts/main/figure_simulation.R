@@ -15,20 +15,10 @@ library(jazzPanda)
 library(here)
 source(here("scripts/utils.R"))
 
-################################################################################
-# Negative controls are extracted from the full set of transcripts.  
-# For details on how different types of negative controls are visualized 
-# for each dataset, please refer to the supplementary R Markdown files.
-# figure 2(a)
-# scripts/supp/supplementary_application_xenium_human_breast_cancer.Rmd
-# figure 2(b)
-# scripts/supp/supplementary_application_cosmx_healthy_human_liver.Rmd
-# figure 2(c)
-# scripts/supp/supplementary_application_merscope_human_breast_cancer.Rmd
 
 ################################################################################
 
-wk_path = "scripts/main/cosmx_hlc_simulation_result/"
+wk_path = "scripts/main/cosmx_hlc_simulation_10k_spearman_result/"
 
 perm_res_files <- list.files(path =wk_path,
                              pattern = "^cosmx_hlc_simulation_s[0-9]+_perm_res_lst\\.Rds$",
@@ -75,8 +65,8 @@ nsig_ps = data.frame(cluster = character(),
                      stringsAsFactors = FALSE)
 
 for (cl in paste("c", 1:13, sep="")){
-    curr_df = adjp_df[,c(cl, "seed") ]
-    #curr_df = p_value_df[,c(cl, "seed") ]
+    #curr_df = adjp_df[,c(cl, "seed") ]
+    curr_df = p_value_df[,c(cl, "seed") ]
     dff = curr_df %>% group_by(seed) %>%
         summarise(nsig = sum(.data[[cl]] < 0.05), .groups = "drop")
     nsig_ps = rbind(nsig_ps,cbind(cluster=cl, dff))
@@ -115,7 +105,7 @@ dff$cluster = as.character(dff$cluster)
 dff$anno_name = as.character(dff$anno_name)
 # dff = rbind(dff, c("falsecode", 0, 0, 0, 0,0,0, 0, "falsecode"), 
 #             c("negprobe", 0, 0, 0, 0,0,0, 0,  "negprobe"))
-# all_clusters <- c(paste0("c", 1:13), "falsecode", "negprobe")
+all_clusters <- c(paste0("c", 1:13), "falsecode", "negprobe")
 # 
 # dff$cluster = factor(dff$cluster, levels =all_clusters )
 dff$cluster = factor(dff$cluster, levels =paste0("c", 1:13) )
@@ -129,11 +119,11 @@ p1<- ggplot(dff, aes(x = log_ncells, y = mean_prob, color = cluster)) +
     scale_color_manual(values = my_colors)+
     geom_hline(yintercept = 0.05, colour = "grey80",linewidth = 1,
                linetype = "dashed")+
-    scale_y_continuous(breaks = c(0, 0.05, 0.2, 0.4, 0.6, 0.8),
-                       labels= c(0, 0.05, 0.2, 0.4, 0.6, 0.8))+
+    scale_y_continuous(limits = c(0,1),
+                       breaks = c(0, 0.05, 0.2, 0.4, 0.6, 0.8, 1),
+                       labels= c(0, 0.05, 0.2, 0.4, 0.6, 0.8, 1))+
     labs(title = " ", x = " log(Cluster size)",
-         y = "Mean false discovery rate", color="") +
-         #y = "Mean p-value", color="") +
+         y = "Mean(proportion of false discoveries)", color="") +
     guides(colour = guide_legend(override.aes = list(size=3,alpha=1)))+
     theme(
         axis.line = element_blank(),
@@ -149,7 +139,7 @@ p1<- ggplot(dff, aes(x = log_ncells, y = mean_prob, color = cluster)) +
         legend.margin     = margin(0, 0, 0, 0)   # remove padding
     )
 
-pdf(file.path(figure_simulation, "simulation_ncells_nsig_adj_pval_scatter.pdf"), 
+pdf(file.path(figure_simulation, "simulation_ncells_nsig_raw_pval_scatter_10k_spearman.pdf"), 
     width=6, height=4)
 p1
 dev.off()
@@ -188,7 +178,7 @@ for (seed in seeds) {
     sv_spatial = readRDS(spatial_file)
     curr_corr= as.data.frame(cor(sv_spatial$gene_mt,
                                  cbind(nc_spatial,sv_spatial$cluster_mt[,paste("c", 1:13, sep="")]), 
-                                 method = "pearson"))
+                                 method = "spearman"))
     curr_corr$seed = seed
     curr_corr$gene = row.names(curr_corr)
     curr_corr=curr_corr[, kep_cols]
@@ -215,14 +205,14 @@ p1<- ggplot(avg_dff, aes(x = cluster, y = mean_corr)) +
     geom_boxplot(outlier.size = 0.8, outlier.alpha = 0.5, width = 0.6)+
     #geom_violin(scale = "width")+
     theme_classic() +
-    labs(title = " ", x = " ", y = "Mean pearson correlation") +
+    labs(title = " ", x = " ", y = "Mean Spearman correlation") +
     theme( axis.line = element_blank(),
            panel.border = element_rect(color = "black", fill = NA, linewidth = 0.6),
            axis.text.y = element_text(size=10, vjust=0.5),
            axis.text.x = element_text(size = 10, angle =45, hjust = 1),
            axis.title.y= element_text(size=12))
 
-pdf(file.path(figure_simulation, "figure2_cosmx_hlc_correlation.pdf"), width=5, height=4)
+pdf(file.path(figure_simulation, "figure2_cosmx_hlc_correlation_10k_spearman.pdf"), width=5, height=4)
 p1
 dev.off()
 
@@ -262,7 +252,11 @@ top_by_gene <- full_df %>%
     group_by(seed, gene) %>%
     slice_head(n = 1) %>%
     ungroup()
-table(top_by_gene$cluster)
+
+dff = table(top_by_gene$cluster)
+cat("top_cluster=falsecode", (as.numeric(dff["falsecode"])/10000*100), "%")
+cat("top_cluster=negprobe", (as.numeric(dff["negprobe"])/10000*100), "%")
+
 
 
 ## no genes with real cluster as only fetures 
@@ -376,7 +370,7 @@ df_reps <-  df_full %>%
         .groups = "drop"
     )
 df_reps$cluster = factor(df_reps$cluster, levels = all_clusters)
-pdf(file.path(figure_simulation, "rank_p_value_heatmap_per_run.pdf"), width=10,height=5)
+pdf(file.path(figure_simulation, "rank_p_value_heatmap_per_run_10k_spearman.pdf"), width=10,height=5)
 ggplot(df_reps, aes(x = seed, y = cluster, fill = mean_rank)) +
     geom_tile() +
     scale_fill_viridis_c(
@@ -404,61 +398,4 @@ ggplot(df_reps, aes(x = seed, y = cluster, fill = mean_rank)) +
 dev.off()
 
 ################################################################################
-# 
-# dff = full_df[, c("gene", "seed", "glm_coef", "cluster", "p_value")]%>%
-#     mutate(cluster = as.character(cluster)) %>%  
-#     group_by(seed, gene) %>%
-#     tidyr::complete(cluster = all_clusters, fill = list(p_value = 1,glm_coef=0)) %>%
-#     ungroup() %>%
-#     mutate(cluster = factor(cluster, levels = all_clusters))
-# dff$cluster = factor(dff$cluster, levels = c(paste("c", 1:13, sep=""), 
-#                                              "falsecode","negprobe"))
-# dff$glm_coef = as.numeric(dff$glm_coef) 
-# summary(dff[!(dff$cluster %in% c("falsecode","negprobe")),"glm_coef"])
-# summary(dff[dff$cluster == "falsecode","glm_coef"])
-# summary(dff[dff$cluster == "negprobe","glm_coef"])
-# 
-# avg_dff = dff %>% group_by(seed, cluster)%>% summarise(mean_glm = mean(glm_coef),
-#                                                        median_glm= median(glm_coef),
-#                                                        sd_glm = sd(glm_coef),
-#                                                        mean_p = mean(p_value),
-#                                                        median_p= median(p_value),
-#                                                        sd_p = sd(p_value),
-#                                                        .groups = "drop")
-# p1<- ggplot(avg_dff, aes(x = cluster, y = mean_p)) +
-#     #geom_point(size = 1) +
-#     geom_boxplot(outlier.size = 0.8, outlier.alpha = 0.5, width = 0.6)+
-#     #geom_violin(scale = "width")+
-#     theme_classic() +
-#     geom_hline(yintercept = 0.05, colour = "grey80",linewidth = 1,
-#                linetype = "dashed")+
-#     scale_y_continuous(breaks = c(0, 0.05, 0.2, 0.4, 0.6, 0.8,1),
-#                        labels= c(0, 0.05, 0.2, 0.4, 0.6, 0.8,1))+
-#     labs(title = " ", x = " ", y = "Mean p-value") +
-#     theme( axis.line = element_blank(),
-#            panel.border = element_rect(color = "black", fill = NA, linewidth = 0.6),
-#            axis.text.y = element_text(size=10, vjust=0.5),
-#            axis.text.x = element_text(size = 10, angle =45, hjust = 1),
-#            axis.title.y= element_text(size=12))
-# 
-# pdf(file.path(figure_simulation, "figure2_cosmx_hlc_boxplot_glm_pval.pdf"), width=8, height=4)
-# p1
-# dev.off()
-# 
-# p2<- ggplot(avg_dff, aes(x = cluster, y = median_glm)) +
-#     #geom_point(size = 1) +
-#     geom_boxplot(outlier.size = 0.8, outlier.alpha = 0.5, width = 0.6)+
-#     #geom_violin(scale = "width")+s
-#     theme_classic() +
-# 
-#     labs(title = " ", x = " ", y = "Median model coefficient") +
-#     theme( axis.line = element_blank(),
-#            panel.border = element_rect(color = "black", fill = NA, linewidth = 0.6),
-#            axis.text.y = element_text(size=10, vjust=0.5),
-#            axis.text.x = element_text(size = 10, angle =45, hjust = 1),
-#            axis.title.y= element_text(size=12))
-# 
-# pdf(file.path(figure_simulation, "figure2_cosmx_hlc_boxplot_glm_coef.pdf"), width=8, height=4)
-# p2
-# dev.off()
 

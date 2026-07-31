@@ -310,7 +310,7 @@ clusters_df = data.frame(
   stringsAsFactors = FALSE
 )
 
-jac_summary = data.frame()      # <-- collector, one row per cluster
+jac_summary = data.frame()      
 plt_lst = list()
 
 for (cl in clusters_df$cluster){
@@ -319,29 +319,29 @@ for (cl in clusters_df$cluster){
     row.names(df_mt) = xenium_merged_df$gene
     colnames(df_mt) = paste(paste(seq(10,100, by=10), "x", sep=""),
                             seq(10,100, by=10),sep="")
-    # fill each column
+
     for (bin_l in seq(10, 100, by = 10)) {
         cl_col   = paste0("top_cluster_gr", bin_l)
-        gr_genes = xenium_merged_df$gene[which(xenium_merged_df[[cl_col]] == cl)]  # which() = NA-safe
+        gr_genes = xenium_merged_df$gene[which(xenium_merged_df[[cl_col]] == cl)]  
         col_nm   = paste0(bin_l, "x", bin_l)
         df_mt[gr_genes, col_nm] = TRUE
     }
 
     df_mt = as.matrix(df_mt)
     rs= rowSums(df_mt)
-    core_n = sum(rs == ncol(df_mt))      # marker in ALL 10 bins
-    union_n = sum(rs >= 1)            # marker in >=1 bin
+    core_n = sum(rs == ncol(df_mt))     
+    union_n = sum(rs >= 1)            
     
     pj = combn(ncol(df_mt), 2, function(ij) {
         a = df_mt[, ij[1]]; b = df_mt[, ij[2]]; u = sum(a | b)
         if (u > 0) sum(a & b) / u else NA_real_
     })
     
-    rec_bins = colnames(df_mt)[seq(10,100,by=10) >= 20]   # 20x20 ... 100x100
-    rec_res  = df_mt[, rec_bins, drop=FALSE]
-    pj_big = combn(ncol(rec_res), 2, function(ij){
-        a=rec_res[,ij[1]]; b=rec_res[,ij[2]]; u=sum(a|b); if(u>0) sum(a&b)/u else NA_real_
-    })
+    # rec_bins = colnames(df_mt)[seq(10,100,by=10) >= 20]   # 20x20 ... 100x100
+    # rec_res  = df_mt[, rec_bins, drop=FALSE]
+    # pj_big = combn(ncol(rec_res), 2, function(ij){
+    #     a=rec_res[,ij[1]]; b=rec_res[,ij[2]]; u=sum(a|b); if(u>0) sum(a&b)/u else NA_real_
+    # })
 
 
     jac_summary = rbind(jac_summary, data.frame(
@@ -349,15 +349,18 @@ for (cl in clusters_df$cluster){
         anno=anno_name,
         shared=core_n,
         union= union_n,
-        multiset_jaccard = if (union_n > 0) round(core_n / union_n, 3) else NA_real_,
-        mean_pairwise = round(mean(pj, na.rm = TRUE), 3),
-        mean_pairwise_big = round(mean(pj_big, na.rm=TRUE), 3)
+        # multiset_jaccard = if (union_n > 0) round(core_n / union_n, 3) else NA_real_,
+        mean_pairwise = round(mean(pj, na.rm = TRUE), 3)
+        # mean_pairwise_big = round(mean(pj_big, na.rm=TRUE), 3)
     ))
 
 }
-jac_summary
 
 print(jac_summary)
+print(xtable(jac_summary, 
+       display = c("s","s","s","d","d","f"),digits = 4,
+       caption = ""), 
+include.rownames=FALSE)
 ```
 
 ```{r}

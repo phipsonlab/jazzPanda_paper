@@ -10,6 +10,8 @@ library(xtable)
 library(spatstat.geom)
 library(ggtext)
 library(here)
+library(patchwork)
+library(scales)
 source(here("scripts/utils.R"))
 ################################################################################
 # Computational complexity 
@@ -59,7 +61,7 @@ dff = rbind(cosmx_cancer,merscope_hbreast,
 labels_refs = as.data.frame(cbind(name = c("perm","glm", "limma","fm"), 
                                   label = c("jazzPanda-correlation(5000 permutation)",
                                             "jazzPanda-glm",
-                                            "limma","Wilcoxon Rank Sum tests")))
+                                            "t-test","Wilcoxon Rank Sum tests")))
 dff = merge(dff, labels_refs, by="name" )
 dff$label = factor(dff$label,levels =labels_refs$label)
 
@@ -72,49 +74,58 @@ xtable(dff_data_summary, format = "latex",
 
 ################################################################################
 # Memory/ Time complexity
+make_label <- function(dataset, cells, transcripts) {
+    nm <- sub(" ", "<br>", dataset)          # break after the platform name
+    n  <- label_number(scale_cut = cut_short_scale(), accuracy = 0.1)
+    paste0(
+        "<span style='font-size:13pt'>", nm, "</span><br>",
+        "<span style='font-size:9pt;color:#555555'>*",
+        n(as.numeric(cells)), " cells,",
+        n(as.numeric(transcripts)), " transcripts*</span>"
+    )
+}
+dff$dataset_info <- make_label(dff$dataset, dff$cells_n, dff$transcript_n)
+dff$dataset_info <- factor(
+    dff$dataset_info,
+    levels = make_label(dff_data_summary$dataset,
+                        dff_data_summary$cells_n,
+                        dff_data_summary$transcript_n)
+)
+dff <- dff[order(dff$dataset_info), ]
 
-dff$dataset_info = paste0(dff$dataset,"<br>", "*", dff$cells_n, 
-                          " cells <br>",dff$transcript_n," transcripts",
-                          "*",  sep="")
-dff$dataset_info = factor(dff$dataset_info, 
-                          levels =paste0(dff_data_summary$dataset,"<br>", "*", 
-                                         dff_data_summary$cells_n, 
-                                         " cells <br>",dff_data_summary$transcript_n,
-                                         " transcripts","*",  sep=""))
-dff = dff[order(dff$dataset_info), ]
-pdf(file.path(figure_technical_performance, "time_usage_per_dataset.pdf"), width=12, height=5)
-ggplot(dff, aes(x = dataset_info, y = time_min, fill =label )) +
-    geom_bar(stat = "identity", position = position_dodge())+
-    theme_classic() +
-    labs(title = "", x = "", y ="Time (min)", fill = " ") +
-    guides(fill = guide_legend(nrow = 1, size=2))+
-    scale_y_continuous(expand = c(0.02,0.02)) +
-    theme(axis.text.y=element_text( vjust = 0.5, hjust=0.5, size=18),
-          axis.text.x=element_markdown(angle=0, vjust = 0.5, hjust=0.5, size=12),
+
+base_theme <- theme_classic() +
+    theme(axis.text.y  = element_text(vjust = 0.5, hjust = 0.5, size = 13),
+          axis.text.x  = element_markdown(angle = 0, vjust = 1, hjust = 0.5,
+                                          lineheight = 1.15,
+                                          margin = margin(t = 3)),
+          axis.title.y = element_text(size = 13),
           legend.position = "top",
-          axis.title.y =  element_text(size=18),
-          legend.title = element_blank(), 
-          legend.key.spacing.x= unit(1.5, 'cm'),     
-          legend.text = element_text(size=15))
+          legend.title = element_blank(),
+          legend.key.spacing.x = unit(1, "cm"),
+          legend.text  = element_text(size = 15),
+          legend.margin = margin(b = -4),
+          plot.margin  = margin(5, 8, 5, 5))
 
+p_time <- ggplot(dff, aes(x = dataset_info, y = time_min, fill = label)) +
+    geom_bar(stat = "identity", position = position_dodge()) +
+    labs(x = "", y = "Time (min)") +
+    scale_y_continuous(expand = c(0.02, 0.02)) +
+    base_theme
+
+p_mem <- ggplot(dff, aes(x = dataset_info, y = peak_memory_mb / 1024, fill = label)) +
+    geom_bar(stat = "identity", position = position_dodge()) +
+    labs(x = "", y = "Memory (GB)") +
+    scale_y_continuous(expand = c(0.02, 0.02)) +
+    base_theme
+
+pdf(file.path(figure_technical_performance, "time_memory_per_dataset.pdf"),
+    width = 17, height = 8)
+p_time + p_mem +
+    plot_layout(ncol = 2, guides = "collect") +
+    plot_annotation() &
+    theme(legend.position = "top")
 dev.off()
-
-
-pdf(file.path(figure_technical_performance, "memory_usage_per_dataset.pdf"), width=12, height=5)
-ggplot(dff, aes(x = dataset_info, y = peak_memory_mb/1024, fill = label)) +
-    geom_bar(stat = "identity", position = position_dodge())+
-    theme_classic() +
-    labs(title = "", x = "", y ="Memory (GB)", fill = " ") +
-    scale_y_continuous(expand = c(0.02,0.02)) +
-    theme(axis.text.y=element_text( vjust = 0.5, hjust=0.5, size=18),
-          axis.text.x=element_markdown(angle=0, vjust = 0.5, hjust=0.5, size=12),
-          legend.position = "top",
-          axis.title.y =  element_text(size=18),
-          legend.title = element_blank(), 
-          legend.key.spacing.x= unit(1.5, 'cm'),     
-          legend.text = element_text(size=15))
-dev.off()
-
 
 ################################################################################
 # Marker gene comparision vs number of tiles 

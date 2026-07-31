@@ -14,7 +14,8 @@ source(here("scripts/utils.R"))
 library(scales)
 library(ComplexUpset)
 library(cowplot)
-
+library(data.table)
+library(limma)
 selected_samples = c("xenium_hbreast_sp1","cosmx_healthy", "merscope_sp1")
 df = fread(here::here("data","gene_count_frequency.csv"))
 df = as.data.frame(df)
@@ -33,9 +34,12 @@ dist_df = df %>%
     group_by(sample, value_grp) %>%
     summarise(prop = sum(prop), .groups = "drop")
 
-dist_df$sample = factor(dist_df$sample, levels = selected_samples)
+dist_df$sample = factor(dist_df$sample, levels = selected_samples,
+                        labels = c("Xenium breast cancer", 
+                                   "CosMx human liver", 
+                                   "MERSCOPE breast cancer"))
 p_dist = ggplot(dist_df, aes(factor(value_grp), prop)) +
-    geom_col(fill = "steelblue") +
+    geom_col(fill = "grey35", colour = NA) +
     geom_text(aes(label = percent(prop, accuracy = 0.1)), vjust = -0.3, size = 2) +
     scale_x_discrete(labels = lab_fun) +
     scale_y_continuous(labels = percent, expand = expansion(mult = c(0, 0.08))) +
@@ -48,14 +52,26 @@ p_dist = ggplot(dist_df, aes(factor(value_grp), prop)) +
 ggsave(file.path(figure_intro,"fig_count_distribution.png"), p_dist, width = 10, height = 3,  dpi = 200)
 
 
-data_nm  <- "xenium_hbreast"
+data_nm="cosmx_hhliver"
 cluster_info = readRDS(here(data_path,paste0(data_nm, "_clusters.Rds")))
-colnames(cluster_info)[6] = "anno_name"
-cluster_names = paste0("c", 1:9)
-cluster_info$cluster = factor(cluster_info$cluster,
-                              levels=cluster_names)
-ct_names =c("Tumor", "Stromal","Macrophages","Myoepithelial", "T_Cells", 
-            "B_Cells","Endothelial", "Dendritic", "Mast_Cells")
+
+
+if (data_nm=="xenium_hbreast"){
+    ct_names =c("Tumor", "Stromal","Macrophages","Myoepithelial", "T_Cells", 
+                "B_Cells","Endothelial", "Dendritic", "Mast_Cells")
+    colnames(cluster_info)[6] = "anno_name"
+    cluster_names = paste0("c", 1:9)
+    cluster_info$cluster = factor(cluster_info$cluster,
+                                  levels=cluster_names)
+}else if(data_nm == "cosmx_hhliver"){
+    ct_names = c( "B", "Central.venous.LSECs", "Cholangiocytes", "Erthyroid.cells", 
+                       "Hep.1", "Hep.3", "Hep.4", "Hep.5", "Hep.6", "Macrophages",
+                       "NK.like.cells", "Periportal.LSECs", "Portal.endothelial.cells", 
+                       "Stellate.cells", "T")  
+    cluster_info$anno_name = cluster_info$cluster
+    
+}
+
 cluster_info$anno_name = factor(cluster_info$anno_name,
                                 levels=ct_names)
 rownames(cluster_info) <-cluster_info$cells
@@ -67,60 +83,91 @@ jazzPanda_res_lst = readRDS(here(data_path,paste0(data_nm, "_jazzPanda_res_lst.R
 fit.cont = readRDS(here(data_path,paste0(data_nm, "_fit_cont_obj.Rds")))
 seu = readRDS(here(data_path,paste0(data_nm, "_seu.Rds")))
 FM_result= readRDS(here(data_path,paste0(data_nm, "_seu_markers.Rds")))
-
+FM_result = FM_result[FM_result$p_val_adj<0.05,]
 total_genes = length(rownames(seu))     
 dt = decideTests(fit.cont)
 total_genes = length(rownames(seu))
 
-sig_df = data.frame(
+limma_sig = data.frame(
     cluster = colnames(dt),
     n_sig   = colSums(dt == 1)
 ) %>%
     mutate(prop = n_sig / total_genes)
+limma_sig$method = "t-test"
 
+wrst_sig = data.frame(
+    table(FM_result$cluster)
+) 
+colnames(wrst_sig) = c("cluster", "n_sig")
+wrst_sig$method = "WRST"
+wrst_sig$prop = wrst_sig$n_sig / total_genes
+
+sig_df = rbind(limma_sig, wrst_sig)
 sig_df$ct = anno_df$anno_name[match(sig_df$cluster, anno_df$cluster)]
-ct_size = sig_df$ct[order(sig_df$n_sig, decreasing = TRUE)]
-# reorder the x-axis factor by cluster size
-sig_df$ct = factor(sig_df$ct, levels = ct_size)
-library(patchwork)
+sig_df$ct = factor(sig_df$ct, levels = ct_names)
 
-
-fill_col = "grey30"
-
-p_bar = ggplot(sig_df, aes(ct, prop)) +
-    geom_col(fill = fill_col) +
-    geom_text(aes(label = scales::percent(prop, accuracy = 0.1)),
-              vjust = -0.3, size = 2.5) +
-    scale_y_continuous(limits = c(0, 0.5), labels = scales::percent,
+p_bar_1 = ggplot(sig_df, aes(ct, prop, fill = method)) +
+    geom_col(position = position_dodge(width = 0.9)) +
+    scale_y_continuous(limits = c(0, 1), labels = scales::percent,
                        expand = expansion(mult = c(0, 0.08))) +
-    labs(x = "Cluster", y = "Proportion of significant genes") +
+    scale_fill_manual(values = c("t-test" = "#0072B2", "WRST" = "#E69F00"))+   # blue / orange
+    labs(x = "Cluster", y = "Proportion of significant genes", fill = NULL,title = "CosMx human liver") +
     theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-mat = as.data.frame((dt == 1) * 1)
-colnames(mat) = anno_df$anno_name[match(colnames(mat), anno_df$cluster)]
+    theme( plot.title    = element_text(size = 15, hjust=0.5,margin = margin(t = 2, b = 8)),
+        legend.position          = "inside",
+        legend.position.inside   = c(0.99, 0.99),
+        legend.justification     = c(1, 1),
+        legend.title = element_blank(),
+        axis.title.x  = element_blank(),
+        legend.background        = element_rect(fill = alpha("white", 0.85), colour = "black"),
+        legend.key.size          = unit(0.5, "cm"),
+        legend.margin            = margin(2, 4, 2, 4),
+        axis.text.x              = element_text(angle = 45, hjust = 1)
+    )
 
-set_queries = lapply(ct_names, function(s) {
-    ComplexUpset::upset_query(set = s, fill = fill_col)
-})
 
-p_upset = ComplexUpset::upset(mat, intersect = ct_names,
-                              min_size = 2,          # fewer intersections -> narrower
-                              queries = set_queries,
-                              wrap=TRUE, keep_empty_groups= FALSE, name="",
-                              stripes='white',
-                              sort_intersections_by ="cardinality",  sort_sets= "ascending",min_degree=1,
-                              set_sizes =( 
-                                  upset_set_size()
-                                  + theme(axis.title= element_blank(),
-                                          axis.ticks.y = element_blank(),
-                                          axis.text.y = element_blank())),
-                              sort_intersections= "descending", warn_when_converting=FALSE,
-                              warn_when_dropping_groups=TRUE,encode_sets=TRUE,
-                              
-                              width_ratio=0.3, height_ratio=1/4)+
-                                theme(plot.title = element_text( size=15))
-jpeg(file.path(figure_intro, paste0(data_nm, "_limma_mg_prop_intersection.jpg")),
-     width=4000, height=2000, res=300)
-print(p_bar + p_upset + plot_layout(widths = c(0.8, 3)))
+library(limma)
+res <- decideTests(fit.cont, adjust.method = "BH", p.value = 0.05, lfc = 0)
+
+gene_tab <- data.frame(
+    gene          = rownames(res),
+    cluster_count = rowSums(res==1)
+)
+gene_tab <- gene_tab[gene_tab$cluster_count > 0, ]   # drop never-significant genes
+
+gene_limma <- data.frame(table(gene_tab$cluster_count))
+colnames(gene_limma) = c("count", "freq")
+gene_limma$method = "t-test"
+
+gene_tab=data.frame(table(FM_result$gene))
+colnames(gene_tab) = c("gene", "cluster_count")
+gene_fm=data.frame(table(gene_tab$cluster_count))
+colnames(gene_fm) = c("count", "freq")
+gene_fm$method = "WRST"
+
+gene_df = rbind(gene_limma, gene_fm)
+
+p_bar_2 = ggplot(gene_df, aes(x=count, freq, fill=method)) +
+     geom_col(position = position_dodge(width = 0.9)) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.08))) +
+    scale_fill_manual(values = c("t-test" = "#0072B2", "WRST" = "#E69F00"))+  
+    labs(x = "Number of clusters a gene is a marker for", y = "Number of genes",title = "CosMx human liver") +
+    theme_bw() +
+    theme( plot.title    = element_text(size = 15, hjust=0.5,
+                                        margin = margin(t = 2, b = 8)),
+        legend.position          = "inside",
+        legend.title = element_blank(),
+        legend.position.inside   = c(0.99, 0.99),
+        legend.justification     = c(1, 1),
+        legend.background        = element_rect(fill = alpha("white", 0.85), colour = "black"),
+        legend.key.size          = unit(0.4, "cm"),
+        legend.margin            = margin(2, 4, 2, 4),
+        axis.text.x              = element_text( hjust =0.5)
+    )
+
+p_combined <- (p_bar_1 | free(p_bar_2, type = "label", side = "b")) +
+    plot_layout(widths = c(0.6, 0.4))
+pdf(file.path(figure_intro, paste0(data_nm, "_mg_prop_ncmg.pdf")),
+    width=12, height=5)
+print(p_combined)
 dev.off()
-

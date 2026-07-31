@@ -99,7 +99,7 @@ cluster_mt = sv_lst$cluster_mt[, paste0("c", 1:10)]
 # cluster_mt <-cluster_mt[,exp_ord]
 
 colnames(cluster_mt) = anno_df$anno_name
-cor_cluster_mt <- cor(cluster_mt,cluster_mt, method = "pearson")
+cor_cluster_mt <- cor(cluster_mt,cluster_mt, method = "spearman")
 
 col <- grDevices::colorRampPalette(c("#4477AA", "#77AADD", 
                                      "#FFFFFF","#EE9988", "#BB4444"))
@@ -126,7 +126,7 @@ dev.off()
 # 
 # # Calculate pairwise correlations
 # cor_gene_mt <- cor(sv_lst$gene_mt[, selected_mg$gene], sv_lst$gene_mt[, selected_mg$gene],
-#                    method = "pearson")
+#                    method = "spearman")
 # xtable(cor_gene_mt)
 # pdf(file.path(figure_sv_extension, "figure6_genegene_corr_glm.pdf"), width=16, height=16)
 # corrplot::corrplot(cor_gene_mt, method="color", col=col(200), diag=TRUE,
@@ -164,13 +164,13 @@ selected_mg <- unlist(lapply(cluster_names, function(cl) {
 # Calculate pairwise correlations
 cor_gene_mt <- cor(sv_lst$gene_mt[, unique(selected_mg)],
                    sv_lst$gene_mt[, unique(selected_mg)],
-                   method = "pearson")
+                   method = "spearman")
 xtable(cor_gene_mt)
-pdf(file.path(figure_sv_extension, "figure6_genegene_corr_perm.pdf"), width=16, height=16)
+pdf(file.path(figure_sv_extension, "supp_genegene_corr_perm.pdf"), width=16, height=16)
 corrplot::corrplot(cor_gene_mt, method="color", col=col(200), diag=TRUE,
-                   addCoef.col = NULL,type="upper",
-                   tl.col="black", tl.srt=45, mar=c(0,0,5,0),sig.level = 0.05,
-                   insig = "blank",
-                   title = " ",cl.cex=1.5
-)
+                   addCoef.col = NULL, type="upper",
+                   tl.col="black", tl.srt=45, mar=c(0,0,2.5,0),
+                   tl.cex=1.8, cl.cex=1.5, title=" ")
+mtext("Pairwise Spearman correlation between top marker gene spatial vectors",
+      side=3, line=0, cex=2.2, font=2)
 dev.off()

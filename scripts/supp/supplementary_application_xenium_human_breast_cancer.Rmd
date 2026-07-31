@@ -408,7 +408,7 @@ for (cl in cluster_names){
     ct_nm = anno_df[anno_df$cluster==cl, "anno_name"]
     
     fm_cl=FindMarkers(seu, ident.1 = cl, only.pos = TRUE,
-            logfc.threshold = 0.1)
+            logfc.threshold = 0)
     fm_cl = fm_cl[fm_cl$p_val_adj<0.05, ]
     fm_cl = fm_cl[order(fm_cl$avg_log2FC, decreasing = TRUE),]
     to_plot_fm =row.names(fm_cl)

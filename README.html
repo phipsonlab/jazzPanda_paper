@@ -360,24 +360,78 @@ figures</strong> for the <em>jazzPanda</em> paper.</p>
 <ul>
 <li><strong>jazzPanda R package</strong>: <a href="https://bioconductor.org/packages/jazzPanda">Repository</a><br />
 </li>
-<li><strong>Preprint</strong>: <a href="https://doi.org/XXXXXX">bioRxiv
-link</a><br />
+<li><strong>Preprint</strong>: <a href="https://doi.org/10.64898/2026.02.13.705867">bioRxiv link</a><br />
 </li>
-<li><strong>Raw datasets</strong>: <a href="https://zenodo.org/record/XXXXXX">Download from Zenodo</a><br />
+<li><strong>Raw/Processed data</strong>: <a href="https://zenodo.org/records/18149456">Download from
+Zenodo</a><br />
 </li>
-<li><strong>Analysis workflow</strong>: <a href="https://github.com/phipsonlab/jazzPanda_workflow">Workflow
+<li><strong>Analysis workflow</strong>: <a href="https://phipsonlab.github.io/jazzPanda_workflowr/">Workflow
+documentation</a></li>
+</ul>
+</div>
+<div id="jazzpanda-paper-repository-1" class="section level1">
+<h1>jazzPanda: Paper Repository</h1>
+<p>This repository provides the complete set of <strong>R
+scripts</strong> used to generate <strong>all main and supplementary
+figures</strong> for the <em>jazzPanda</em> paper.</p>
+<ul>
+<li><strong>jazzPanda R package</strong>: <a href="https://bioconductor.org/packages/jazzPanda">Repository</a></li>
+<li><strong>Preprint</strong>: <a href="https://doi.org/10.64898/2026.02.13.705867">bioRxiv link</a></li>
+<li><strong>Raw/Processed data</strong>: <a href="https://zenodo.org/records/18149456">Download from Zenodo</a></li>
+<li><strong>Analysis workflow</strong>: <a href="https://phipsonlab.github.io/jazzPanda_workflowr/">Workflow
 documentation</a></li>
 </ul>
 <pre class="sh"><code>.
 ├── scripts/
-│   ├── main/                 
-│   └── supp/                 
+│   ├── main/
+│   └── supp/
 ├── figures/                  # outputs (PDF/JPG) — created by scripts
 │   ├── main/
 │   └── supp/
 ├── data/
 ├── .gitignore
 └── README.md                 # you are here</code></pre>
+<div id="datasets" class="section level2">
+<h2>Datasets</h2>
+<p>Four imaging-based spatial transcriptomics datasets are used
+throughout the paper:</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Short name</th>
+<th>Platform</th>
+<th>Tissue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>xenium_hbreast</code></td>
+<td>10x Xenium</td>
+<td>Human HER2+ breast cancer (2 samples)</td>
+</tr>
+<tr class="even">
+<td><code>cosmx_hhliver</code></td>
+<td>Nanostring CosMx</td>
+<td>Human healthy liver</td>
+</tr>
+<tr class="odd">
+<td><code>cosmx_hlc</code></td>
+<td>Nanostring CosMx</td>
+<td>Human liver cancer</td>
+</tr>
+<tr class="even">
+<td><code>merscope_hbreast</code></td>
+<td>Vizgen MERSCOPE</td>
+<td>Human breast cancer</td>
+</tr>
+</tbody>
+</table>
+</div>
 <div id="data-availability" class="section level2">
 <h2>Data Availability</h2>
 <p>Raw experimental data can be accessed via the links below. Processed
@@ -388,73 +442,88 @@ the repository size limits, we provide access via
 <strong>Zenodo</strong>.</p>
 <div id="raw-data" class="section level3">
 <h3>Raw data</h3>
-<p>-1) 10x Xenium Mouse brain data <a href="https://www.10xgenomics.com/resources/datasets/fresh-frozen-mouse-brain-replicates-1-standard%7D">🔗</a></p>
-<p>-2) 10x Xenium Human HER2+ breast cancer data <a href="https://www.10xgenomics.com/products/xenium-in-situ/preview-dataset-human-breast">🔗</a></p>
-<p>-3) 10x Xenium Human lung cancer data <a href="https://www.10xgenomics.com/resources/datasets/xenium-human-lung-preview-data-1-standard">🔗</a></p>
-<p>-4) Nanostring CosMX Human liver healthy and cancer data <a href="https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-liver-rna-ffpe-dataset/">🔗</a></p>
-<p>-5) Vizgen MERSCOPE Human breast cancer data <a href="https://info.vizgen.com/ffpe-showcase?submissionGuid=c9a25730-3fe5-444b-bef8-1a74d51ddefb">🔗</a></p>
+<p>-1) 10x Xenium Human HER2+ breast cancer data <a href="https://www.10xgenomics.com/products/xenium-in-situ/preview-dataset-human-breast">🔗</a></p>
+<p>-2) Nanostring CosMx Human liver healthy and cancer data <a href="https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/human-liver-rna-ffpe-dataset/">🔗</a></p>
+<p>-3) Vizgen MERSCOPE Human breast cancer data <a href="https://info.vizgen.com/ffpe-showcase?submissionGuid=c9a25730-3fe5-444b-bef8-1a74d51ddefb">🔗</a></p>
 </div>
 <div id="processed-data" class="section level3">
 <h3>Processed data</h3>
 <p>Processed outputs are organized in the <code>data/</code> directory
 of this repository, with intermediate results saved as <code>.Rds</code>
 files. Very large processed datasets that exceed repository size limits
-are deposited on <a href="#">Zenodo</a> for convenient download.</p>
+are deposited on <a href="https://zenodo.org/records/18149456">Zenodo</a> for convenient
+download.</p>
 </div>
 </div>
 <div id="figure-map" class="section level2">
 <h2>Figure map</h2>
 <table>
 <colgroup>
-<col width="15%" />
-<col width="41%" />
-<col width="42%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
 </colgroup>
 <thead>
 <tr class="header">
 <th>Figure</th>
+<th>Content</th>
 <th>Script</th>
 <th>Output</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>Figure 1</td>
+<td>Data sparsity and performance of single-cell marker analysis
+methods</td>
+<td><code>scripts/main/figure_gene_count.R</code></td>
+<td><code>figures/main/figure_intro/</code></td>
+</tr>
+<tr class="even">
 <td>Figure 2</td>
-<td><code>scripts/main/figure2_simulation.R</code></td>
-<td><code>figures/main/figure2_cosmx_hliver/</code></td>
+<td>Method overview (schematic)</td>
+<td>—</td>
+<td>—</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Figure 3</td>
-<td><code>scripts/main/figure3_onesample.R</code></td>
-<td><code>figures/main/figure3_xenium_hbreast/</code></td>
+<td>Negative control probes and simulation-based evaluation</td>
+<td><code>scripts/main/figure_simulation.R</code></td>
+<td><code>figures/main/figure_simulation/</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Figure 4</td>
-<td><code>scripts/main/figure4_multisamples.R</code></td>
-<td><code>figures/main/figure4_simulation/</code></td>
-</tr>
-<tr class="even">
-<td>Figure 5</td>
-<td><code>scripts/main/figure5_compare_methods.R</code></td>
-<td><code>figures/main/figure5_compare_methods/</code></td>
+<td>Application to CosMx healthy liver and Xenium HER2+ breast
+cancer</td>
+<td><code>scripts/main/figure_result.R</code></td>
+<td><code>figures/main/figure_result/</code></td>
 </tr>
 <tr class="odd">
-<td>Figure 6</td>
-<td><code>scripts/main/figure6_sv_extension.R</code></td>
-<td><code>figures/main/figure6_sv_extension/</code></td>
+<td>Figure 5</td>
+<td>Comparison of marker analysis methods</td>
+<td><code>scripts/main/figure_compare_methods.R</code></td>
+<td><code>figures/main/figure_compare_methods/</code></td>
 </tr>
 <tr class="even">
+<td>Figure 6</td>
+<td>Extension of the jazzPanda framework (MERSCOPE breast cancer)</td>
+<td><code>scripts/main/figure_sv_extension.R</code></td>
+<td><code>figures/main/figure_sv_extension/</code></td>
+</tr>
+<tr class="odd">
 <td>Figure 7</td>
-<td><code>scripts/main/figure7_technical_performance.R</code></td>
-<td><code>figures/main/figure7_technical_performance/</code></td>
+<td>Technical performance (bin size, runtime, memory)</td>
+<td><code>scripts/main/figure_technical_performance.R</code></td>
+<td><code>figures/main/figure_technical_performance/</code></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div id="script-overview" class="section level2">
 <h2>Script Overview</h2>
-<div id="marker-gene" class="section level3">
-<h3>Marker gene:</h3>
+<div id="marker-gene-detection" class="section level3">
+<h3>Marker gene detection</h3>
 <table>
 <colgroup>
 <col width="10%" />
@@ -471,33 +540,23 @@ are deposited on <a href="#">Zenodo</a> for convenient download.</p>
 <tbody>
 <tr class="odd">
 <td><code>scripts/main</code></td>
-<td><code>run_mg_xenium_mouse_brain.sh</code><br><code>mg_xenium_mouse_brain.R</code></td>
-<td><code>data/dataset_computational_complexity/xenium_mbrain_*.Rds</code></td>
-</tr>
-<tr class="even">
-<td><code>scripts/main</code></td>
 <td><code>run_mg_xenium_human_breast_cancer.sh</code><br><code>mg_xenium_human_breast_cancer.R</code></td>
 <td><code>data/dataset_computational_complexity/xenium_hbreast_*.Rds</code></td>
 </tr>
+<tr class="even">
+<td><code>scripts/main</code></td>
+<td><code>run_mg_cosmx_human_healthy_liver.sh</code><br><code>mg_cosmx_human_healthy_liver.R</code></td>
+<td><code>data/dataset_computational_complexity/cosmx_hhliver_*.Rds</code></td>
+</tr>
 <tr class="odd">
 <td><code>scripts/main</code></td>
-<td><code>run_mg_xenium_human_breast_cancer.sh</code><br><code>mg_xenium_human_breast_cancer.R</code></td>
-<td><code>data/dataset_computational_complexity/xenium_hlc_*.Rds</code></td>
+<td><code>run_mg_cosmx_human_liver_cancer.sh</code><br><code>mg_cosmx_human_liver_cancer.R</code></td>
+<td><code>data/dataset_computational_complexity/cosmx_hlc_*.Rds</code></td>
 </tr>
 <tr class="even">
 <td><code>scripts/main</code></td>
 <td><code>run_mg_merscope_human_breast_cancer.sh</code><br><code>mg_merscope_human_breast_cancer.R</code></td>
 <td><code>data/dataset_computational_complexity/merscope_hbreast_*.Rds</code></td>
-</tr>
-<tr class="odd">
-<td><code>scripts/main</code></td>
-<td><code>run_mg_cosmx_human_healthy_liver.sh</code><br><code>mg_cosmx_human_healthy_liver.R</code></td>
-<td><code>data/dataset_computational_complexity/cosmx_hhliver_*.Rds</code></td>
-</tr>
-<tr class="even">
-<td><code>scripts/main</code></td>
-<td><code>run_mg_cosmx_human_liver_cancer.sh</code><br><code>mg_cosmx_human_liver_cancer.R</code></td>
-<td><code>data/dataset_computational_complexity/cosmx_hlc_*.Rds</code></td>
 </tr>
 </tbody>
 </table>
@@ -530,7 +589,7 @@ are deposited on <a href="#">Zenodo</a> for convenient download.</p>
 </table>
 </div>
 <div id="technical-performance" class="section level3">
-<h3>Technical performance:</h3>
+<h3>Technical performance</h3>
 <div id="tiles-on-marker-genes" class="section level4">
 <h4>Tiles on marker genes</h4>
 <table>
@@ -548,11 +607,6 @@ are deposited on <a href="#">Zenodo</a> for convenient download.</p>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>scripts/main/discussion_markergenes_vs_ntiles</code></td>
-<td><code>cosmx_ntile_markergenes_sa.sh</code><br><code>cosmx_ntile_markergene_result.R</code></td>
-<td><code>scripts/main/discussion_markergenes_vs_ntiles/cosmx_hlc_ntiles_mg_gr{10–100}_*.csv</code></td>
-</tr>
-<tr class="even">
 <td><code>scripts/main/discussion_markergenes_vs_ntiles</code></td>
 <td><code>xenium_hbreast_ntile_markergenes_sa.sh</code><br><code>xenium_hbreast_ntile_markergene_result.R</code></td>
 <td><code>scripts/main/discussion_markergenes_vs_ntiles/xenium_hbreast_ntiles_mg_gr{10–100}_*.csv</code></td>
@@ -638,6 +692,60 @@ are deposited on <a href="#">Zenodo</a> for convenient download.</p>
 </table>
 </div>
 </div>
+</div>
+<div id="supplementary-material" class="section level2">
+<h2>Supplementary material</h2>
+<p>Supplementary figures and tables are generated as R Markdown
+notebooks in <code>scripts/supp/</code>, each rendered to a
+self-contained <code>.html</code> of the same name.</p>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Notebook</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>supplementary_simulation.Rmd</code></td>
+<td>Permutation p-values and correlation of simulated genes across
+clusters; false discovery rates</td>
+</tr>
+<tr class="even">
+<td><code>supplementary_application_cosmx_healthy_human_liver.Rmd</code></td>
+<td>Dataset overview; top marker genes per cluster and cluster–gene
+vector relationships (jazzPanda-correlation and jazzPanda-glm); marker
+gene overlap and cumulative average correlation across methods</td>
+</tr>
+<tr class="odd">
+<td><code>supplementary_application_cosmx_human_liver_cancer.Rmd</code></td>
+<td>Dataset overview; marker gene detection for the CosMx human liver
+cancer sample</td>
+</tr>
+<tr class="even">
+<td><code>supplementary_application_xenium_human_breast_cancer.Rmd</code></td>
+<td>Dataset overview; top marker genes per cluster and cluster–gene
+vector relationships (jazzPanda-glm); marker gene overlap and cumulative
+average correlation across methods; marker gene overlap across tile
+lengths</td>
+</tr>
+<tr class="odd">
+<td><code>supplementary_application_merscope_human_breast_cancer.Rmd</code></td>
+<td>Dataset overview; spatial visualisation of selected cell types;
+pairwise Spearman correlation between top marker gene spatial
+vectors</td>
+</tr>
+<tr class="even">
+<td><code>supplementary_technical_performance.Rmd</code></td>
+<td>Computational complexity of spatial vector construction across
+square and hex bin lengths; runtime and memory benchmarks</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 

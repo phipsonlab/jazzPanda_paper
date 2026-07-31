@@ -198,7 +198,7 @@ xhb_clusters= readRDS(file.path(here("data/dataset_computational_complexity/xeni
 limma_dt<-decideTests(xhb_fit)
 panel_genes=row.names(xhb_seu)
 plot_lst=list()
-for (cl in c("c1", "c5", "c8")){
+for (cl in c("c2", "c5", "c8")){
     anno_name = unique(xhb_clusters[xhb_clusters$cluster==cl,"anno"])
     anno_name = sub(anno_name,pattern = "_Cells", replacement="")
     limma_sig=row.names(limma_dt[limma_dt[,cl]==1,])
@@ -265,7 +265,7 @@ rownames(xhb_clusters) <-xhb_clusters$cells
 Idents(xhb_seu) <- xhb_clusters$cluster[match(colnames(xhb_seu),
                                           rownames(xhb_clusters))]
 
-for (cl in c("c1", "c5","c8")){
+for (cl in c("c2", "c5","c8")){
     anno_name = unique(xhb_clusters[xhb_clusters$cluster==cl,"anno"])
     anno_name = sub(anno_name,pattern = "_Cells", replacement="")
     fm_cl=FindMarkers(xhb_seu, ident.1 = cl, only.pos = TRUE,
@@ -314,7 +314,6 @@ for (cl in c("c1", "c5","c8")){
                                       "Wilcoxon Rank Sum Test" = "blue")) +
 
         labs(title = paste(anno_name, "cells"), x = "Rank of marker genes",
-             #y = "Cumulative count of genes with correlation >0.7",
              y = "Cumulative average correlation",
              color = NULL) +
         scale_x_continuous(limits = c(0, 50))+
